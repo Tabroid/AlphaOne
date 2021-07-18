@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "BaseClass.generated.h"
+#include "CharacterBase.generated.h"
 
 UCLASS()
-class ALPHAONE_API ABaseClass : public ACharacter
+class ALPHAONE_API ACharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	ABaseClass();
+	ACharacterBase();
 
 protected:
 	// Called when the game starts or when spawned
