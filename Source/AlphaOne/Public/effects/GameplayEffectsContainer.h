@@ -10,6 +10,7 @@
 
 #include "GameplayEffectTypes.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
+#include "abilities/TargetType.h"
 #include "GameplayEffectsContainer.generated.h"
 
 class UAbilitySystemComponent;
@@ -30,8 +31,8 @@ public:
 	FGameplayEffectContainer() {}
 
 	/** Sets the way that targeting happens */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GameplayEffectContainer)
-	// TSubclassOf<UTargetType> TargetType;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GameplayEffectContainer)
+	TSubclassOf<UTargetType> TargetType;
 
 	/** List of gameplay effects to apply to the targets */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GameplayEffectContainer)
@@ -45,7 +46,7 @@ struct FGameplayEffectContainerSpec
 	GENERATED_BODY()
 
 public:
-	FRPGGameplayEffectContainerSpec() {}
+	FGameplayEffectContainerSpec() {}
 
 	/** Computed target data */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GameplayEffectContainer)
@@ -56,26 +57,11 @@ public:
 	TArray<FGameplayEffectSpecHandle> TargetGameplayEffectSpecs;
 
 	/** Returns true if this has any valid effect specs */
-	bool HasValidEffects() const {
-		return TargetGameplayEffectSpecs.Num() > 0;
-	}
+	bool HasValidEffects() const;
 
 	/** Returns true if this has any valid targets */
-	bool HasValidTargets() const {
-		return TargetData.Num() > 0;
-	}
+	bool HasValidTargets() const;
 
 	/** Adds new targets to target data */
-	void AddTargets(const TArray<FHitResult>& HitResults, const TArray<AActor*>& TargetActors) {
-		for (const FHitResult& HitResult : HitResults) {
-			FGameplayAbilityTargetData_SingleTargetHit* NewData = new FGameplayAbilityTargetData_SingleTargetHit(HitResult);
-			TargetData.Add(NewData);
-		}
-
-		if (TargetActors.Num() > 0) {
-			FGameplayAbilityTargetData_ActorArray* NewData = new FGameplayAbilityTargetData_ActorArray();
-			NewData->TargetActorArray.Append(TargetActors);
-			TargetData.Add(NewData);
-		}
-	}
+	void AddTargets(const TArray<FHitResult>& HitResults, const TArray<AActor*>& TargetActors);
 };

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Base class for abilities
 
 #pragma once
 
@@ -8,9 +8,6 @@
 #include "AbilityBase.generated.h"
 
 
-/**
- * 
- */
 UCLASS()
 class ALPHAONE_API UAbilityBase : public UGameplayAbility
 {
