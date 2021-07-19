@@ -8,12 +8,34 @@ public class AlphaOne : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule", "GameplayTasks", "GameplayTags" });
+		PublicDependencyModuleNames.AddRange(
+			new string[] {
+				"Core",
+				"CoreUObject",
+				"Engine",
+				"OnlineSubsystem",
+				"OnlineSubsystemUtils",
+				"AssetRegistry",
+				"NavigationSystem",
+				"AIModule",
+				"GameplayTasks",
+				"GameplayTags",
+			}
+		);
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
-
-		// Uncomment if you are using Slate UI
-		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+		PrivateDependencyModuleNames.AddRange(
+			new string[] {
+				"InputCore",
+				"Slate",
+				"SlateCore",
+				"Json",
+				"ApplicationCore",
+				"ReplicationGraph",
+				"PakFile",
+				"RHI",
+				"PhysicsCore"
+			}
+		);
 		
 		if (Target.Platform == UnrealTargetPlatform.IOS)
 		{
