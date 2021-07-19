@@ -22,6 +22,10 @@
 		{
 			"Name": "GameplayAbilities",
 			"Enabled": true
+		},
+		{
+			"Name": "OnlineFramework",
+			"Enabled": true
 		}
 	]
 }
