@@ -7,6 +7,8 @@
 #include "Archer.generated.h"
 
 class AProjectileBase;
+class UAnimMontage;
+class UAnimInstance;
 
 UCLASS()
 class ALPHAONE_API AArcher : public ACharacterBase
@@ -21,12 +23,17 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	void Fire();
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	void Fire();
 
 private:
+	void AttackStatusOff();
+
 	//projectile of this pawn
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile Type", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AProjectileBase> ProjectileClass;
@@ -34,5 +41,17 @@ private:
 	//the location where the projectile will spawn
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* ProjectileSpawnPoint = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* NormalAttackMontage;
+
+	UPROPERTY(EditAnywhere)
+	float NormalAttackRate = 1.0f;
+
+	//used to play animation montage
+	UAnimInstance* AnimInstance;
+
+	FTimerHandle FireRateTimerHandle;
 };
+
 

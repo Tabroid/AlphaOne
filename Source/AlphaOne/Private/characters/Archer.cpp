@@ -19,19 +19,37 @@ void AArcher::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//get the animation instance from the skeletal mesh
+	AnimInstance = GetMesh()->GetAnimInstance();
+
+	bIsAttacking = false;
 }
 
 void AArcher::Fire() 
 {
-	if (ProjectileClass){
-		//spawning the projectile at the spawn point
-		FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
-		FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
-		AProjectileBase* TempProjectile = 
-		GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation);
-		//set the owner 
-		TempProjectile->SetOwner(this);
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	//bWantToAttack = PlayerController->IsInputKeyDown(EKeys::LeftMouseButton);
+	if (PlayerController){
+		//while(PlayerController->IsInputKeyDown(EKeys::LeftMouseButton)){
+			if (!bIsAttacking && ProjectileClass && AnimInstance && NormalAttackMontage){
+				//spawning the projectile at the spawn point
+				FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
+				FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
+				AProjectileBase* TempProjectile = 
+				GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation);
+				//set the owner 
+				TempProjectile->SetOwner(this);
+				bIsAttacking = true;
+				float PlayTime = AnimInstance->Montage_Play(NormalAttackMontage, NormalAttackRate);
+				GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, this, &AArcher::AttackStatusOff, PlayTime/NormalAttackRate, true);
+			}
+		//}
 	}
+}
+
+void AArcher::AttackStatusOff() 
+{
+	bIsAttacking = false;
 }
 
 // Called every frame
