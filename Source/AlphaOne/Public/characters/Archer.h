@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "characters/CharacterBase.h"
 #include "Archer.generated.h"
 
-class AArrow;
+class AProjectileBase;
 
 UCLASS()
-class ALPHAONE_API AArcher : public ACharacter
+class ALPHAONE_API AArcher : public ACharacterBase
 {
 	GENERATED_BODY()
 
@@ -19,9 +19,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -30,11 +27,9 @@ protected:
 private:
 	//projectile of this pawn
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile Type", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AArrow> ProjectileClass;
+	TSubclassOf<AProjectileBase> ProjectileClass;
 
 	//the location where the projectile will spawn
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	USceneComponent*      ProjectileSpawnPoint = nullptr;
-
-
+	USceneComponent* ProjectileSpawnPoint = nullptr;
 };

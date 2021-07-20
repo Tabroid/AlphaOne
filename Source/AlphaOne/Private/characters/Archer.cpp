@@ -2,7 +2,7 @@
 
 
 #include "characters/Archer.h"
-#include "Projectile/Arrow.h"
+#include "weapons/ProjectileBase.h"
 
 // Sets default values
 AArcher::AArcher()
@@ -27,8 +27,8 @@ void AArcher::Fire()
 		//spawning the projectile at the spawn point
 		FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
 		FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
-		AArrow* TempProjectile = 
-		GetWorld()->SpawnActor<AArrow>(ProjectileClass, SpawnLocation, SpawnRotation);
+		AProjectileBase* TempProjectile = 
+		GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation);
 		//set the owner 
 		TempProjectile->SetOwner(this);
 	}
@@ -39,12 +39,4 @@ void AArcher::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
-
-// Called to bind functionality to input
-void AArcher::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AArcher::Fire);
 }

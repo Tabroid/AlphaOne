@@ -1,24 +1,25 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "weapons/ProjectileBase.h"
+// UE4
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "Projectile/Arrow.h"
+
 
 // Sets default values
-AArrow::AArrow()
+AProjectileBase::AProjectileBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	// no need to tick
 	PrimaryActorTick.bCanEverTick = false;
 
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	CollisionComp->InitSphereRadius(5.0f);
+	CollisionComp->InitSphereRadius(CollisionSize);
 	CollisionComp->AlwaysLoadOnClient = true;
 	CollisionComp->AlwaysLoadOnServer = true;
 	CollisionComp->bTraceComplexOnMove = true;
 	CollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	//CollisionComp->SetCollisionObjectType(COLLISION_PROJECTILE);
 	CollisionComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	CollisionComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	CollisionComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
@@ -26,7 +27,7 @@ AArrow::AArrow()
 	RootComponent = CollisionComp;
 
 	//dynamic binding the OnHit function when the projectile hit something
-	CollisionComp->OnComponentHit.AddDynamic(this, &AArrow::OnHit);
+	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHit);
 
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile Mesh"));
@@ -35,27 +36,43 @@ AArrow::AArrow()
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
-	ProjectileMovement->InitialSpeed = MovementSpeed;
-	ProjectileMovement->MaxSpeed     = MovementSpeed;
+	ProjectileMovement->InitialSpeed = MoveSpeed;
+	ProjectileMovement->MaxSpeed     = MoveSpeed;
 	ProjectileMovement->bRotationFollowsVelocity = true;
-
+	bInitialized = true;
 }
 
 // Called when the game starts or when spawned
-void AArrow::BeginPlay()
+void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-AController* AArrow::GetOwnerController() const
+AController* AProjectileBase::GetOwnerController() const
 {
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	if (OwnerPawn == nullptr) return nullptr;
 	return OwnerPawn->GetController();
 }
 
-void AArrow::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
+float AProjectileBase::GetCollisionSize() const
+{
+	return CollisionSize;
+}
+
+float AProjectileBase::GetMoveSpeed() const
+{
+	return MoveSpeed;
+}
+
+float AProjectileBase::GetMass() const
+{
+	return Mass;
+}
+
+
+void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
 			   FVector NormalImpulse, const FHitResult& Hit) 
 {
 	AActor* MyOwner = GetOwner();
@@ -72,9 +89,35 @@ void AArrow::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveC
 }
 
 // Called every frame
-void AArrow::Tick(float DeltaTime)
+void AProjectileBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AProjectileBase::HandleCollesionSizeChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags)
+{
+	// Update the collision size
+	CollisionComp->InitSphereRadius(GetCollisionSize());
+	if (bInitialized) {
+		OnCollesionSizeChanged(DeltaValue, EventTags);
+	}
+}
+
+void AProjectileBase::HandleMassChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags)
+{
+	// @TODO mass is for physics
+	if (bInitialized) {
+		OnMassChanged(DeltaValue, EventTags);
+	}
+}
+
+void AProjectileBase::HandleMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags)
+{
+	// Update the movement speed
+	ProjectileMovement->MaxSpeed = GetMoveSpeed();
+	if (bInitialized) {
+		OnMoveSpeedChanged(DeltaValue, EventTags);
+	}
 }
 

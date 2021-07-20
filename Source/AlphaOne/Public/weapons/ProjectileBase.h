@@ -4,26 +4,53 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Arrow.generated.h"
+#include "GameplayTags.h"
+#include "ProjectileBase.generated.h"
 
 class UProjectileMovementComponent;
 class USphereComponent;
 class UParticleSystem;
 
 UCLASS()
-class ALPHAONE_API AArrow : public AActor
+class ALPHAONE_API AProjectileBase : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AArrow();
+	AProjectileBase();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual float GetCollisionSize() const;
+
+	// Returns current mana
+	UFUNCTION(BlueprintCallable)
+	virtual float GetMoveSpeed() const;
+
+	// Returns maximum mana
+	UFUNCTION(BlueprintCallable)
+	virtual float GetMass() const;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void HandleCollesionSizeChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	virtual void HandleMassChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	virtual void HandleMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	// called when movement speed changes
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnCollesionSizeChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnMassChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 
 private:
 	AController* GetOwnerController() const;
@@ -46,11 +73,20 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Effects")
 	UParticleSystem* HitParticle = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", meta = (AllowPrivateAccess = "true"))
+	float CollisionSize = 5.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move", meta = (AllowPrivateAccess = "true"))
-	float MovementSpeed = 5000.f;
+	float MoveSpeed = 5000.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move", meta = (AllowPrivateAccess = "true"))
+	float Mass = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Damage", meta = (AllowPrivateAccess = "true"))
 	float Damage = 50.f;
+
+	UPROPERTY()
+	bool bInitialized = false;
 
 	//used for the damage of the projectile
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
