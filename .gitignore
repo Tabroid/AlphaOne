@@ -2,8 +2,8 @@ Binaries
 DerivedDataCache
 Intermediate
 Saved
-Content
-!Content/Blueprint/*
+Content/*
+!Content/Blueprint
 .vscode
 .vs
 *.VC.db

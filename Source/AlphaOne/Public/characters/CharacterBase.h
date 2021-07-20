@@ -55,6 +55,12 @@ public:
 
 	UCharacterAttributes* GetAttributes() { return AttributeSet; }
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
 	// @TODO: item slots, equipment slots
 
 protected:
@@ -106,11 +112,16 @@ protected:
 
 	virtual FGenericTeamId GetGenericTeamId() const override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+private:
+	//character movement function for keyboard
+	void MoveForward(float AxisValue);
+	void MoveRight(float AxisValue);
+	//character movement function for controller
+	void LookUpRate(float AxisValue);
+	void TurnRate(float AxisValue);
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	UPROPERTY(EditAnywhere)
+	float RotationRate = 10.0f;
 };
+
+

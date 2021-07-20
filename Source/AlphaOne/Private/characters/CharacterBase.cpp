@@ -33,6 +33,13 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ACharacterBase::MoveForward);
+	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis(TEXT("LookUpRate"), this, &ACharacterBase::LookUpRate);
+	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ACharacterBase::MoveRight);
+	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis(TEXT("TurnRate"), this, &ACharacterBase::TurnRate);
+	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 }
 
 
@@ -137,4 +144,24 @@ FGenericTeamId ACharacterBase::GetGenericTeamId() const
 	static const FGenericTeamId PlayerTeam(0);
 	static const FGenericTeamId AITeam(1);
 	return Cast<APlayerController>(GetController()) ? PlayerTeam : AITeam;
+}
+
+void ACharacterBase::MoveForward(float AxisValue) 
+{
+	AddMovementInput(GetActorForwardVector() * AxisValue);
+}
+
+void ACharacterBase::MoveRight(float AxisValue) 
+{
+	AddMovementInput(GetActorRightVector() * AxisValue);
+}
+
+void ACharacterBase::LookUpRate(float AxisValue) 
+{
+	AddControllerPitchInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
+}
+
+void ACharacterBase::TurnRate(float AxisValue) 
+{
+	AddControllerYawInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
 }

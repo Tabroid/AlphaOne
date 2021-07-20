@@ -40,3 +40,10 @@ void AArcher::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+void AArcher::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) 
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AArcher::Fire);
+}
