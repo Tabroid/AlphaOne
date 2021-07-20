@@ -62,6 +62,19 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// @TODO: item slots, equipment slots
+	// setupItems()
+
+	// Controller responses
+	void MoveForward(float AxisValue);
+	void MoveRight(float AxisValue);
+	void LookUpRate(float AxisValue);
+	void TurnRate(float AxisValue);
+	void OnStartAttack();
+	void OnStopAttack();
+	void SetRunning(bool bNewRunning, bool bToggle);
+	void OnStartRunning();
+	void OnStartRunningToggle();
+	void OnStopRunning();
 
 protected:
 	// Called when the game starts or when spawned
@@ -99,8 +112,21 @@ protected:
 	UPROPERTY()
 	UCharacterAttributes* AttributeSet;
 
-	UPROPERTY()
-	bool bInitialized;
+	UPROPERTY(Transient)
+	uint8 bInitialized : 1;
+
+	// current running state
+	UPROPERTY(Transient, BlueprintReadOnly, Replicated)
+	uint8 bWantsToRun : 1;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	uint8 bWantsToRunToggled : 1;
+
+	UPROPERTY(Transient, BlueprintReadOnly)
+	uint8 bWantsToAttack : 1;
+
+	UPROPERTY(Transient, EditAnywhere)
+	uint32 bIsAttacking : 1;
 
 	// Passive gameplay effects applied on creation
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
@@ -113,13 +139,6 @@ protected:
 	virtual FGenericTeamId GetGenericTeamId() const override;
 
 private:
-	//character movement function for keyboard
-	void MoveForward(float AxisValue);
-	void MoveRight(float AxisValue);
-	//character movement function for controller
-	void LookUpRate(float AxisValue);
-	void TurnRate(float AxisValue);
-
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 10.0f;
 };

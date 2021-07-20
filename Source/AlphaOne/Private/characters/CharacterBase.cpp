@@ -6,7 +6,7 @@
 
 // Sets default values
 ACharacterBase::ACharacterBase()
-: CharacterLevel(1), bInitialized(false)
+: CharacterLevel(1)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -33,13 +33,21 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ACharacterBase::MoveForward);
-	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis(TEXT("LookUpRate"), this, &ACharacterBase::LookUpRate);
-	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ACharacterBase::MoveRight);
-	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis(TEXT("TurnRate"), this, &ACharacterBase::TurnRate);
-	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+	check(PlayerInputComponent);
+	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacterBase::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ACharacterBase::MoveRight);
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("TurnRate", this, &ACharacterBase::TurnRate);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &ACharacterBase::LookUpRate);
+
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacterBase::OnStartAttack);
+	PlayerInputComponent->BindAction("Attack", IE_Released, this, &ACharacterBase::OnStopAttack);
+
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ACharacterBase::OnStartRunning);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &ACharacterBase::OnStopRunning);
+	PlayerInputComponent->BindAction("RunToggle", IE_Pressed, this, &ACharacterBase::OnStartRunningToggle);
+
 }
 
 
@@ -47,7 +55,6 @@ void ACharacterBase::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 }
-
 
 void ACharacterBase::UnPossessed()
 {
@@ -164,4 +171,38 @@ void ACharacterBase::LookUpRate(float AxisValue)
 void ACharacterBase::TurnRate(float AxisValue) 
 {
 	AddControllerYawInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
+}
+
+void ACharacterBase::OnStartAttack()
+{
+	bWantsToAttack = true;
+	SetRunning(false, false);
+}
+
+void ACharacterBase::OnStopAttack()
+{
+	bWantsToAttack = false;
+}
+
+void ACharacterBase::SetRunning(bool bNewRunning, bool bToggle)
+{
+	bWantsToRun = bNewRunning;
+	bWantsToRunToggled = bNewRunning && bToggle;
+}
+
+void ACharacterBase::OnStartRunning()
+{
+	OnStopAttack();
+	SetRunning(true, false);
+}
+
+void ACharacterBase::OnStartRunningToggle()
+{
+	OnStopAttack();
+	SetRunning(true, true);
+}
+
+void ACharacterBase::OnStopRunning()
+{
+	SetRunning(false, false);
 }
