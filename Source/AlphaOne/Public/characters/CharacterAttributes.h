@@ -52,7 +52,6 @@ public:
 	ADD_ATTRIBUTE(UCharacterAttributes, DamageReduction, "Defense")
 	ADD_ATTRIBUTE(UCharacterAttributes, DodgeRate, "Defense")
 	ADD_ATTRIBUTE(UCharacterAttributes, MoveSpeed, "Speed")
-	ADD_ATTRIBUTE(UCharacterAttributes, BaseMoveSpeed, "Speed")
 	ADD_ATTRIBUTE(UCharacterAttributes, AttackSpeed, "Speed")
 
 

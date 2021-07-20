@@ -45,10 +45,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMoveSpeed() const;
 
-	// Returns base movement speed (matches model and animation)
-	UFUNCTION(BlueprintCallable)
-	virtual float GetBaseMoveSpeed() const;
-
 	// Returns the character level that is passed to the ability system 
 	UFUNCTION(BlueprintCallable)
 	virtual int32 GetCharacterLevel() const;

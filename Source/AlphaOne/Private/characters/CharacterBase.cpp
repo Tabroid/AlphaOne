@@ -86,11 +86,6 @@ float ACharacterBase::GetMoveSpeed() const
 	return AttributeSet->GetMoveSpeed();
 }
 
-float ACharacterBase::GetBaseMoveSpeed() const
-{
-	return AttributeSet->GetBaseMoveSpeed();
-}
-
 int32 ACharacterBase::GetCharacterLevel() const
 {
 	return CharacterLevel;

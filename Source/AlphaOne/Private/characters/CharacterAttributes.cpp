@@ -22,7 +22,6 @@ UCharacterAttributes::UCharacterAttributes()
     , DamageReduction(0.f)
     , DodgeRate(0.05f)
 	, MoveSpeed(1.0f)
-    , BaseMoveSpeed(1.0f)
 	, AttackSpeed(1.0f)
 {
 }
@@ -48,7 +47,6 @@ void UCharacterAttributes::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
     DOREPLIFETIME(UCharacterAttributes, DamageReduction);
     DOREPLIFETIME(UCharacterAttributes, DodgeRate);
     DOREPLIFETIME(UCharacterAttributes, MoveSpeed);
-	DOREPLIFETIME(UCharacterAttributes, BaseMoveSpeed);
     DOREPLIFETIME(UCharacterAttributes, AttackSpeed);
 }
 
