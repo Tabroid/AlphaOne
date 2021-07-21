@@ -63,7 +63,6 @@ public:
 	
 	// @TODO: item slots, equipment slots
 	// setupItems()
-	UFUNCTION(BlueprintCallable)
 	virtual bool Attack();
 
 	// Controller responses

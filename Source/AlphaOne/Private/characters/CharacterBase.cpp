@@ -177,8 +177,9 @@ void ACharacterBase::TurnRate(float AxisValue)
 void ACharacterBase::OnStartAttack()
 {
 	bWantsToAttack = true;
+	auto bAttacked = Attack();
 	SetRunning(false, false);
-	Attack();
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Attack function returns : %d"), bAttacked));
 }
 
 void ACharacterBase::OnStopAttack()
