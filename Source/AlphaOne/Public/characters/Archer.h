@@ -8,6 +8,8 @@
 
 class AProjectileBase;
 class UAnimMontage;
+class USpringArmComponent;
+class UCameraComponent;
 
 UCLASS()
 class ALPHAONE_API AArcher : public ACharacterBase
@@ -30,6 +32,8 @@ protected:
 
 private:
 	void AttackStatusOff();
+	void CameraIn();
+	void CameraOut();
 
 	//projectile of this pawn
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile Type", meta = (AllowPrivateAccess = "true"))
@@ -39,7 +43,15 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* ProjectileSpawnPoint = nullptr;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	USpringArmComponent* SpringArm = nullptr;
+	//camera that the player look through
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* Camera = nullptr;
+
 	FTimerHandle FireRateTimerHandle;
 };
+
+
 
 
