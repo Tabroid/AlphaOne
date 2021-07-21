@@ -53,6 +53,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual bool SetCharacterLevel(int32 NewLevel);
 
+	UFUNCTION(BlueprintPure)
+	virtual bool IsSprinting() const;
+
 	UCharacterAttributes* GetAttributes() { return AttributeSet; }
 
 	// Called every frame
@@ -148,9 +151,17 @@ private:
 	UPROPERTY(EditAnywhere)
 	float NormalAttackRate = 1.0f;
 
+	UPROPERTY(EditAnywhere)
+	float JogSpeed = 350.0f;
+
+	UPROPERTY(EditAnywhere)
+	float SprintSpeed = 700.0f;
+
 	// @TODO: use a character animation manager to manage all montages
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* NormalAttackMontage;
 };
+
+
 
 

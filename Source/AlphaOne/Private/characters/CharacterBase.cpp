@@ -3,6 +3,7 @@
 
 #include "characters/CharacterBase.h"
 #include "Net/UnrealNetwork.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -196,6 +197,7 @@ void ACharacterBase::SetRunning(bool bNewRunning, bool bToggle)
 void ACharacterBase::OnStartRunning()
 {
 	OnStopAttack();
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 	SetRunning(true, false);
 }
 
@@ -207,6 +209,7 @@ void ACharacterBase::OnStartRunningToggle()
 
 void ACharacterBase::OnStopRunning()
 {
+	GetCharacterMovement()->MaxWalkSpeed = JogSpeed;
 	SetRunning(false, false);
 }
 
@@ -231,4 +234,9 @@ void ACharacterBase::OnPlayAttackEnd(UAnimMontage* montage, bool interrupted)
 	if (!interrupted && bWantsToAttack) {
 		Attack();
 	}
+}
+
+bool ACharacterBase::IsSprinting() const
+{
+	return bWantsToRun;
 }
