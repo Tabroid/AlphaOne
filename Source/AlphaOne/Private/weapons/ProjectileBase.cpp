@@ -121,4 +121,3 @@ void AProjectileBase::HandleMoveSpeedChanged(float DeltaValue, const struct FGam
 		OnMoveSpeedChanged(DeltaValue, EventTags);
 	}
 }
-
