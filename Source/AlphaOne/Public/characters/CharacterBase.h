@@ -63,6 +63,8 @@ public:
 	
 	// @TODO: item slots, equipment slots
 	// setupItems()
+	UFUNCTION(BlueprintCallable)
+	virtual bool Attack();
 
 	// Controller responses
 	void MoveForward(float AxisValue);
@@ -75,6 +77,8 @@ public:
 	void OnStartRunning();
 	void OnStartRunningToggle();
 	void OnStopRunning();
+	virtual void OnPlayAttackEnd(UAnimMontage* montage, bool interrupted);
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -141,6 +145,13 @@ protected:
 private:
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 10.0f;
+
+	UPROPERTY(EditAnywhere)
+	float NormalAttackRate = 1.0f;
+
+	// @TODO: use a character animation manager to manage all montages
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* NormalAttackMontage;
 };
 
 

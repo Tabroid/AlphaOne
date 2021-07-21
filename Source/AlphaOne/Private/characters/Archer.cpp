@@ -18,33 +18,8 @@ AArcher::AArcher()
 void AArcher::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	//get the animation instance from the skeletal mesh
-	AnimInstance = GetMesh()->GetAnimInstance();
 
 	bIsAttacking = false;
-}
-
-void AArcher::Fire() 
-{
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	//bWantToAttack = PlayerController->IsInputKeyDown(EKeys::LeftMouseButton);
-	if (PlayerController){
-		//while(PlayerController->IsInputKeyDown(EKeys::LeftMouseButton)){
-			if (!bIsAttacking && ProjectileClass && AnimInstance && NormalAttackMontage){
-				//spawning the projectile at the spawn point
-				FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
-				FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
-				AProjectileBase* TempProjectile = 
-				GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation);
-				//set the owner 
-				TempProjectile->SetOwner(this);
-				bIsAttacking = true;
-				float PlayTime = AnimInstance->Montage_Play(NormalAttackMontage, NormalAttackRate);
-				GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, this, &AArcher::AttackStatusOff, PlayTime/NormalAttackRate, true);
-			}
-		//}
-	}
 }
 
 void AArcher::AttackStatusOff() 
@@ -56,12 +31,24 @@ void AArcher::AttackStatusOff()
 void AArcher::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AArcher::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) 
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
 
-	PlayerInputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AArcher::Fire);
+bool AArcher::Attack()
+{
+	if (Projectile && Super::Attack()) {
+		//spawning the projectile at the spawn point
+		FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
+		FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
+		AProjectileBase* TempProjectile = 
+		GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation);
+		//set the owner 
+		TempProjectile->SetOwner(this);
+		return true;
+	}
+	return false;
 }

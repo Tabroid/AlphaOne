@@ -177,6 +177,7 @@ void ACharacterBase::OnStartAttack()
 {
 	bWantsToAttack = true;
 	SetRunning(false, false);
+	Attack();
 }
 
 void ACharacterBase::OnStopAttack()
@@ -205,4 +206,28 @@ void ACharacterBase::OnStartRunningToggle()
 void ACharacterBase::OnStopRunning()
 {
 	SetRunning(false, false);
+}
+
+bool ACharacterBase::Attack() 
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	auto AnimInstance = GetMesh()->GetAnimInstance();
+	if (PlayerController) {
+		if (!bIsAttacking && AnimInstance && NormalAttackMontage) {
+			bIsAttacking = true;
+			float PlayTime = AnimInstance->Montage_Play(NormalAttackMontage, NormalAttackRate);
+			FOnMontageEnded MontageBlendOutDelegate;    
+    		MontageBlendOutDelegate.BindUObject(this, &ACharacterBase::OnPlayAttackEnd);
+			AnimInstance->Montage_SetEndDelegate(MontageBlendOutDelegate);
+		}
+	}
+	return bIsAttacking;
+}
+
+void ACharacterBase::OnPlayAttackEnd(UAnimMontage* montage, bool interrupted)
+{
+	bIsAttacking = false;
+	if (!interrupted && bWantsToAttack) {
+		Attack();
+	}
 }
