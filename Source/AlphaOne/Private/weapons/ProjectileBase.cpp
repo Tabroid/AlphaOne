@@ -39,6 +39,7 @@ AProjectileBase::AProjectileBase()
 	ProjectileMovement->InitialSpeed = MoveSpeed;
 	ProjectileMovement->MaxSpeed     = MoveSpeed;
 	ProjectileMovement->bRotationFollowsVelocity = true;
+	ProjectileMovement->ProjectileGravityScale = Mass;
 	bInitialized = true;
 }
 
@@ -106,7 +107,7 @@ void AProjectileBase::HandleCollesionSizeChanged(float DeltaValue, const struct 
 
 void AProjectileBase::HandleMassChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags)
 {
-	// @TODO mass is for physics
+	ProjectileMovement->ProjectileGravityScale = GetMass();
 	if (bInitialized) {
 		OnMassChanged(DeltaValue, EventTags);
 	}
