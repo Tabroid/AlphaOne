@@ -13,7 +13,7 @@ AArcher::AArcher()
 	PrimaryActorTick.bCanEverTick = true;
 
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile Spawn Point"));
-	ProjectileSpawnPoint->AttachTo(GetMesh(), TEXT("bow_base"));
+	ProjectileSpawnPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform ,TEXT("bow_base"));
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
     SpringArm->SetupAttachment(RootComponent);
