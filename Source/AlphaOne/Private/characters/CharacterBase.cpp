@@ -214,16 +214,15 @@ bool ACharacterBase::Attack()
 {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	auto AnimInstance = GetMesh()->GetAnimInstance();
-	if (PlayerController) {
-		if (!bIsAttacking && AnimInstance && NormalAttackMontage) {
-			bIsAttacking = true;
-			float PlayTime = AnimInstance->Montage_Play(NormalAttackMontage, NormalAttackRate);
-			FOnMontageEnded MontageBlendOutDelegate;    
-    		MontageBlendOutDelegate.BindUObject(this, &ACharacterBase::OnPlayAttackEnd);
-			AnimInstance->Montage_SetEndDelegate(MontageBlendOutDelegate);
-		}
+	if (PlayerController && !bIsAttacking && AnimInstance && NormalAttackMontage) {
+		bIsAttacking = true;
+		float PlayTime = AnimInstance->Montage_Play(NormalAttackMontage, NormalAttackRate);
+		FOnMontageEnded MontageBlendOutDelegate;    
+    	MontageBlendOutDelegate.BindUObject(this, &ACharacterBase::OnPlayAttackEnd);
+		AnimInstance->Montage_SetEndDelegate(MontageBlendOutDelegate);
+		return true;
 	}
-	return bIsAttacking;
+	return false;
 }
 
 void ACharacterBase::OnPlayAttackEnd(UAnimMontage* montage, bool interrupted)
