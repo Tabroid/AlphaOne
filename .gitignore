@@ -4,6 +4,7 @@ Intermediate
 Saved
 Content/*
 !Content/Blueprint
+!Content/Map
 .vscode
 .vs
 *.VC.db

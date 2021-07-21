@@ -52,13 +52,6 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 
-private:
-	AController* GetOwnerController() const;
-
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
-	           FVector NormalImpulse, const FHitResult& Hit);
-
 	UPROPERTY(VisibleDefaultsOnly, Category=Projectile)
 	USphereComponent* CollisionComp;
 
@@ -91,4 +84,12 @@ private:
 	//used for the damage of the projectile
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	TSubclassOf<UDamageType> DamageType;
+
+private:
+	AController* GetOwnerController() const;
+
+	UFUNCTION()
+	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
+	                   FVector NormalImpulse, const FHitResult& Hit);
+
 };
