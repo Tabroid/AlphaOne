@@ -82,19 +82,16 @@ public:
 
 	// @TODO: item slots, equipment slots
 	// setupItems()
+
 	virtual bool Attack();
+	void SetSprinting(bool bNewSprinting, bool bToggle);
 
 	// Controller responses
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void LookUpRate(float AxisValue);
 	void TurnRate(float AxisValue);
-	void OnStartAttack();
-	void OnStopAttack();
-	void SetRunning(bool bNewRunning, bool bToggle);
-	void OnStartRunning();
-	void OnStartRunningToggle();
-	void OnStopRunning();
+
 	virtual void OnPlayAttackEnd(UAnimMontage* montage, bool interrupted);
 
 
@@ -102,29 +99,17 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// called when character takes damage
-	UFUNCTION(BlueprintImplementableEvent)
+	// response functions
 	void OnDamaged(float DamageAmount, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
 	    	       ACharacterBase* InstigatorCharacter, AActor* DamageCauser);
-
-	// called when health changes
-	UFUNCTION(BlueprintImplementableEvent)
 	void OnHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
-
-	// called when mana changes
-	UFUNCTION(BlueprintImplementableEvent)
 	void OnManaChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
-
-	// called when movement speed changes
-	UFUNCTION(BlueprintImplementableEvent)
 	void OnMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
-
-	// handle functions that can be overrided by inherited classes
-	virtual void HandleDamage(float DamageAmount, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
-							  ACharacterBase* InstigatorCharacter, AActor* DamageCauser);
-	virtual void HandleHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
-	virtual void HandleManaChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
-	virtual void HandleMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+	void OnStartAttack();
+	void OnStopAttack();
+	void OnStartSprinting();
+	void OnStartSprintingToggle();
+	void OnStopSprinting();
 
 	// The level of this character, should not be modified directly once it has already spawned
 	UPROPERTY(EditAnywhere, Replicated, Category = Abilities)
@@ -139,10 +124,10 @@ protected:
 
 	// current running state
 	UPROPERTY(Transient, BlueprintReadOnly, Replicated)
-	uint8 bWantsToRun : 1;
+	uint8 bWantsToSprint : 1;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
-	uint8 bWantsToRunToggled : 1;
+	uint8 bWantsToSprintToggled : 1;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 	uint8 bWantsToAttack : 1;
