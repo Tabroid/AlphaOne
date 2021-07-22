@@ -20,7 +20,6 @@ ACharacterBase::ACharacterBase()
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -47,9 +46,9 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Attack", IE_Released, this, &ACharacterBase::OnStopAttack);
 
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ACharacterBase::OnStartRunning);
-	PlayerInputComponent->BindAction("Run", IE_Released, this, &ACharacterBase::OnStopRunning);
-	PlayerInputComponent->BindAction("RunToggle", IE_Pressed, this, &ACharacterBase::OnStartRunningToggle);
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ACharacterBase::OnStartSprinting);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &ACharacterBase::OnStopSprinting);
+	PlayerInputComponent->BindAction("RunToggle", IE_Pressed, this, &ACharacterBase::OnStartSprintingToggle);
 
 }
 
@@ -141,37 +140,6 @@ void ACharacterBase::SetType(EUnitTypes NewType)
 	AttributeSet->Type = NewType;
 }
 
-void ACharacterBase::HandleDamage(float DamageAmount, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
-                                  ACharacterBase* InstigatorPawn, AActor* DamageCauser)
-{
-	OnDamaged(DamageAmount, HitInfo, DamageTags, InstigatorPawn, DamageCauser);
-}
-
-void ACharacterBase::HandleHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags)
-{
-	// We only call the BP callback if this is not the initial ability setup
-	if (bInitialized) {
-		OnHealthChanged(DeltaValue, EventTags);
-	}
-}
-
-void ACharacterBase::HandleManaChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags)
-{
-	if (bInitialized) {
-		OnManaChanged(DeltaValue, EventTags);
-	}
-}
-
-void ACharacterBase::HandleMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags)
-{
-	// Update the character movement's walk speed
-	GetCharacterMovement()->MaxWalkSpeed = GetMoveSpeed();
-
-	if (bInitialized) {
-		OnMoveSpeedChanged(DeltaValue, EventTags);
-	}
-}
-
 FGenericTeamId ACharacterBase::GetGenericTeamId() const
 {
 	static const FGenericTeamId PlayerTeam(0);
@@ -202,9 +170,8 @@ void ACharacterBase::TurnRate(float AxisValue)
 void ACharacterBase::OnStartAttack()
 {
 	bWantsToAttack = true;
-	auto bAttacked = Attack();
-	SetRunning(false, false);
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Attack function returns : %d"), bAttacked));
+	Attack();
+	SetSprinting(false, false);
 }
 
 void ACharacterBase::OnStopAttack()
@@ -212,29 +179,29 @@ void ACharacterBase::OnStopAttack()
 	bWantsToAttack = false;
 }
 
-void ACharacterBase::SetRunning(bool bNewRunning, bool bToggle)
+void ACharacterBase::SetSprinting(bool bNewSprinting, bool bToggle)
 {
-	bWantsToRun = bNewRunning;
-	bWantsToRunToggled = bNewRunning && bToggle;
+	bWantsToSprint = bNewSprinting;
+	bWantsToSprintToggled = bNewSprinting && bToggle;
 }
 
-void ACharacterBase::OnStartRunning()
+void ACharacterBase::OnStartSprinting()
 {
 	OnStopAttack();
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-	SetRunning(true, false);
+	SetSprinting(true, false);
 }
 
-void ACharacterBase::OnStartRunningToggle()
+void ACharacterBase::OnStartSprintingToggle()
 {
 	OnStopAttack();
-	SetRunning(true, true);
+	SetSprinting(true, true);
 }
 
-void ACharacterBase::OnStopRunning()
+void ACharacterBase::OnStopSprinting()
 {
 	GetCharacterMovement()->MaxWalkSpeed = JogSpeed;
-	SetRunning(false, false);
+	SetSprinting(false, false);
 }
 
 bool ACharacterBase::Attack()

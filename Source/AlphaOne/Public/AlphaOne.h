@@ -19,9 +19,10 @@ enum class EUnitTypes: uint8
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EUnitActions: uint8
 {
-    NONE       = 0          UMETA(Hidden),
-    Attacking  = 1 << 0     UMETA(DisplayName="Attacking"),
-    Running    = 1 << 1     UMETA(DisplayName="Running"),
+    NONE            = 0          UMETA(Hidden),
+    Attacking       = 1 << 0     UMETA(DisplayName = "Attacking"),
+    Running         = 1 << 1     UMETA(DisplayName = "Running"),
+    BeingAttacked   = 1 << 2     UMETA(DisplayName = "BeingAttacked"),
 };
 ENUM_CLASS_FLAGS(EUnitActions);
 
@@ -30,6 +31,6 @@ UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true
 enum class EUnitStatuses: uint8
 {
     NONE     = 0          UMETA(Hidden),
-    Dead     = 1 << 0     UMETA(DisplayName="Dead"),
+    Dead     = 1 << 0     UMETA(DisplayName = "Dead"),
 };
 ENUM_CLASS_FLAGS(EUnitStatuses);
