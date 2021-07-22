@@ -5,6 +5,7 @@ Saved
 Content/*
 !Content/Blueprint
 !Content/Map
+!Content/BSP_Static_Mesh
 .vscode
 .vs
 *.VC.db
