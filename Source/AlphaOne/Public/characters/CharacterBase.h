@@ -99,10 +99,6 @@ public:
 
 
 protected:
-	// @ TODO adjust how sprinting works
-	UFUNCTION(BlueprintPure)
-	virtual bool IsSprinting() const { return bWantsToRun; }
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
