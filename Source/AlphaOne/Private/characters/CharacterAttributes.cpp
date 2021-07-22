@@ -24,6 +24,9 @@ UCharacterAttributes::UCharacterAttributes()
 	, MoveSpeed(1.0f)
 	, AttackSpeed(1.0f)
 {
+    // unset all flags for action and status
+    Action = static_cast<EUnitActions>(0);
+    Status = static_cast<EUnitStatuses>(0);
 }
 
 void UCharacterAttributes::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -19,19 +19,14 @@ AArcher::AArcher()
     SpringArm->SetupAttachment(RootComponent);
     Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     Camera->SetupAttachment(SpringArm);
+
+	SetType(EUnitTypes::Hero);
 }
 
 // Called when the game starts or when spawned
 void AArcher::BeginPlay()
 {
 	Super::BeginPlay();
-
-	bIsAttacking = false;
-}
-
-void AArcher::AttackStatusOff() 
-{
-	bIsAttacking = false;
 }
 
 // Called every frame

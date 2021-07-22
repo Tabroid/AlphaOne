@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "AlphaOne.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
 #include "CharacterAttributes.generated.h"
@@ -26,14 +27,23 @@ UCLASS()
 class ALPHAONE_API UCharacterAttributes : public UAttributeSet
 {
 	GENERATED_BODY()
-public:
 
+public:
 	// Constructor and overrides
 	UCharacterAttributes();
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	// @TODO: add effects
 	// virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = EUnitActions))
+	EUnitActions Action;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = EUnitStatus))
+	EUnitStatuses Status;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EUnitTypes Type;
 
 	ADD_ATTRIBUTE(UCharacterAttributes, Health, "Health")
 	ADD_ATTRIBUTE(UCharacterAttributes, MaxHealth, "Health")

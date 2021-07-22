@@ -31,7 +31,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	void AttackStatusOff();
 	void CameraIn();
 	void CameraOut();
 

@@ -13,6 +13,7 @@ ACharacterBase::ACharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 	AttributeSet = CreateDefaultSubobject<UCharacterAttributes>(TEXT("AttributeSet"));
 	bInitialized = true;
+	SetType(EUnitTypes::Mob);
 }
 
 // Called when the game starts or when spawned
@@ -117,10 +118,33 @@ bool ACharacterBase::SetCharacterLevel(int32 NewLevel)
 	return false;
 }
 
+void ACharacterBase::SetAction(EUnitActions NewAction, bool State)
+{
+	if (State) {
+		AttributeSet->Action |= NewAction;
+	} else {
+		AttributeSet->Action &= ~NewAction;
+	}
+}
+
+void ACharacterBase::SetStatus(EUnitStatuses NewStatus, bool State)
+{
+	if (State) {
+		AttributeSet->Status |= NewStatus;
+	} else {
+		AttributeSet->Status &= ~NewStatus;
+	}
+}
+
+void ACharacterBase::SetType(EUnitTypes NewType)
+{
+	AttributeSet->Type = NewType;
+}
+
 void ACharacterBase::HandleDamage(float DamageAmount, const FHitResult& HitInfo, const struct FGameplayTagContainer& DamageTags,
                                   ACharacterBase* InstigatorPawn, AActor* DamageCauser)
 {
-	OnDamaged(DamageAmount, HitInfo, DamageTags, InstigatorPawn, DamageCauser);	
+	OnDamaged(DamageAmount, HitInfo, DamageTags, InstigatorPawn, DamageCauser);
 }
 
 void ACharacterBase::HandleHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags)
@@ -155,22 +179,22 @@ FGenericTeamId ACharacterBase::GetGenericTeamId() const
 	return Cast<APlayerController>(GetController()) ? PlayerTeam : AITeam;
 }
 
-void ACharacterBase::MoveForward(float AxisValue) 
+void ACharacterBase::MoveForward(float AxisValue)
 {
 	AddMovementInput(GetActorForwardVector() * AxisValue);
 }
 
-void ACharacterBase::MoveRight(float AxisValue) 
+void ACharacterBase::MoveRight(float AxisValue)
 {
 	AddMovementInput(GetActorRightVector() * AxisValue);
 }
 
-void ACharacterBase::LookUpRate(float AxisValue) 
+void ACharacterBase::LookUpRate(float AxisValue)
 {
 	AddControllerPitchInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
 }
 
-void ACharacterBase::TurnRate(float AxisValue) 
+void ACharacterBase::TurnRate(float AxisValue)
 {
 	AddControllerYawInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
 }
@@ -213,14 +237,14 @@ void ACharacterBase::OnStopRunning()
 	SetRunning(false, false);
 }
 
-bool ACharacterBase::Attack() 
+bool ACharacterBase::Attack()
 {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	auto AnimInstance = GetMesh()->GetAnimInstance();
-	if (PlayerController && !bIsAttacking && AnimInstance && NormalAttackMontage) {
-		bIsAttacking = true;
+	if (PlayerController && !(GetAction() & EUnitActions::Attacking) && AnimInstance && NormalAttackMontage) {
+		SetAction(EUnitActions::Attacking, true);
 		float PlayTime = AnimInstance->Montage_Play(NormalAttackMontage, NormalAttackRate);
-		FOnMontageEnded MontageBlendOutDelegate;    
+		FOnMontageEnded MontageBlendOutDelegate;
     	MontageBlendOutDelegate.BindUObject(this, &ACharacterBase::OnPlayAttackEnd);
 		AnimInstance->Montage_SetEndDelegate(MontageBlendOutDelegate);
 		return true;
@@ -230,13 +254,8 @@ bool ACharacterBase::Attack()
 
 void ACharacterBase::OnPlayAttackEnd(UAnimMontage* montage, bool interrupted)
 {
-	bIsAttacking = false;
+	SetAction(EUnitActions::Attacking, false);
 	if (!interrupted && bWantsToAttack) {
 		Attack();
 	}
-}
-
-bool ACharacterBase::IsSprinting() const
-{
-	return bWantsToRun;
 }

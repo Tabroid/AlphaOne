@@ -53,17 +53,33 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual bool SetCharacterLevel(int32 NewLevel);
 
-	UFUNCTION(BlueprintPure)
-	virtual bool IsSprinting() const;
-
+	UFUNCTION(BlueprintCallable)
 	UCharacterAttributes* GetAttributes() { return AttributeSet; }
+
+	UFUNCTION(BlueprintCallable)
+	EUnitActions GetAction() { return AttributeSet->Action; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetAction(EUnitActions NewAction, bool State = true);
+
+	UFUNCTION(BlueprintCallable)
+	EUnitStatuses GetStatus() { return AttributeSet->Status; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetStatus(EUnitStatuses NewStatus, bool State = true);
+
+	UFUNCTION(BlueprintCallable)
+	EUnitTypes GetType() { return AttributeSet->Type; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetType(EUnitTypes NewType);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 	// @TODO: item slots, equipment slots
 	// setupItems()
 	virtual bool Attack();
@@ -83,6 +99,10 @@ public:
 
 
 protected:
+	// @ TODO adjust how sprinting works
+	UFUNCTION(BlueprintPure)
+	virtual bool IsSprinting() const { return bWantsToRun; }
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -130,9 +150,6 @@ protected:
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 	uint8 bWantsToAttack : 1;
-
-	UPROPERTY(Transient, EditAnywhere)
-	uint32 bIsAttacking : 1;
 
 	// Passive gameplay effects applied on creation
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
