@@ -14,13 +14,13 @@ UCLASS()
 class ALPHAONE_API ATower : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ATower();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	                         class AController* EventInstigator, AActor* DamageCauser) override;
 	float GetHealthPercentage() const;
 
@@ -30,7 +30,7 @@ protected:
 
 private:
 	void RotateHealthBar();
-	
+
 	//various component for assigning mesh later on
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UCapsuleComponent*    CapsuleComp = nullptr;
@@ -52,7 +52,3 @@ private:
 	ACharacter* PlayerCharacter;
 
 };
-
-
-
-

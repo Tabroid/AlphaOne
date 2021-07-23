@@ -320,6 +320,11 @@ void ACharacterBase::OnDeath(float KillingDamage, const FDamageEvent& DamageEven
 
 void ACharacterBase::SetRagdollPhysics()
 {
+	// building does not have ragdoll
+	if (GetType() == EUnitTypes::Building) {
+		return;
+	}
+
 	bool bInRagdoll = false;
 
 	if (IsPendingKill()) {

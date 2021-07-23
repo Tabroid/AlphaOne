@@ -36,7 +36,7 @@ void ATower::BeginPlay()
 	PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 
     Cast<UHealthBar>(HealthBar->GetUserWidgetObject())->SetOwnerActor(this);
-	
+
 	CurrentHealth = MaxHealth;
 }
 
@@ -47,32 +47,29 @@ void ATower::Tick(float DeltaTime)
 	RotateHealthBar();
 }
 
-void ATower::RotateHealthBar() 
+void ATower::RotateHealthBar()
 {
 	if (!PlayerCharacter) return;
 
 	FVector LookDirection = PlayerCharacter->GetActorLocation() - GetActorLocation();
-	
+
 	HealthBar->SetWorldRotation(LookDirection.Rotation());
 
 }
 
-float ATower::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
-							 class AController* EventInstigator, AActor* DamageCauser) 
+float ATower::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	DamageApplied = FMath::Min(CurrentHealth, DamageApplied);
-	
-	CurrentHealth -= DamageApplied;
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"), CurrentHealth);
+	CurrentHealth -= DamageApplied;
 
 	return DamageApplied;
 }
 
 float ATower::GetHealthPercentage() const
 {
-	return CurrentHealth / MaxHealth * 100.0f;	
+	return CurrentHealth / MaxHealth * 100.0f;
 }
 

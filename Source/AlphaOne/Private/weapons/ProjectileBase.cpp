@@ -47,7 +47,6 @@ AProjectileBase::AProjectileBase()
 void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 AController* AProjectileBase::GetOwnerController() const
@@ -73,8 +72,8 @@ float AProjectileBase::GetMass() const
 }
 
 
-void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
-			   FVector NormalImpulse, const FHitResult& Hit) 
+void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+			   				FVector NormalImpulse, const FHitResult& Hit)
 {
 	AActor* MyOwner = GetOwner();
 	if (!MyOwner) return;
