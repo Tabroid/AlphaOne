@@ -4,6 +4,7 @@
 #include "characters/CharacterBase.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -26,7 +27,7 @@ void ACharacterBase::BeginPlay()
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	AttributeSet->NaturalChange(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -206,14 +207,17 @@ void ACharacterBase::OnStopSprinting()
 
 bool ACharacterBase::Attack()
 {
+	if (!IsAbleToAct()) {
+		return false;
+	}
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	auto AnimInstance = GetMesh()->GetAnimInstance();
 	if (PlayerController && !(GetAction() & EUnitActions::Attacking) && AnimInstance && NormalAttackMontage) {
 		SetAction(EUnitActions::Attacking, true);
-		float PlayTime = AnimInstance->Montage_Play(NormalAttackMontage, NormalAttackRate);
-		FOnMontageEnded MontageBlendOutDelegate;
-    	MontageBlendOutDelegate.BindUObject(this, &ACharacterBase::OnPlayAttackEnd);
-		AnimInstance->Montage_SetEndDelegate(MontageBlendOutDelegate);
+		AnimInstance->Montage_Play(NormalAttackMontage, NormalAttackRate);
+		FOnMontageEnded MontageEndDelegate;
+    	MontageEndDelegate.BindUObject(this, &ACharacterBase::OnPlayAttackEnd);
+		AnimInstance->Montage_SetEndDelegate(MontageEndDelegate);
 		return true;
 	}
 	return false;
@@ -225,4 +229,128 @@ void ACharacterBase::OnPlayAttackEnd(UAnimMontage* montage, bool interrupted)
 	if (!interrupted && bWantsToAttack) {
 		Attack();
 	}
+}
+
+float ACharacterBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (!IsAbleToAct()) {
+		return 0.f;
+	}
+	auto hp = AttributeSet->GetHealth() - DamageAmount;
+	AttributeSet->SetHealth(hp);
+	if (hp <= 0.) {
+		Die(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	}
+	return DamageAmount;
+}
+
+bool ACharacterBase::IsAbleToAct() const
+{
+	if (GetAction() == EUnitActions::Dying				// already dying
+		|| IsPendingKill()								// object already destroyed
+		|| GetWorld()->GetAuthGameMode<AAlphaOneGameModeBase>() == NULL) {
+		return false;
+	}
+
+	return true;
+}
+
+bool ACharacterBase::Die(float KillingDamage, const FDamageEvent& DamageEvent, AController* Killer, AActor* DamageCauser)
+{
+	if (!IsAbleToAct()) {
+		return false;
+	}
+
+	GetCharacterMovement()->ForceReplicationUpdate();
+
+	UDamageType const* const DamageType = DamageEvent.DamageTypeClass ? DamageEvent.DamageTypeClass->GetDefaultObject<UDamageType>() : GetDefault<UDamageType>();
+	Killer = GetDamageInstigator(Killer, *DamageType);
+	APawn *KillerPawn = Killer ? Killer->GetPawn() : nullptr;
+
+	OnDeath(KillingDamage, DamageEvent, KillerPawn, DamageCauser);
+	return true;
+}
+
+void ACharacterBase::OnDeath(float KillingDamage, const FDamageEvent& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser)
+{
+	SetAction(EUnitActions::Dying);
+	SetReplicatingMovement(false);
+	TearOff();
+
+	// @TODO play sound
+	// @TODO death penalty
+	// @TODO change view
+
+	DetachFromControllerPendingDestroy();
+	StopAllAnimMontages();
+
+	if (GetMesh()) {
+		static FName CollisionProfileName(TEXT("Ragdoll"));
+		GetMesh()->SetCollisionProfileName(CollisionProfileName);
+	}
+	SetActorEnableCollision(true);
+
+	// Death anim
+	auto AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && DeathMontage) {
+		float DeathAnimDuration = AnimInstance->Montage_Play(DeathMontage);
+		// Ragdoll
+		if (DeathAnimDuration > 0.f) {
+			// Trigger ragdoll a little before the animation early so the character doesn't
+			// blend back to its normal position.
+			const float TriggerRagdollTime = DeathAnimDuration - 0.7f;
+
+			// Enable blend physics so the bones are properly blending against the montage.
+			GetMesh()->bBlendPhysics = true;
+
+			// Use a local timer handle as we don't need to store it for later but we don't need to look for something to clear
+			FTimerHandle TimerHandle;
+			GetWorldTimerManager().SetTimer(TimerHandle, this, &ACharacterBase::SetRagdollPhysics, FMath::Max(0.1f, TriggerRagdollTime), false);
+		} else {
+			SetRagdollPhysics();
+		}
+	}
+
+	// disable collisions on capsule
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
+	// @TODO need test the right timing to call destroy
+	// Destroyed();
+}
+
+void ACharacterBase::SetRagdollPhysics()
+{
+	bool bInRagdoll = false;
+
+	if (IsPendingKill()) {
+		bInRagdoll = false;
+	} else if (!GetMesh() || !GetMesh()->GetPhysicsAsset()) {
+		bInRagdoll = false;
+	} else {
+		// initialize physics/etc
+		GetMesh()->SetSimulatePhysics(true);
+		GetMesh()->WakeAllRigidBodies();
+		GetMesh()->bBlendPhysics = true;
+		bInRagdoll = true;
+	}
+
+	GetCharacterMovement()->StopMovementImmediately();
+	GetCharacterMovement()->DisableMovement();
+	GetCharacterMovement()->SetComponentTickEnabled(false);
+
+	if (!bInRagdoll) {
+		// hide and set short lifespan
+		TurnOff();
+		SetActorHiddenInGame(true);
+		SetLifeSpan(1.0f);
+	} else {
+		SetLifeSpan(10.0f);
+	}
+}
+
+
+void ACharacterBase::StopAllAnimMontages()
+{
+	auto AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Stop(0.0f);
 }

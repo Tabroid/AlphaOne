@@ -3,10 +3,11 @@
 #include "characters/CharacterAttributes.h"
 #include "characters/CharacterBase.h"
 #include "Net/UnrealNetwork.h"
+#include <algorithm>
 
 UCharacterAttributes::UCharacterAttributes()
-	: Health(1.f)
-	, MaxHealth(1.f)
+	: Health(100.f)
+	, MaxHealth(100.f)
     , HealthRegen(0.f)
     , Absorption(0.f)
 	, Mana(0.f)
@@ -73,4 +74,10 @@ void UCharacterAttributes::PreAttributeChange(const FGameplayAttribute& Attribut
 	{
 		AdjustAttributeForMaxChange(Mana, MaxMana, NewValue, GetManaAttribute());
 	}
+}
+
+void UCharacterAttributes::NaturalChange(float DeltaTime)
+{
+    Health.SetCurrentValue(std::min(MaxHealth.GetCurrentValue(), Health.GetCurrentValue() + HealthRegen.GetCurrentValue()*DeltaTime));
+    Mana.SetCurrentValue(std::min(MaxMana.GetCurrentValue(), Mana.GetCurrentValue() + ManaRegen.GetCurrentValue()*DeltaTime));
 }

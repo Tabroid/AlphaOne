@@ -15,8 +15,8 @@ UCLASS()
 class ALPHAONE_API AProjectileBase : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AProjectileBase();
 

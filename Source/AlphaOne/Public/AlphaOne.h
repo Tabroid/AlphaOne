@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AlphaOneGameModeBase.h"
 
 
 UENUM(BlueprintType)
@@ -23,6 +24,7 @@ enum class EUnitActions: uint8
     Attacking       = 1 << 0     UMETA(DisplayName = "Attacking"),
     Running         = 1 << 1     UMETA(DisplayName = "Running"),
     BeingAttacked   = 1 << 2     UMETA(DisplayName = "BeingAttacked"),
+    Dying           = 1 << 3     UMETA(DisplayName = "Dying"),
 };
 ENUM_CLASS_FLAGS(EUnitActions);
 
