@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayEffect.h"
-#include "abilities/AbilityBase.h"
+#include "abilities/AlphaOneAbilityType.h"
 #include "characters/CharacterAttributes.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"

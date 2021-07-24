@@ -5,17 +5,17 @@
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
 #include "effects/GameplayEffectsContainer.h"
-#include "AbilityBase.generated.h"
+#include "AlphaOneAbilityType.generated.h"
 
 
 UCLASS()
-class ALPHAONE_API UAbilityBase : public UGameplayAbility
+class ALPHAONE_API UAlphaOneAbilityType : public UGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
 	// Constructor and overrides
-	UAbilityBase();
+	UAlphaOneAbilityType();
 
 	/** Map of gameplay tags to gameplay effect containers */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GameplayEffects)
