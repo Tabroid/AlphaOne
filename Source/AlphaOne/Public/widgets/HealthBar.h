@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "characters/CharacterAttributes.h"
 #include "Blueprint/UserWidget.h"
 #include "HealthBar.generated.h"
 
 class UProgressBar;
 class UTextBlock;
-class ATower;
 
 UCLASS(Abstract)
 class ALPHAONE_API UHealthBar : public UUserWidget
@@ -16,12 +16,12 @@ class ALPHAONE_API UHealthBar : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void SetOwnerActor(ATower* Owner);
+	void SetAttributeSet(UCharacterAttributes* Attr) { AttributeSet = Attr; }
 
 protected:
 	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 
-	TWeakObjectPtr<ATower> OwnerActor;
+	TWeakObjectPtr<UCharacterAttributes> AttributeSet;
 
 	UPROPERTY (meta = (BindWidget))
 	UProgressBar* HealthBar = nullptr;

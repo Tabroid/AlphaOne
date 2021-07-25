@@ -6,7 +6,8 @@
 #include <algorithm>
 
 UCharacterAttributes::UCharacterAttributes()
-	: Health(100.f)
+    : Level(1)
+	, Health(100.f)
 	, MaxHealth(100.f)
     , HealthRegen(0.f)
     , Absorption(0.f)

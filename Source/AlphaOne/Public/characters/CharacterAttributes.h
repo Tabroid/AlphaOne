@@ -48,6 +48,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EUnitTypes Type;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Basic") //, ReplicatedUsing = OnRep_Level)
+	int32 Level;
+	// @TODO level may affect other attributes
+	int32 GetLevel() const { return Level; }
+	bool SetLevel(int32 NewValue) { if (Level == NewValue) { return false; } Level = NewValue; return true; }
+	void InitLevel() { Level = 1; }
+
+	ADD_ATTRIBUTE(UCharacterAttributes, MoveSpeed, "Basic")
 	ADD_ATTRIBUTE(UCharacterAttributes, Health, "Health")
 	ADD_ATTRIBUTE(UCharacterAttributes, MaxHealth, "Health")
 	ADD_ATTRIBUTE(UCharacterAttributes, HealthRegen, "Health")
@@ -61,11 +69,10 @@ public:
 	ADD_ATTRIBUTE(UCharacterAttributes, ArmorPenetration, "Damage")
 	ADD_ATTRIBUTE(UCharacterAttributes, DamageAmplification, "Damage")
 	ADD_ATTRIBUTE(UCharacterAttributes, HitRate, "Damage")
+	ADD_ATTRIBUTE(UCharacterAttributes, AttackSpeed, "Damage")
 	ADD_ATTRIBUTE(UCharacterAttributes, DefensePower, "Defense")
 	ADD_ATTRIBUTE(UCharacterAttributes, DamageReduction, "Defense")
 	ADD_ATTRIBUTE(UCharacterAttributes, DodgeRate, "Defense")
-	ADD_ATTRIBUTE(UCharacterAttributes, MoveSpeed, "Speed")
-	ADD_ATTRIBUTE(UCharacterAttributes, AttackSpeed, "Speed")
 
 
 protected:

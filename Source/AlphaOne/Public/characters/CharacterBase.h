@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayEffect.h"
-#include "abilities/AlphaOneAbilityType.h"
+#include "abilities/AlphaOneAbilitySystem.h"
 #include "characters/CharacterAttributes.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -25,33 +25,35 @@ public:
 	virtual void OnRep_Controller() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	// Returns current health, will be 0 if dead
+	// Implement IAbilitySystemInterface
+	UAbilitySystemComponent* GetAbilitySystemComponent() const;
+
 	UFUNCTION(BlueprintCallable)
 	virtual float GetHealth() const;
 
-	// Returns maximum health
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMaxHealth() const;
 
-	// Returns current mana
+	UFUNCTION(BlueprintCallable)
+	virtual float GetHealthPercentage() const;
+
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMana() const;
 
-	// Returns maximum mana
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMaxMana() const;
 
-	// Returns current movement speed
+	UFUNCTION(BlueprintCallable)
+	virtual float GetManaPercentage() const;
+
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMoveSpeed() const;
 
-	// Returns the character level that is passed to the ability system
 	UFUNCTION(BlueprintCallable)
-	virtual int32 GetCharacterLevel() const;
+	virtual int32 GetLevel() const;
 
-	// Modifies the character level, this may change abilities. Returns true on success
 	UFUNCTION(BlueprintCallable)
-	virtual bool SetCharacterLevel(int32 NewLevel);
+	virtual bool SetLevel(int32 NewLevel);
 
 	UFUNCTION(BlueprintCallable)
 	UCharacterAttributes* GetAttributes() { return AttributeSet; }
@@ -114,10 +116,6 @@ protected:
 	virtual void OnDeath(float KillingDamage, const FDamageEvent& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
 	virtual void SetRagdollPhysics();
 
-	// The level of this character, should not be modified directly once it has already spawned
-	UPROPERTY(EditAnywhere, Replicated, Category = Abilities)
-	int32 CharacterLevel;
-
 	// properties of the character
 	UPROPERTY()
 	UCharacterAttributes* AttributeSet;
@@ -135,15 +133,21 @@ protected:
 	UPROPERTY(Transient, BlueprintReadOnly)
 	uint8 bWantsToAttack : 1;
 
+	UPROPERTY()
+	UAlphaOneAbilitySystem* AbilitySystemComponent;
+
 	// Passive gameplay effects applied on creation
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
 	TArray<TSubclassOf<UGameplayEffect>> PassiveGameplayEffects;
 
-	// TODO: gamplay abilities
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Abilities)
-	// TArray<TSubclassOf<UAbilityBase>> GameplayAbilities;
-
 	virtual FGenericTeamId GetGenericTeamId() const override;
+
+	// @TODO: use a character animation manager to manage all montages
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* NormalAttackMontage = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* DeathMontage = nullptr;
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -157,15 +161,4 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float SprintSpeed = 700.0f;
-
-	// @TODO: use a character animation manager to manage all montages
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* NormalAttackMontage = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* DeathMontage = nullptr;
 };
-
-
-
-

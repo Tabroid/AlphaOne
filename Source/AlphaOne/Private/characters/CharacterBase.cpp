@@ -8,10 +8,13 @@
 
 // Sets default values
 ACharacterBase::ACharacterBase()
-: CharacterLevel(1)
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Create ability system component, and set it to be explicitly replicated
+	AbilitySystemComponent = CreateDefaultSubobject<UAlphaOneAbilitySystem>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+
 	AttributeSet = CreateDefaultSubobject<UCharacterAttributes>(TEXT("AttributeSet"));
 	bInitialized = true;
 	SetType(EUnitTypes::Mob);
@@ -28,6 +31,11 @@ void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	AttributeSet->NaturalChange(DeltaTime);
+}
+
+UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
 }
 
 // Called to bind functionality to input
@@ -71,21 +79,21 @@ void ACharacterBase::OnRep_Controller()
 void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ACharacterBase, CharacterLevel);
 }
 
 float ACharacterBase::GetHealth() const
 {
-	if (!AttributeSet)
-	return 1.f;
-
 	return AttributeSet->GetHealth();
 }
 
 float ACharacterBase::GetMaxHealth() const
 {
 	return AttributeSet->GetMaxHealth();
+}
+
+float ACharacterBase::GetHealthPercentage() const
+{
+    return AttributeSet->GetHealth() / AttributeSet->GetMaxHealth();
 }
 
 float ACharacterBase::GetMana() const
@@ -98,24 +106,24 @@ float ACharacterBase::GetMaxMana() const
 	return AttributeSet->GetMaxMana();
 }
 
+float ACharacterBase::GetManaPercentage() const
+{
+    return AttributeSet->GetMana() / AttributeSet->GetMaxMana();
+}
+
 float ACharacterBase::GetMoveSpeed() const
 {
 	return AttributeSet->GetMoveSpeed();
 }
 
-int32 ACharacterBase::GetCharacterLevel() const
+int32 ACharacterBase::GetLevel() const
 {
-	return CharacterLevel;
+	return AttributeSet->GetLevel();
 }
 
-bool ACharacterBase::SetCharacterLevel(int32 NewLevel)
+bool ACharacterBase::SetLevel(int32 NewLevel)
 {
-	if (CharacterLevel != NewLevel && NewLevel > 0) {
-		CharacterLevel = NewLevel;
-		// do changes for level change
-		return true;
-	}
-	return false;
+	return AttributeSet->SetLevel(NewLevel);
 }
 
 void ACharacterBase::SetAction(EUnitActions NewAction, bool State)
@@ -237,7 +245,7 @@ float ACharacterBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 		return 0.f;
 	}
 	auto hp = AttributeSet->GetHealth() - DamageAmount;
-	AttributeSet->SetHealth(hp);
+	AttributeSet->InitHealth(hp);
 	if (hp <= 0.) {
 		Die(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	}

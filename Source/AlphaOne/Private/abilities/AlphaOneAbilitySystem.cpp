@@ -28,7 +28,7 @@ int32 UAlphaOneAbilitySystem::GetDefaultAbilityLevel() const
 	ACharacterBase* OwningCharacter = Cast<ACharacterBase>(GetOwnerActor());
 
 	if (OwningCharacter) {
-		return OwningCharacter->GetCharacterLevel();
+		return OwningCharacter->GetLevel();
 	}
 	return 1;
 }

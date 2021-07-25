@@ -6,20 +6,16 @@
 #include "Components/TextBlock.h"
 #include "buildings/Tower.h"
 
-void UHealthBar::SetOwnerActor(ATower* Owner)
-{
-    OwnerActor = Owner;
-}
-
 void UHealthBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
 
-	if (!OwnerActor.IsValid()) return;
+	if (!AttributeSet.IsValid()) return;
 
-    HealthBar->SetPercent(OwnerActor->GetHealthPercentage()/100.0f);
+    auto percentage = AttributeSet->GetHealth() / AttributeSet->GetMaxHealth() * 100.f;
+    HealthBar->SetPercent(percentage);
 
-    FString PrintText = FString::Printf( TEXT("%0.1f %%"), OwnerActor->GetHealthPercentage());
+    FString PrintText = FString::Printf( TEXT("%0.1f %%"), percentage);
     HealthPercentage->SetText(FText::FromString(PrintText));
 }
 

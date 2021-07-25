@@ -35,7 +35,7 @@ void AArcher::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AArcher::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) 
+void AArcher::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
@@ -49,21 +49,21 @@ bool AArcher::Attack()
 		//spawning the projectile at the spawn point
 		FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
 		FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
-		AProjectileBase* TempProjectile = 
+		AProjectileBase* TempProjectile =
 		GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation);
-		//set the owner 
+		//set the owner
 		TempProjectile->SetOwner(this);
 		return true;
 	}
 	return false;
 }
 
-void AArcher::CameraIn() 
+void AArcher::CameraIn()
 {
 	SpringArm->TargetArmLength = 0.0f;
 }
 
-void AArcher::CameraOut() 
+void AArcher::CameraOut()
 {
 	SpringArm->TargetArmLength = 200.0f;
 }
