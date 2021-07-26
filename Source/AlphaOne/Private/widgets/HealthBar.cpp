@@ -13,7 +13,7 @@ void UHealthBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	if (!AttributeSet.IsValid()) return;
 
     auto percentage = AttributeSet->GetHealth() / AttributeSet->GetMaxHealth() * 100.f;
-    HealthBar->SetPercent(percentage);
+    HealthBar->SetPercent(percentage / 100.0f);
 
     FString PrintText = FString::Printf( TEXT("%0.1f %%"), percentage);
     HealthPercentage->SetText(FText::FromString(PrintText));
