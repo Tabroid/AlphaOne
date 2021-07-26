@@ -1,6 +1,6 @@
 #include "abilities/AlphaOneAbilitySystem.h"
 #include "abilities/AlphaOneAbility.h"
-#include "characters/CharacterBase.h"
+#include "characters/CharacterAttributes.h"
 #include "AbilitySystemGlobals.h"
 
 UAlphaOneAbilitySystem::UAlphaOneAbilitySystem() {}
@@ -25,10 +25,10 @@ void UAlphaOneAbilitySystem::GetActiveAbilitiesWithTags(const FGameplayTagContai
 
 int32 UAlphaOneAbilitySystem::GetDefaultAbilityLevel() const
 {
-	ACharacterBase* OwningCharacter = Cast<ACharacterBase>(GetOwnerActor());
-
-	if (OwningCharacter) {
-		return OwningCharacter->GetLevel();
+	auto attr = GetSet<UCharacterAttributes>();
+	if (attr) {
+		// @TODO: use another attribute for it
+		return attr->GetLevel();
 	}
 	return 1;
 }
