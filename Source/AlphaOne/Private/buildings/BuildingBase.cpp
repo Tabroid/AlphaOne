@@ -67,8 +67,8 @@ void ABuildingBase::RotateHealthBar()
 float ABuildingBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	auto hp = AttributeSet->GetHealth() - DamageAmount;
-    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Damage: %.0f, Health: %.0f!"), DamageAmount, hp));
 	AttributeSet->InitHealth(hp);
+	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Damage: %.0f, Health: %.0f!"), DamageAmount, hp));
 	if (hp <= 0.) {
         // @TODO, to implement
 		; // Die(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
