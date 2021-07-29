@@ -20,7 +20,8 @@ public class AlphaOne : ModuleRules
 				"AIModule",
 				"GameplayTasks",
 				"GameplayTags",
-				"UMG"
+				"UMG",
+				"Niagara"
 			}
 		);
 

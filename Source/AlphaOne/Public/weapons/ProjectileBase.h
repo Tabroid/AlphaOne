@@ -10,6 +10,8 @@
 class UProjectileMovementComponent;
 class USphereComponent;
 class UParticleSystem;
+class UNiagaraSystem;
+class UNiagaraComponent;
 
 UCLASS()
 class ALPHAONE_API AProjectileBase : public AActor
@@ -64,7 +66,10 @@ protected:
 
 	//particle effect when the projectile hit
 	UPROPERTY(EditAnywhere, Category = "Effects")
-	UParticleSystem* HitParticle = nullptr;
+	UNiagaraComponent* ParticleTrail = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	UNiagaraSystem* HitParticle = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", meta = (AllowPrivateAccess = "true"))
 	float CollisionSize = 5.f;

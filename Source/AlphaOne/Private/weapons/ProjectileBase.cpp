@@ -6,6 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
+#include "NiagaraComponent.h"
 
 
 // Sets default values
@@ -41,6 +44,13 @@ AProjectileBase::AProjectileBase()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->ProjectileGravityScale = Mass;
 	bInitialized = true;
+
+
+	ParticleTrail = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Particle Trail"));
+	ParticleTrail->SetupAttachment(RootComponent);
+	//if (ParticleTrail) 
+	//UNiagaraFunctionLibrary::SpawnSystemAttached(ParticleTrail, RootComponent, 
+	//TEXT("SphereComp"), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepRelativeOffset, true);
 }
 
 // Called when the game starts or when spawned
@@ -82,7 +92,8 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		//UGameplayStatics::ApplyDamage(OtherActor, Damage, MyOwner->GetInstigatorController(), this, DamageType);
 		FPointDamageEvent DamageEvent(Damage, Hit, NormalImpulse, DamageType);
 		OtherActor->TakeDamage(Damage, DamageEvent, GetOwnerController(), GetOwner());
-		UGameplayStatics::SpawnEmitterAtLocation(this, HitParticle, GetActorLocation());
+		if (HitParticle)
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitParticle, GetActorLocation());
 
 	    Destroy();
 	}
