@@ -218,9 +218,9 @@ bool ACharacterBase::Attack()
 	if (!IsAbleToAct()) {
 		return false;
 	}
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
 	auto AnimInstance = GetMesh()->GetAnimInstance();
-	if (PlayerController && !(GetAction() & EUnitActions::Attacking) && AnimInstance && NormalAttackMontage) {
+	if (!(GetAction() & EUnitActions::Attacking) && AnimInstance && NormalAttackMontage) {
 		SetAction(EUnitActions::Attacking, true);
 		AnimInstance->Montage_Play(NormalAttackMontage, NormalAttackRate);
 		FOnMontageEnded MontageEndDelegate;

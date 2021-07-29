@@ -6,6 +6,7 @@
 #include "GameplayEffect.h"
 #include "abilities/AlphaOneAbilitySystem.h"
 #include "characters/CharacterAttributes.h"
+#include "weapons/WeaponBase.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GenericTeamAgentInterface.h"
@@ -27,6 +28,12 @@ public:
 
 	// Implement IAbilitySystemInterface
 	UAbilitySystemComponent* GetAbilitySystemComponent() const;
+
+	UFUNCTION(BlueprintCallable)
+	virtual AWeaponBase* GetCurrentWeapon() const { return Weapon; }
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetCurrentWeapon(AWeaponBase* NewWeapon) { Weapon = NewWeapon; }
 
 	UFUNCTION(BlueprintCallable)
 	virtual float GetHealth() const;
@@ -143,11 +150,14 @@ protected:
 	virtual FGenericTeamId GetGenericTeamId() const override;
 
 	// @TODO: use a character animation manager to manage all montages
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* NormalAttackMontage = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment", meta = (AllowPrivateAccess = "true"))
+	AWeaponBase* Weapon;
 
 private:
 	UPROPERTY(EditAnywhere)

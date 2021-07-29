@@ -38,7 +38,6 @@ void AArcher::Tick(float DeltaTime)
 void AArcher::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, this, &AArcher::CameraIn);
 	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Released, this, &AArcher::CameraOut);
 }
@@ -60,6 +59,8 @@ bool AArcher::Attack()
 
 void AArcher::CameraIn()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Damage: %.0f, Health: %.0f!"), AttributeSet->GetAttackPower(), AttributeSet->GetHealth()));
+
 	SpringArm->TargetArmLength = 0.0f;
 }
 
