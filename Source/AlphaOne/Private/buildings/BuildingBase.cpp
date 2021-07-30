@@ -44,7 +44,7 @@ void ABuildingBase::BeginPlay()
 	PlayerCharacter = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
     // auto health = AbilitySystemComponent->GetAttributeSubobject("AttributeSet")->GetHealth();
-    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Format("Health: {}!", health));
+    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Health: %d!"), health));
 
     Cast<UHealthBar>(HealthBar->GetUserWidgetObject())->SetAttributeSet(AttributeSet);
 }

@@ -21,7 +21,6 @@ void AWeaponBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-
 // Called every frame
 void AWeaponBase::Tick(float DeltaTime)
 {
@@ -46,4 +45,26 @@ void AWeaponBase::DetachFromCharacter()
 bool AWeaponBase::Attack()
 {
 	return true;
+}
+
+FVector AWeaponBase::GetSocketLocation(FName name) const
+{
+	if (CollisionMesh) {
+		return CollisionMesh->GetSocketLocation(name);
+	} else if (MyCharacter && MyCharacter->GetMesh()) {
+		return MyCharacter->GetMesh()->GetSocketLocation(name);
+	} else {
+		return FVector();
+	}
+}
+
+FRotator AWeaponBase::GetSocketRotation(FName name) const
+{
+	if (CollisionMesh) {
+		return CollisionMesh->GetSocketRotation(name);
+	} else if (MyCharacter && MyCharacter->GetMesh()) {
+		return MyCharacter->GetMesh()->GetSocketRotation(name);
+	} else {
+		return FRotator();
+	}
 }

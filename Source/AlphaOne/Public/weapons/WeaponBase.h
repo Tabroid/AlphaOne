@@ -24,10 +24,13 @@ public:
 	virtual bool Attack();
 
 	// @TODO: implment
-	float GetDamage() const { return 0; }
+	float GetDamage() const { return 50; }
 
 	UFUNCTION(BlueprintCallable)
-	FVector GetSocketLocation(FName name) const { return CollisionMesh->GetSocketLocation(name); }
+	FVector GetSocketLocation(FName name) const;
+
+	UFUNCTION(BlueprintCallable)
+	FRotator GetSocketRotation(FName name) const;
 
 	UFUNCTION(BlueprintCallable)
 	const TArray<FWeaponSockets> &GetCollisionSockets() const { return CollisionSockets; }
