@@ -6,10 +6,10 @@
 
 void UMeleeSweeper::NotifyBegin(USkeletalMeshComponent* Mesh, UAnimSequenceBase* Animation, float TotalDuration)
 {
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("NOTIFY BEGIN!"));
+    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("NOTIFY BEGIN!"));
     auto Player = Cast<ACharacterBase>(Mesh->GetOwner());
     if (Player && Player->GetCurrentWeapon()) {
-        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("GOT WEAPON!"));
+        // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("GOT WEAPON!"));
         Weapon = Player->GetCurrentWeapon();
         IgnoreActors = { Cast<AActor>(Player) };
         SocketLocations_Prev.Reset(0);
