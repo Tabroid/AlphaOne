@@ -106,7 +106,8 @@ public:
 	void LookUpRate(float AxisValue);
 	void TurnRate(float AxisValue);
 
-	virtual void OnPlayAttackEnd(UAnimMontage* montage, bool interrupted);
+	UFUNCTION(BlueprintCallable)
+	virtual void OnAttackEnd(bool Interrupted = false);
 
 
 protected:
@@ -152,7 +153,9 @@ protected:
 
 	// @TODO: use a character animation manager to manage all montages
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* NormalAttackMontage = nullptr;
+	TArray<UAnimMontage*> NormalAttackMontages;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	int32 NormalAttackCombo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage = nullptr;

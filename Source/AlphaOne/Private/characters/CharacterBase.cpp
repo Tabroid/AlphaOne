@@ -226,21 +226,31 @@ bool ACharacterBase::Attack()
 	}
 
 	auto AnimInstance = GetMesh()->GetAnimInstance();
-	if (CurrentWeapon && !(GetAction() & EUnitActions::Attacking) && AnimInstance && NormalAttackMontage) {
+	if (CurrentWeapon && AnimInstance && !(GetAction() & EUnitActions::Attacking) && NormalAttackMontages.Num()) {
+		// reset combo to 0
+		if ((NormalAttackCombo >= NormalAttackMontages.Num()) || (NormalAttackCombo < 0)) {
+			NormalAttackCombo = 0;
+		}
+		auto AttackMontage = NormalAttackMontages[NormalAttackCombo];
+		if (!AttackMontage) { return false; }
 		SetAction(EUnitActions::Attacking, true);
-		AnimInstance->Montage_Play(NormalAttackMontage, NormalAttackRate);
-		FOnMontageEnded MontageEndDelegate;
-    	MontageEndDelegate.BindUObject(this, &ACharacterBase::OnPlayAttackEnd);
-		AnimInstance->Montage_SetEndDelegate(MontageEndDelegate);
+		AnimInstance->Montage_Play(AttackMontage, NormalAttackRate);
+		// FOnMontageEnded MontageEndDelegate;
+    	// MontageEndDelegate.BindUObject(this, &ACharacterBase::OnPlayAttackEnd);
+		// AnimInstance->Montage_SetEndDelegate(MontageEndDelegate);
 		return CurrentWeapon->Attack();
 	}
 	return false;
 }
 
-void ACharacterBase::OnPlayAttackEnd(UAnimMontage* montage, bool interrupted)
+void ACharacterBase::OnAttackEnd(bool Interrupted)
 {
 	SetAction(EUnitActions::Attacking, false);
-	if (!interrupted && bWantsToAttack) {
+	NormalAttackCombo += 1;
+	if (Interrupted) {
+		NormalAttackCombo = 0;
+		return;
+	} else if (bWantsToAttack) {
 		Attack();
 	}
 }

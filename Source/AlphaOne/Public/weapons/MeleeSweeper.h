@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CoreMinimal.h"
+#include "AlphaOne.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "weapons/WeaponBase.h"
 #include "MeleeSweeper.generated.h"
