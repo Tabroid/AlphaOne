@@ -7,13 +7,12 @@
 AWeaponBase::AWeaponBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 }
 
 AWeaponBase::~AWeaponBase()
 {
-	Unequip();
 }
 
 // Called when the game starts or when spawned
@@ -29,15 +28,18 @@ void AWeaponBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AWeaponBase::Equip(ACharacterBase *Character)
+void AWeaponBase::AttachToCharacter(ACharacterBase* Character)
 {
-	MyCharacter = TSharedPtr<ACharacterBase>(Character);
+	if (Character) {
+		DetachFromCharacter();
+		MyCharacter = Character;
+	}
 }
 
-void AWeaponBase::Unequip()
+void AWeaponBase::DetachFromCharacter()
 {
-	if (MyCharacter.IsValid()) {
-		MyCharacter.Reset();
+	if (MyCharacter) {
+		MyCharacter = nullptr;
 	}
 }
 

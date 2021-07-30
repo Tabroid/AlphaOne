@@ -17,9 +17,9 @@ public:
 	AWeaponBase();
 	virtual ~AWeaponBase();
 
-	virtual ACharacterBase *GetCharacter() const { return MyCharacter.Get(); }
-	virtual void Equip(ACharacterBase *Character);
-	virtual void Unequip();
+	virtual ACharacterBase* GetCharacter() const { return MyCharacter; }
+	virtual void AttachToCharacter(ACharacterBase* Character);
+	virtual void DetachFromCharacter();
 
 	virtual bool Attack();
 
@@ -39,7 +39,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	TSharedPtr<ACharacterBase> MyCharacter;
+	ACharacterBase* MyCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
 	TArray<FWeaponSockets> CollisionSockets;

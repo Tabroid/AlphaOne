@@ -43,7 +43,7 @@ void UMeleeSweeper::NotifyTick(USkeletalMeshComponent* /*Mesh*/, UAnimSequenceBa
             if (!HitActors.Contains(Actor)) {
                 HitActors.Add(Actor);
                 FPointDamageEvent DamageEvent(Weapon->GetDamage(), Hit, Hit.Normal, DamageType);
-                auto Player = Weapon->GetCharacter();
+                auto Player = Cast<ACharacterBase>(Weapon->GetCharacter());
                 Actor->TakeDamage(Weapon->GetDamage(), DamageEvent, Player->GetController(), Player);
             }
         }

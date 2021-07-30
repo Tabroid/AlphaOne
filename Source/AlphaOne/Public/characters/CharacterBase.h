@@ -10,6 +10,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GenericTeamAgentInterface.h"
+#include "Templates/SharedPointer.h"
 #include "CharacterBase.generated.h"
 
 UCLASS()
@@ -30,10 +31,10 @@ public:
 	UAbilitySystemComponent* GetAbilitySystemComponent() const;
 
 	UFUNCTION(BlueprintCallable)
-	virtual AWeaponBase* GetCurrentWeapon() const { return Weapon; }
+	virtual AWeaponBase *GetCurrentWeapon() const;
 
 	UFUNCTION(BlueprintCallable)
-	virtual void SetCurrentWeapon(AWeaponBase* NewWeapon) { Weapon = NewWeapon; }
+	virtual bool EquipWeapon(AWeaponBase* NewWeapon = nullptr);
 
 	UFUNCTION(BlueprintCallable)
 	virtual float GetHealth() const;
@@ -156,8 +157,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equipment", meta = (AllowPrivateAccess = "true"))
-	AWeaponBase* Weapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	AWeaponBase* CurrentWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AWeaponBase> DefaultWeapon;
+	AWeaponBase* DefaultWeaponPtr;
 
 private:
 	UPROPERTY(EditAnywhere)

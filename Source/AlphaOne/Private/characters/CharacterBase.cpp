@@ -4,6 +4,7 @@
 #include "characters/CharacterBase.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "weapons/RangedWeapon.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
@@ -24,6 +25,11 @@ ACharacterBase::ACharacterBase()
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+	if (DefaultWeapon) {
+		DefaultWeaponPtr = GetWorld()->SpawnActor<AWeaponBase>(DefaultWeapon, GetMesh()->GetComponentLocation(), GetMesh()->GetComponentRotation());
+		DefaultWeaponPtr->SetOwner(Cast<AActor>(this));
+		EquipWeapon(DefaultWeaponPtr);
+	}
 }
 
 // Called every frame
@@ -220,13 +226,13 @@ bool ACharacterBase::Attack()
 	}
 
 	auto AnimInstance = GetMesh()->GetAnimInstance();
-	if (!(GetAction() & EUnitActions::Attacking) && AnimInstance && NormalAttackMontage) {
+	if (CurrentWeapon && !(GetAction() & EUnitActions::Attacking) && AnimInstance && NormalAttackMontage) {
 		SetAction(EUnitActions::Attacking, true);
 		AnimInstance->Montage_Play(NormalAttackMontage, NormalAttackRate);
 		FOnMontageEnded MontageEndDelegate;
     	MontageEndDelegate.BindUObject(this, &ACharacterBase::OnPlayAttackEnd);
 		AnimInstance->Montage_SetEndDelegate(MontageEndDelegate);
-		return true;
+		return CurrentWeapon->Attack();
 	}
 	return false;
 }
@@ -361,9 +367,34 @@ void ACharacterBase::SetRagdollPhysics()
 	}
 }
 
-
 void ACharacterBase::StopAllAnimMontages()
 {
 	auto AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Stop(0.0f);
+}
+
+AWeaponBase* ACharacterBase::GetCurrentWeapon() const
+{
+	return CurrentWeapon;
+}
+
+bool ACharacterBase::EquipWeapon(AWeaponBase* NewWeapon)
+{
+	// Use default weapon
+	if (!NewWeapon) {
+		NewWeapon = DefaultWeaponPtr;
+	}
+
+	// the same, no change
+	if (CurrentWeapon == NewWeapon) {
+		return true;
+	}
+
+	// unequip first
+	if (CurrentWeapon) {
+		CurrentWeapon->DetachFromCharacter();
+	}
+	CurrentWeapon = NewWeapon;
+	CurrentWeapon->AttachToCharacter(this);
+	return true;
 }
