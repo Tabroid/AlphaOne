@@ -19,6 +19,7 @@ AArcher::AArcher()
 
 	// @TODO move this to weapon if weapon mesh implemented
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile Spawn Point"));
+	ProjectileSpawnPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform ,TEXT("bow_base"));
 
 	SetType(EUnitTypes::Hero);
 }
@@ -26,9 +27,10 @@ AArcher::AArcher()
 // Called when the game starts or when spawned
 void AArcher::BeginPlay()
 {
-	ProjectileSpawnPoint->AttachToComponent(GetMesh(),
+	/*ProjectileSpawnPoint->AttachToComponent(GetMesh(),
                                             FAttachmentTransformRules::KeepRelativeTransform,
                                             ProjectileSpawnSocket);
+	*/
 	Super::BeginPlay();
 }
 
