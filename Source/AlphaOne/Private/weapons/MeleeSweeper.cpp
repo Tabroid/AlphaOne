@@ -7,6 +7,7 @@
 void UMeleeSweeper::NotifyBegin(USkeletalMeshComponent* Mesh, UAnimSequenceBase* Animation, float TotalDuration)
 {
     // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("NOTIFY BEGIN!"));
+    SweepingTimer = 0.f;
     auto Player = Cast<ACharacterBase>(Mesh->GetOwner());
     if (Player && Player->GetCurrentWeapon()) {
         // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("GOT WEAPON!"));
@@ -21,6 +22,14 @@ void UMeleeSweeper::NotifyBegin(USkeletalMeshComponent* Mesh, UAnimSequenceBase*
 
 void UMeleeSweeper::NotifyTick(USkeletalMeshComponent* /*Mesh*/, UAnimSequenceBase* Animation, float FrameDeltaTime)
 {
+    // check time interval
+    SweepingTimer += FrameDeltaTime;
+    if (SweepingTimer < SweepingInterval) {
+        return;
+    } else {
+        SweepingTimer = 0.f;
+    }
+
     if ((Weapon == nullptr) || Weapon->IsPendingKill()) {
         return;
     }
@@ -58,8 +67,10 @@ void UMeleeSweeper::NotifyTick(USkeletalMeshComponent* /*Mesh*/, UAnimSequenceBa
     }
 }
 
-void UMeleeSweeper::NotifyEnd(USkeletalMeshComponent* /*Mesh*/, UAnimSequenceBase* /*Animation*/)
+void UMeleeSweeper::NotifyEnd(USkeletalMeshComponent* Mesh, UAnimSequenceBase* Animation)
 {
+    // last check
+    NotifyTick(Mesh, Animation, SweepingInterval);
     HitActors.Empty();
     Weapon = nullptr;
 }
