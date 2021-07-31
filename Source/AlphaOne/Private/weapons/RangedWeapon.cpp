@@ -23,7 +23,8 @@ bool ARangedWeapon::Attack()
     if (!Projectile || !Archer) {
         return false;
     }
-
+    // this controls the animation
+    Super::Attack();
     // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Spawn arrows"));
     //spawning the projectile at the spawn point
     auto ProjectileSpawn = Archer->GetProjectileSpawnComponent();

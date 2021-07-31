@@ -22,6 +22,7 @@ public:
 	virtual void DetachFromCharacter();
 
 	virtual bool Attack();
+	virtual void AttackEnd(bool ResetCombo = false) { if (ResetCombo) { AttackCombo = 0; } else { AttackCombo++; } }
 
 	// @TODO: implment
 	float GetDamage() const { return 50; }
@@ -33,10 +34,7 @@ public:
 	FRotator GetSocketRotation(FName name) const;
 
 	UFUNCTION(BlueprintCallable)
-	const TArray<FWeaponSockets> &GetCollisionSockets() const { return CollisionSockets; }
-
-	UFUNCTION(BlueprintCallable)
-	TArray<FWeaponSockets> &GetCollisionSockets_Mutable() { return CollisionSockets; }
+	const TArray<FWeaponSockets> &GetCollisionSockets() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -44,8 +42,14 @@ protected:
 
 	ACharacterBase* MyCharacter;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
-	TArray<FWeaponSockets> CollisionSockets;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+	TArray<FWeaponMontages> AttackMontages;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+	int32 AttackCombo;
+
+	UPROPERTY(EditAnywhere)
+	float AttackRate = 1.0f;
 
 	// Used for assigning the collision mesh
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component", meta = (AllowPrivateAccess = "true"))

@@ -151,12 +151,6 @@ protected:
 
 	virtual FGenericTeamId GetGenericTeamId() const override;
 
-	// @TODO: use a character animation manager to manage all montages
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	TArray<UAnimMontage*> NormalAttackMontages;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	int32 NormalAttackCombo;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage = nullptr;
 
@@ -170,9 +164,6 @@ protected:
 private:
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 10.0f;
-
-	UPROPERTY(EditAnywhere)
-	float NormalAttackRate = 1.0f;
 
 	UPROPERTY(EditAnywhere)
 	float JogSpeed = 350.0f;

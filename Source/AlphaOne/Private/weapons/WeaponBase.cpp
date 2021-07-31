@@ -44,6 +44,23 @@ void AWeaponBase::DetachFromCharacter()
 
 bool AWeaponBase::Attack()
 {
+	// safety check
+	if (!MyCharacter || !MyCharacter->GetMesh() || !AttackMontages.Num()) {
+		return false;
+	}
+
+	auto AnimInstance = MyCharacter->GetMesh()->GetAnimInstance();
+
+	// reset combo for a new circle
+	if ((AttackCombo >= AttackMontages.Num()) || (AttackCombo < 0)) {
+		AttackCombo = 0;
+	}
+	auto AttackMontage = AttackMontages[AttackCombo].Montage;
+	MyCharacter->SetAction(EUnitActions::Attacking, true);
+	AnimInstance->Montage_Play(AttackMontage, AttackRate);
+	// FOnMontageEnded MontageEndDelegate;
+    // MontageEndDelegate.BindUObject(this, &ACharacterBase::OnPlayAttackEnd);
+	// AnimInstance->Montage_SetEndDelegate(MontageEndDelegate);
 	return true;
 }
 
@@ -67,4 +84,10 @@ FRotator AWeaponBase::GetSocketRotation(FName name) const
 	} else {
 		return FRotator();
 	}
+}
+
+const TArray<FWeaponSockets>& AWeaponBase::GetCollisionSockets() const
+{
+	// intentionally give error if AttackCombo is out of array
+	return AttackMontages[AttackCombo].Sockets;
 }
