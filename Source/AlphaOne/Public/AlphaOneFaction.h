@@ -32,7 +32,12 @@ public:
     void SetFaction(EUnitFactions NewFaction) { Faction = NewFaction; }
 
     UFUNCTION(BlueprintCallable)
-    virtual bool IsEnemy(const AActor *Target) const;
+    virtual bool IsEnemy(const AActor *Target) const {
+        if (!IsValid(Target)) { return false; }
+        return IsEnemy(Target->FindComponentByClass<UFactionComponent>());
+    }
+
+    virtual bool IsEnemy(const UFactionComponent *TargetFactionComponent) const;
 
     // virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

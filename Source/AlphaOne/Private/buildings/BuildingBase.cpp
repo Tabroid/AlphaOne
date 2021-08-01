@@ -74,8 +74,7 @@ float ABuildingBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEv
 		return 0.f;
 	}
 
-	
-	if (DamageCauser && !GetFactionComponent()->IsEnemy(Cast<AActor>(DamageCauser))) return 0.f;
+	DamageAmount = Cast<UAlphaOneInstance>(GetGameInstance())->Battle()->CalcDamage(DamageAmount, DamageCauser, AttributeSet);
 
 	auto hp = AttributeSet->GetHealth() - DamageAmount;
 	AttributeSet->InitHealth(hp);

@@ -4,5 +4,7 @@
 
 #include "AlphaOneGlobals.h"
 #include "AlphaOneFaction.h"
+#include "AlphaOneBattle.h"
 #include "AlphaOneGameModeBase.h"
+#include "AlphaOneInstance.h"
 

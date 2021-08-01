@@ -30,9 +30,11 @@ void UMeleeSweeper::NotifyTick(USkeletalMeshComponent* /*Mesh*/, UAnimSequenceBa
         SweepingTimer = 0.f;
     }
 
-    if ((Weapon == nullptr) || Weapon->IsPendingKill()) {
+    auto Character = Weapon->GetCharacter();
+    if (!IsValid(Weapon) || !IsValid(Weapon->GetCharacter())) {
         return;
     }
+    auto FactionComp = Character->GetFactionComponent();
 
     for (int32 i = 0; i < Weapon->GetCollisionSockets().Num(); ++i) {
         auto &[name, radius] = Weapon->GetCollisionSockets()[i];
@@ -55,11 +57,13 @@ void UMeleeSweeper::NotifyTick(USkeletalMeshComponent* /*Mesh*/, UAnimSequenceBa
                                                10);
         for (auto Hit : HitResult) {
             auto Actor = Hit.GetActor();
+            if (!FactionComp->IsEnemy(Actor)) {
+                continue;
+            }
             if (!HitActors.Contains(Actor)) {
                 HitActors.Add(Actor);
                 FPointDamageEvent DamageEvent(Weapon->GetDamage(), Hit, Hit.Normal, DamageType);
-                auto Player = Cast<ACharacterBase>(Weapon->GetCharacter());
-                Actor->TakeDamage(Weapon->GetDamage(), DamageEvent, Player->GetController(), Player);
+                Actor->TakeDamage(Weapon->GetDamage(), DamageEvent, Character->GetController(), Character);
             }
         }
         // update previous location

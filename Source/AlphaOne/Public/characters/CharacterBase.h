@@ -127,13 +127,6 @@ protected:
 	virtual void OnDeath(float KillingDamage, const FDamageEvent& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
 	virtual void SetRagdollPhysics();
 
-	// properties of the character
-	UPROPERTY()
-	UCharacterAttributes* AttributeSet;
-
-	UPROPERTY(Transient)
-	uint8 bInitialized : 1;
-
 	// current running state
 	UPROPERTY(Transient, BlueprintReadOnly, Replicated)
 	uint8 bWantsToSprint : 1;
@@ -143,9 +136,6 @@ protected:
 
 	UPROPERTY(Transient, BlueprintReadOnly)
 	uint8 bWantsToAttack : 1;
-
-	UPROPERTY()
-	UAlphaOneAbilitySystem* AbilitySystemComponent;
 
 	// Passive gameplay effects applied on creation
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
@@ -158,17 +148,20 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AWeaponBase> DefaultWeapon;
-
 	AWeaponBase* DefaultWeaponPtr;
-
 	AWeaponBase* CurrentWeapon;
 
 	// A proxy to FactionSystem component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (AllowPrivateAccess = "true"))
 	EUnitFactions DefaultFaction;
-
 	UPROPERTY()
 	UFactionComponent* FactionSystemComponent;
+
+	// properties of the character
+	UPROPERTY()
+	UCharacterAttributes* AttributeSet;
+	UPROPERTY()
+	UAlphaOneAbilitySystem* AbilitySystemComponent;
 
 private:
 	UPROPERTY(EditAnywhere)

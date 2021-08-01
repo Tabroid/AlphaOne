@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "weapons/ProjectileBase.h"
+#include "AlphaOneFaction.h"
 // UE4
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -48,8 +49,8 @@ AProjectileBase::AProjectileBase()
 
 	ParticleTrail = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Particle Trail"));
 	ParticleTrail->SetupAttachment(RootComponent);
-	//if (ParticleTrail) 
-	//UNiagaraFunctionLibrary::SpawnSystemAttached(ParticleTrail, RootComponent, 
+	//if (ParticleTrail)
+	//UNiagaraFunctionLibrary::SpawnSystemAttached(ParticleTrail, RootComponent,
 	//TEXT("SphereComp"), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepRelativeOffset, true);
 }
 
@@ -86,15 +87,17 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 			   				FVector NormalImpulse, const FHitResult& Hit)
 {
 	AActor* MyOwner = GetOwner();
-	if (!MyOwner) return;
-	if (OtherActor && OtherActor != this && OtherActor != MyOwner){
+	if (IsValid(MyOwner) && IsValid(OtherActor) && OtherActor != MyOwner) {
 		//apply the damage to the target that the projectile hits.
 		//UGameplayStatics::ApplyDamage(OtherActor, Damage, MyOwner->GetInstigatorController(), this, DamageType);
-		FPointDamageEvent DamageEvent(Damage, Hit, NormalImpulse, DamageType);
-		OtherActor->TakeDamage(Damage, DamageEvent, GetOwnerController(), GetOwner());
-		if (HitParticle)
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitParticle, GetActorLocation());
-
+		auto FactionComp = MyOwner->FindComponentByClass<UFactionComponent>();
+		if (FactionComp && FactionComp->IsEnemy(OtherActor)) {
+			FPointDamageEvent DamageEvent(Damage, Hit, NormalImpulse, DamageType);
+			OtherActor->TakeDamage(Damage, DamageEvent, GetOwnerController(), MyOwner);
+		}
+		if (HitParticle) {
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitParticle, GetActorLocation());
+		}
 	    Destroy();
 	}
 }

@@ -6,15 +6,14 @@ UFactionComponent::UFactionComponent()
     PrimaryComponentTick.bCanEverTick = false;
 }
 
-bool UFactionComponent::IsEnemy(const AActor *Target) const
+bool UFactionComponent::IsEnemy(const UFactionComponent* TargetFactionComponent) const
 {
-    auto FactorComponent = Target->FindComponentByClass<UFactionComponent>();
-    if (FactorComponent) {
+    if (TargetFactionComponent) {
         switch (Faction) {
         case EUnitFactions::Intruders:
-            return FactorComponent->GetFaction() != EUnitFactions::Intruders;
+            return TargetFactionComponent->GetFaction() != EUnitFactions::Intruders;
         default:
-            return FactorComponent->GetFaction() == EUnitFactions::Intruders;
+            return TargetFactionComponent->GetFaction() == EUnitFactions::Intruders;
         }
     }
     return false;

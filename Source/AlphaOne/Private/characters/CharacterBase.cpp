@@ -20,7 +20,6 @@ ACharacterBase::ACharacterBase()
 	FactionSystemComponent = CreateDefaultSubobject<UFactionComponent>(TEXT("FactionSystemComponent"));
 
 	AttributeSet = CreateDefaultSubobject<UCharacterAttributes>(TEXT("AttributeSet"));
-	bInitialized = true;
 	SetType(EUnitTypes::Mob);
 }
 
@@ -247,6 +246,7 @@ float ACharacterBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 	if (!CanBeDamaged() || !IsAbleToAct()) {
 		return 0.f;
 	}
+	DamageAmount = Cast<UAlphaOneInstance>(GetGameInstance())->Battle()->CalcDamage(DamageAmount, DamageCauser, AttributeSet);
 	auto hp = AttributeSet->GetHealth() - DamageAmount;
 	AttributeSet->InitHealth(hp);
 	if (hp <= 0.) {
