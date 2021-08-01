@@ -6,14 +6,9 @@
 #include "GameFramework/PlayerController.h"
 #include "AlphaOnePlayerController.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class ALPHAONE_API AAlphaOnePlayerController : public APlayerController
 {
 	GENERATED_BODY()
-
-	
-	
 };

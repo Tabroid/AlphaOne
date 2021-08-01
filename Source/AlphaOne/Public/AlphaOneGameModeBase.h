@@ -6,12 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "AlphaOneGameModeBase.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class ALPHAONE_API AAlphaOneGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
 };

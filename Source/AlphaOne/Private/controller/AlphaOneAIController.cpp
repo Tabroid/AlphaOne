@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "characters/CharacterBase.h"
 #include "controller/AlphaOneAIController.h"
+#include "characters/CharacterBase.h"
 #include "buildings/Tower.h"
 // UE4
 #include "Kismet/GameplayStatics.h"
