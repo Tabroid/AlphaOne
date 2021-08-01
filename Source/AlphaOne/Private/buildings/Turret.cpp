@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "weapons/ProjectileBase.h"
 #include "buildings/Turret.h"
+#include "weapons/ProjectileBase.h"
 #include "characters/CharacterBase.h"
 #include "Components/WidgetComponent.h"
 
@@ -9,32 +9,32 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
-ATurret::ATurret() 
+ATurret::ATurret()
 {
 	//create default component for the projectile spawn point
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile Spawn Point"));
 	ProjectileSpawnPoint->SetupAttachment(AuraMesh);
     BaseMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
     BaseMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
-
-    
+    // by default it is indestructible
+    SetCanBeDamaged(false);
 }
 
-void ATurret::Tick(float DeltaTime) 
+void ATurret::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void ATurret::BeginPlay() 
+void ATurret::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
     //set up the fire rate timer for the turret
     GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, this, &ATurret::CheckFireCondition, FireRate, true);
     HealthBar->SetVisibility(false);
 }
 
-void ATurret::CheckFireCondition() 
+void ATurret::CheckFireCondition()
 {
     ACharacterBase* NearestEnemy = nullptr;
 

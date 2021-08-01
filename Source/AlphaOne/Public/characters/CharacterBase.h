@@ -145,6 +145,9 @@ protected:
 	UPROPERTY()
 	UAlphaOneAbilitySystem* AbilitySystemComponent;
 
+	UPROPERTY()
+	UFactionComponent* FactionSystemComponent;
+
 	// Passive gameplay effects applied on creation
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
 	TArray<TSubclassOf<UGameplayEffect>> PassiveGameplayEffects;
@@ -155,11 +158,15 @@ protected:
 	UAnimMontage* DeathMontage = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AWeaponBase> DefaultWeapon;
+
+	AWeaponBase* DefaultWeaponPtr;
+
 	AWeaponBase* CurrentWeapon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AWeaponBase> DefaultWeapon;
-	AWeaponBase* DefaultWeaponPtr;
+	// A proxy to component
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (AllowPrivateAccess = "true"))
+	EUnitFactions DefaultFaction;
 
 private:
 	UPROPERTY(EditAnywhere)

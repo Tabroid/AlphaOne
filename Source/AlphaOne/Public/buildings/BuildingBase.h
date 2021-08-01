@@ -20,6 +20,7 @@ class ALPHAONE_API ABuildingBase : public APawn
 public:
 	// Sets default values for this actor's properties
 	ABuildingBase();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
@@ -82,6 +83,9 @@ protected:
 	UPROPERTY()
 	UAlphaOneAbilitySystem* AbilitySystemComponent;
 
+	UPROPERTY()
+	UFactionComponent* FactionSystemComponent;
+
 	void RotateHealthBar();
 
 	//various component for assigning mesh later on
@@ -96,6 +100,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* HealthBar = nullptr;
+
+	// A proxy to FactionSystem
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (AllowPrivateAccess = "true"))
+	EUnitFactions DefaultFaction;
 
 private:
 	ACharacterBase* PlayerCharacter;

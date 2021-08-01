@@ -3,5 +3,6 @@
 #pragma once
 
 #include "AlphaOneGlobals.h"
+#include "AlphaOneFaction.h"
 #include "AlphaOneGameModeBase.h"
 

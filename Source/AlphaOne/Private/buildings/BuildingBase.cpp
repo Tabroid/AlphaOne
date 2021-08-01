@@ -11,6 +11,7 @@
 
 // Sets default values
 ABuildingBase::ABuildingBase()
+	: DefaultFaction(EUnitFactions::Defenders)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -32,6 +33,9 @@ ABuildingBase::ABuildingBase()
 	AbilitySystemComponent = CreateDefaultSubobject<UAlphaOneAbilitySystem>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 
+	FactionSystemComponent = CreateDefaultSubobject<UFactionComponent>(TEXT("FactionSystemComponent"));
+	FactionSystemComponent->bEditableWhenInherited = true;
+
 	AttributeSet = CreateDefaultSubobject<UCharacterAttributes>(TEXT("AttributeSet"));
 	SetType(EUnitTypes::Building);
 }
@@ -40,7 +44,7 @@ ABuildingBase::ABuildingBase()
 void ABuildingBase::BeginPlay()
 {
 	Super::BeginPlay();
-
+	FactionSystemComponent->SetFaction(DefaultFaction);
 	PlayerCharacter = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
     // auto health = AbilitySystemComponent->GetAttributeSubobject("AttributeSet")->GetHealth();
@@ -66,6 +70,10 @@ void ABuildingBase::RotateHealthBar()
 
 float ABuildingBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (!CanBeDamaged()) {
+		return 0.f;
+	}
+
 	auto hp = AttributeSet->GetHealth() - DamageAmount;
 	AttributeSet->InitHealth(hp);
 	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Damage: %.0f, Health: %.0f!"), DamageAmount, hp));

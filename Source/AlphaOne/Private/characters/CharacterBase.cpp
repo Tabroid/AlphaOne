@@ -9,12 +9,15 @@
 
 // Sets default values
 ACharacterBase::ACharacterBase()
+	: DefaultFaction(EUnitFactions::Protagonist)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Create ability system component, and set it to be explicitly replicated
 	AbilitySystemComponent = CreateDefaultSubobject<UAlphaOneAbilitySystem>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
+
+	FactionSystemComponent = CreateDefaultSubobject<UFactionComponent>(TEXT("FactionSystemComponent"));
 
 	AttributeSet = CreateDefaultSubobject<UCharacterAttributes>(TEXT("AttributeSet"));
 	bInitialized = true;
@@ -25,6 +28,7 @@ ACharacterBase::ACharacterBase()
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+	FactionSystemComponent->SetFaction(DefaultFaction);
 	if (DefaultWeapon) {
 		DefaultWeaponPtr = GetWorld()->SpawnActor<AWeaponBase>(DefaultWeapon, GetMesh()->GetComponentLocation(), GetMesh()->GetComponentRotation());
 		DefaultWeaponPtr->SetOwner(Cast<AActor>(this));
@@ -240,7 +244,7 @@ void ACharacterBase::OnAttackEnd(bool Interrupted)
 
 float ACharacterBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (!IsAbleToAct()) {
+	if (!CanBeDamaged() || !IsAbleToAct()) {
 		return 0.f;
 	}
 	auto hp = AttributeSet->GetHealth() - DamageAmount;
