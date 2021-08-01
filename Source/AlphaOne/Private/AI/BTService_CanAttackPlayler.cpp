@@ -1,12 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
+#include "AI/BTService_CanAttackPlayler.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 #include "GameFramework/Character.h"
-#include "AI/BTService_CanAttackPlayler.h"
+
 
 UBTService_CanAttackPlayler::UBTService_CanAttackPlayler()
 {
