@@ -15,6 +15,7 @@ class ALPHAONE_API AAlphaOneAIController : public AAIController
 	GENERATED_BODY()
 
 public:
+	virtual void Tick(float DeltaTime) override;
 	bool IsDead() const;
 
 protected:
@@ -24,6 +25,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	UBehaviorTree* AIBehavior = nullptr;
 };
+
+
 
 
 

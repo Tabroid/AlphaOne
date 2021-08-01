@@ -1,7 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "AI/BTTask_Attack.h"
+//UE4
+#include "characters/CharacterBase.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "AIController.h"
+
 
 
 UBTTask_Attack::UBTTask_Attack() 
@@ -17,14 +20,14 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
         return EBTNodeResult::Failed;
     }
     //call the attack function of the pawn 
-    /*AShooterCharacter* Character = Cast<AShooterCharacter>(OwnerComp.GetAIOwner()->GetPawn());
+    ACharacterBase* Character = Cast<ACharacterBase>(OwnerComp.GetAIOwner()->GetPawn());
 
     if (Character == nullptr){
         return EBTNodeResult::Failed;
     }
 
-    Character->Fire();
-    */
+    Character->Attack();
+    
     return EBTNodeResult::Succeeded;
 }
 

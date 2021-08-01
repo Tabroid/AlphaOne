@@ -74,6 +74,9 @@ float ABuildingBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEv
 		return 0.f;
 	}
 
+	
+	if (DamageCauser && !GetFactionComponent()->IsEnemy(Cast<AActor>(DamageCauser))) return 0.f;
+
 	auto hp = AttributeSet->GetHealth() - DamageAmount;
 	AttributeSet->InitHealth(hp);
 	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Damage: %.0f, Health: %.0f!"), DamageAmount, hp));

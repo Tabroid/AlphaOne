@@ -46,6 +46,7 @@ void ATurret::CheckFireCondition()
     for (auto Enemy : AllEnemy){
         ACharacterBase* CurrentEnemy = Cast<ACharacterBase>(Enemy);
         if (!CurrentEnemy || CurrentEnemy->GetStatus() == EUnitStatuses::Dead) continue;
+        if (!GetFactionComponent()->IsEnemy(Cast<AActor>(CurrentEnemy))) continue;
         float CurrentDistance = FVector::Dist(CurrentEnemy->GetActorLocation(), GetActorLocation());
         if (CurrentDistance < Distance) {
             Distance = CurrentDistance;
