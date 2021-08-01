@@ -2,10 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "AlphaOne.h"
 #include "GameplayEffect.h"
 #include "abilities/AlphaOneAbilitySystem.h"
-#include "characters/CharacterAttributes.h"
 #include "weapons/WeaponBase.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"

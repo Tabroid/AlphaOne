@@ -1,6 +1,5 @@
 #include "abilities/AlphaOneAbilitySystem.h"
 #include "abilities/AlphaOneAbility.h"
-#include "characters/CharacterAttributes.h"
 #include "AbilitySystemGlobals.h"
 
 UAlphaOneAbilitySystem::UAlphaOneAbilitySystem() {}

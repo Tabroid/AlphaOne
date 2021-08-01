@@ -2,9 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "AlphaOne.h"
 #include "abilities/AlphaOneAbilitySystem.h"
-#include "characters/CharacterAttributes.h"
 #include "GameFramework/Actor.h"
 #include "BuildingBase.generated.h"
 

@@ -2,6 +2,7 @@
 # pragma once
 
 #include "CoreMinimal.h"
+#include "characters/CharacterAttributes.h"
 #include "AlphaOneGlobals.generated.h"
 
 

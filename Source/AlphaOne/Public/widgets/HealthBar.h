@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "characters/CharacterAttributes.h"
+#include "AlphaOne.h"
 #include "Blueprint/UserWidget.h"
 #include "HealthBar.generated.h"
 
