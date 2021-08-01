@@ -5,7 +5,7 @@
 #include "AlphaOne.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
-#include "CharacterAttributes.generated.h"
+#include "UnitAttributes.generated.h"
 
 // Uses macros from AttributeSet.h
 #define ADD_ATTRIBUTE(ClassName, PropertyName, Category) \

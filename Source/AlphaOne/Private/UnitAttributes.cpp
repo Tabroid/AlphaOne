@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "characters/CharacterAttributes.h"
-#include "characters/CharacterBase.h"
+#include "UnitAttributes.h"
 #include "Net/UnrealNetwork.h"
 #include <algorithm>
 
