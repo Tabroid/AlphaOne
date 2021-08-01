@@ -73,20 +73,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetType(EUnitTypes NewType);
 
+	UFUNCTION(BlueprintCallable)
+	UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void RotateHealthBar();
 
 	UPROPERTY()
 	UCharacterAttributes* AttributeSet;
 
 	UPROPERTY()
 	UAlphaOneAbilitySystem* AbilitySystemComponent;
-
-	UPROPERTY()
-	UFactionComponent* FactionSystemComponent;
-
-	void RotateHealthBar();
 
 	//various component for assigning mesh later on
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
@@ -101,9 +101,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* HealthBar = nullptr;
 
-	// A proxy to FactionSystem
+	// A proxy to FactionSystem component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (AllowPrivateAccess = "true"))
 	EUnitFactions DefaultFaction;
+
+	UPROPERTY()
+	UFactionComponent* FactionSystemComponent;
 
 private:
 	ACharacterBase* PlayerCharacter;

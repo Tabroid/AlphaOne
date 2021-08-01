@@ -109,6 +109,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void OnAttackEnd(bool Interrupted = false);
 
+	UFUNCTION(BlueprintCallable)
+	UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -145,9 +148,6 @@ protected:
 	UPROPERTY()
 	UAlphaOneAbilitySystem* AbilitySystemComponent;
 
-	UPROPERTY()
-	UFactionComponent* FactionSystemComponent;
-
 	// Passive gameplay effects applied on creation
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
 	TArray<TSubclassOf<UGameplayEffect>> PassiveGameplayEffects;
@@ -164,9 +164,12 @@ protected:
 
 	AWeaponBase* CurrentWeapon;
 
-	// A proxy to component
+	// A proxy to FactionSystem component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (AllowPrivateAccess = "true"))
 	EUnitFactions DefaultFaction;
+
+	UPROPERTY()
+	UFactionComponent* FactionSystemComponent;
 
 private:
 	UPROPERTY(EditAnywhere)
