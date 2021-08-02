@@ -246,6 +246,9 @@ void ACharacterBase::OnDeath(float KillingDamage, const FDamageEvent& DamageEven
 	// @TODO play sound
 	// @TODO death penalty
 	// @TODO change view
+	GetCharacterMovement()->StopMovementImmediately();
+	GetCharacterMovement()->DisableMovement();
+	GetCharacterMovement()->SetComponentTickEnabled(false);
 
 	DetachFromControllerPendingDestroy();
 	StopAllAnimMontages();
@@ -264,7 +267,8 @@ void ACharacterBase::OnDeath(float KillingDamage, const FDamageEvent& DamageEven
 		if (DeathAnimDuration > 0.f) {
 			// Trigger ragdoll a little before the animation early so the character doesn't
 			// blend back to its normal position.
-			const float TriggerRagdollTime = DeathAnimDuration - 0.7f;
+			// const float TriggerRagdollTime = DeathAnimDuration - 0.7f;
+			const float TriggerRagdollTime = DeathAnimDuration + 2.0f;
 
 			// Enable blend physics so the bones are properly blending against the montage.
 			GetMesh()->bBlendPhysics = true;
@@ -281,14 +285,20 @@ void ACharacterBase::OnDeath(float KillingDamage, const FDamageEvent& DamageEven
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
 	// @TODO need test the right timing to call destroy
-	DetachFromControllerPendingDestroy();
-	Destroyed();
+	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("DESTROY!"));
+	// Destroy();
+	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("IS PENDING KILL: %d!"), IsPendingKill()));
 }
 
 void ACharacterBase::SetRagdollPhysics()
 {
+	// ragdoll is not working properly (pieces are connected)
+	Destroy();
+	return;
+/*
 	// building does not have ragdoll
 	if (GetType() == EUnitTypes::Building) {
+		Destroyed();
 		return;
 	}
 
@@ -318,6 +328,7 @@ void ACharacterBase::SetRagdollPhysics()
 	} else {
 		SetLifeSpan(10.0f);
 	}
+*/
 }
 
 void ACharacterBase::StopAllAnimMontages()
