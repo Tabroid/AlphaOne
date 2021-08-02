@@ -58,7 +58,7 @@ public:
 	virtual TSubclassOf<UDamageType> GetDamageType() const { return DamageType; }
 
 	virtual void OnSweepBegin();
-	virtual void OnSweepComplete(const FTraceHandle& Handle, FTraceDatum& Data);
+	virtual void OnSweepComplete();
 	virtual void OnSweepEnd();
 	virtual void RequestAsyncSweep();
 
@@ -102,5 +102,4 @@ protected:
 
 	uint8 bWantsToSweep : 1;
 	FTraceDatum SweepResult;
-	FTraceDelegate SweepDelegate;
 };

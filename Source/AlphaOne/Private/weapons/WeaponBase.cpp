@@ -9,7 +9,6 @@ AWeaponBase::AWeaponBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	QueryParams.AddIgnoredActor(this);
-	bWantsToSweep = false;
 }
 
 AWeaponBase::~AWeaponBase()
@@ -20,14 +19,13 @@ AWeaponBase::~AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
-	SweepDelegate.BindUObject(this, &AWeaponBase::OnSweepComplete);
 }
 
 // Called every frame
 void AWeaponBase::Tick(float DeltaTime)
 {
 	if (bWantsToSweep) {
-
+		OnSweepComplete();
 		RequestAsyncSweep();
 	}
 }
@@ -121,12 +119,12 @@ void AWeaponBase::OnSweepBegin()
 		QueryHandle_Prev._Data.FrameNumber = 0;
     }
     HitActors.Empty();
-	bWantsToSweep = true;
 
+	bWantsToSweep = true;
 	RequestAsyncSweep();
 }
 
-void AWeaponBase::OnSweepComplete(const FTraceHandle& Handle, FTraceDatum& Data)
+void AWeaponBase::OnSweepComplete()
 {
     if (!IsValid(MyCharacter) || !IsValid(GetWorld())) {
         return;
@@ -152,15 +150,6 @@ void AWeaponBase::OnSweepComplete(const FTraceHandle& Handle, FTraceDatum& Data)
             }
         }
     }
-
-	if (bWantsToSweep) {
-		RequestAsyncSweep();
-	}
-}
-
-void AWeaponBase::OnSweepEnd()
-{
-	bWantsToSweep = false;
 }
 
 // request async sweep, data is available in next tick
@@ -182,8 +171,14 @@ void AWeaponBase::RequestAsyncSweep()
                                                            FCollisionShape::MakeSphere(Radius),
                                                            QueryParams,
                                                            FCollisionResponseParams::DefaultResponseParam,
-                                                           &SweepDelegate, 0);
+                                                           nullptr, 0);
         Location_Prev = SocketLocation;
         Rotation_Prev = SocketRotation;
     }
+}
+
+void AWeaponBase::OnSweepEnd()
+{
+	OnSweepComplete();
+	bWantsToSweep = false;
 }
