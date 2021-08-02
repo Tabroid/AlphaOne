@@ -58,9 +58,9 @@ public:
 	virtual TSubclassOf<UDamageType> GetDamageType() const { return DamageType; }
 
 	virtual void OnSweepBegin();
-	virtual void OnSweepComplete();
+	virtual void OnSweepComplete(const FTraceHandle &Handle, FTraceDatum &Data);
 	virtual void OnSweepEnd();
-	virtual void RequestAsyncSweep();
+	virtual void RequestAsyncSweep(int32 Index);
 
 	// @TODO: implment
 	float GetDamage() const { return 50; }
@@ -101,5 +101,8 @@ protected:
 	TArray<AActor*> HitActors;
 
 	uint8 bWantsToSweep : 1;
-	FTraceDatum SweepResult;
+	FTraceDelegate SweepDelegate;
+
+private:
+	void SweepDebugDrawings(const FTraceDatum &TraceData, bool Persist = false, float LifeTime = 10.0f, uint8 Depth = 0, float Thickness = 1.0f);
 };

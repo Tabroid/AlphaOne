@@ -2,6 +2,8 @@
 
 
 #include "weapons/WeaponBase.h"
+#include "DrawDebugHelpers.h"
+
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -9,6 +11,7 @@ AWeaponBase::AWeaponBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	QueryParams.AddIgnoredActor(this);
+	SweepDelegate.BindUObject(this, &AWeaponBase::OnSweepComplete);
 }
 
 AWeaponBase::~AWeaponBase()
@@ -24,10 +27,6 @@ void AWeaponBase::BeginPlay()
 // Called every frame
 void AWeaponBase::Tick(float DeltaTime)
 {
-	if (bWantsToSweep) {
-		OnSweepComplete();
-		RequestAsyncSweep();
-	}
 }
 
 void AWeaponBase::AttachToCharacter(ACharacterBase* Character)
@@ -116,70 +115,79 @@ void AWeaponBase::OnSweepBegin()
     for (auto &[Name, Radius, Location_Prev, Rotation_Prev, QueryHandle_Prev] : GetCollisionSockets()) {
 		Location_Prev = GetSocketLocation(Name);
 		Rotation_Prev = GetSocketRotation(Name);
-		QueryHandle_Prev._Data.FrameNumber = 0;
+		QueryHandle_Prev = FTraceHandle();
     }
     HitActors.Empty();
 
 	bWantsToSweep = true;
-	RequestAsyncSweep();
+	for (int32 i = 0; i < GetCollisionSockets().Num(); ++i) {
+		RequestAsyncSweep(i);
+	}
 }
 
 // use sweep results
-void AWeaponBase::OnSweepComplete()
+void AWeaponBase::OnSweepComplete(const FTraceHandle &Handle, FTraceDatum &Data)
 {
     if (!IsValid(MyCharacter) || !IsValid(GetWorld())) {
         return;
     }
+	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Sweep complete: %d!"), Data.UserData));
 	auto World = GetWorld();
     auto FactionComp = MyCharacter->GetFactionComponent();
 
-    for (auto &[Name, Radius, Location_Prev, Rotation_Prev, QueryHandle_Prev] : GetCollisionSockets()) {
-        if (!World->QueryTraceData(QueryHandle_Prev, SweepResult)) {
-            continue;
-        }
-        // Clear out handle
-        QueryHandle_Prev._Data.FrameNumber = 0;
-        for (auto &Hit: SweepResult.OutHits) {
-            auto Actor = Hit.GetActor();
-            if (!FactionComp->IsEnemy(Actor)) {
-                continue;
-            }
-            if (!HitActors.Contains(Actor)) {
-                HitActors.Add(Actor);
-                FPointDamageEvent DamageEvent(GetDamage(), Hit, Hit.Normal, GetDamageType());
-                Actor->TakeDamage(GetDamage(), DamageEvent, MyCharacter->GetController(), MyCharacter);
-            }
-        }
-    }
+	int32 Index = Data.UserData;
+	for (auto &Hit: Data.OutHits) {
+		auto Actor = Hit.GetActor();
+		if (!FactionComp->IsEnemy(Actor)) {
+			continue;
+		}
+		if (!HitActors.Contains(Actor)) {
+			HitActors.Add(Actor);
+			FPointDamageEvent DamageEvent(GetDamage(), Hit, Hit.Normal, GetDamageType());
+			Actor->TakeDamage(GetDamage(), DamageEvent, MyCharacter->GetController(), MyCharacter);
+		}
+	}
+
+	if (bWantsToSweep) {
+		RequestAsyncSweep(Index);
+	}
+	// SweepDebugDrawings(Data);
+}
+
+void AWeaponBase::SweepDebugDrawings(const FTraceDatum &TraceData, bool Persist, float LifeTime, uint8 Depth, float Thickness)
+{
+	FColor Color = TraceData.OutHits.Num() ? FColor::Green : FColor::Red;
+	DrawDebugSphere(GetWorld(), TraceData.Start, TraceData.CollisionParams.CollisionShape.GetSphereRadius(), 6,
+	                Color, Persist, LifeTime, Depth, Thickness);
+	DrawDebugLine(GetWorld(), TraceData.Start, TraceData.End, Color, Persist, LifeTime, Depth, Thickness);
 }
 
 // request async sweep, data is available in NEXT TICK
-void AWeaponBase::RequestAsyncSweep()
+void AWeaponBase::RequestAsyncSweep(int32 Index)
 {
     if (!IsValid(GetWorld())) {
         return;
     }
 
-    for (auto &[Name, Radius, Location_Prev, Rotation_Prev, QueryHandle_Prev] : GetCollisionSockets()) {
-		if (QueryHandle_Prev._Data.FrameNumber != 0) {
-			continue;
-		}
-        auto SocketLocation = GetSocketLocation(Name);
-        auto SocketRotation = GetSocketRotation(Name);
-        QueryHandle_Prev = GetWorld()->AsyncSweepByChannel(EAsyncTraceType::Multi,
-                                                           Location_Prev, SocketLocation, FQuat(SocketRotation - Rotation_Prev),
-                                                           ECC_PhysicsBody,
-                                                           FCollisionShape::MakeSphere(Radius),
-                                                           QueryParams,
-                                                           FCollisionResponseParams::DefaultResponseParam,
-                                                           nullptr, 0);
-        Location_Prev = SocketLocation;
-        Rotation_Prev = SocketRotation;
-    }
+	auto &[Name, Radius, Location_Prev, Rotation_Prev, QueryHandle_Prev] = GetCollisionSockets()[Index];
+	auto SocketLocation = GetSocketLocation(Name);
+	auto SocketRotation = GetSocketRotation(Name);
+	QueryHandle_Prev = GetWorld()->AsyncSweepByChannel(EAsyncTraceType::Multi,
+													   Location_Prev, SocketLocation, FQuat(SocketRotation - Rotation_Prev),
+													   ECC_PhysicsBody,
+													   FCollisionShape::MakeSphere(Radius),
+													   QueryParams,
+													   FCollisionResponseParams::DefaultResponseParam,
+													   &SweepDelegate, Index);
+	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+	//  								 FString::Printf(TEXT("Sweep query: %d! Start: (%.02f, %.02f, %.02f), End: (%.02f, %.02f, %.02f)"), Index,
+	// 								                 Location_Prev.X, Location_Prev.Y, Location_Prev.Z, SocketLocation.X, SocketLocation.Y, SocketLocation.Z));
+
+	Location_Prev = SocketLocation;
+	Rotation_Prev = SocketRotation;
 }
 
 void AWeaponBase::OnSweepEnd()
 {
-	OnSweepComplete();
 	bWantsToSweep = false;
 }

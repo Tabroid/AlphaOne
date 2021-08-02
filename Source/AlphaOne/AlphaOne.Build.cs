@@ -7,7 +7,7 @@ public class AlphaOne : ModuleRules
 	public AlphaOne(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
+
 		PublicDependencyModuleNames.AddRange(
 			new string[] {
 				"Core",
@@ -21,7 +21,9 @@ public class AlphaOne : ModuleRules
 				"GameplayTasks",
 				"GameplayTags",
 				"UMG",
-				"Niagara"
+				"Niagara",
+				"Json",
+				"JsonUtilities"
 			}
 		);
 
@@ -38,7 +40,7 @@ public class AlphaOne : ModuleRules
 				"PhysicsCore"
 			}
 		);
-		
+
 		if (Target.Platform == UnrealTargetPlatform.IOS)
 		{
 			PrivateDependencyModuleNames.AddRange(new string[] { "OnlineSubsystem", "OnlineSubsystemUtils" });
