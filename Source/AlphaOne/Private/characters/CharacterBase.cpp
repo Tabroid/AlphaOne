@@ -281,7 +281,8 @@ void ACharacterBase::OnDeath(float KillingDamage, const FDamageEvent& DamageEven
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
 	// @TODO need test the right timing to call destroy
-	// Destroyed();
+	DetachFromControllerPendingDestroy();
+	Destroyed();
 }
 
 void ACharacterBase::SetRagdollPhysics()
