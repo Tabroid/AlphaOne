@@ -90,51 +90,6 @@ void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
-float ACharacterBase::GetHealth() const
-{
-	return AttributeSet->GetHealth();
-}
-
-float ACharacterBase::GetMaxHealth() const
-{
-	return AttributeSet->GetMaxHealth();
-}
-
-float ACharacterBase::GetHealthPercentage() const
-{
-    return AttributeSet->GetHealth() / AttributeSet->GetMaxHealth();
-}
-
-float ACharacterBase::GetMana() const
-{
-	return AttributeSet->GetMana();
-}
-
-float ACharacterBase::GetMaxMana() const
-{
-	return AttributeSet->GetMaxMana();
-}
-
-float ACharacterBase::GetManaPercentage() const
-{
-    return AttributeSet->GetMana() / AttributeSet->GetMaxMana();
-}
-
-float ACharacterBase::GetMoveSpeed() const
-{
-	return AttributeSet->GetMoveSpeed();
-}
-
-int32 ACharacterBase::GetLevel() const
-{
-	return AttributeSet->GetLevel();
-}
-
-bool ACharacterBase::SetLevel(int32 NewLevel)
-{
-	return AttributeSet->SetLevel(NewLevel);
-}
-
 void ACharacterBase::SetAction(EUnitActions NewAction, bool State)
 {
 	if (State) {

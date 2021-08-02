@@ -36,33 +36,6 @@ public:
 	virtual bool EquipWeapon(AWeaponBase* NewWeapon = nullptr);
 
 	UFUNCTION(BlueprintCallable)
-	virtual float GetHealth() const;
-
-	UFUNCTION(BlueprintCallable)
-	virtual float GetMaxHealth() const;
-
-	UFUNCTION(BlueprintCallable)
-	virtual float GetHealthPercentage() const;
-
-	UFUNCTION(BlueprintCallable)
-	virtual float GetMana() const;
-
-	UFUNCTION(BlueprintCallable)
-	virtual float GetMaxMana() const;
-
-	UFUNCTION(BlueprintCallable)
-	virtual float GetManaPercentage() const;
-
-	UFUNCTION(BlueprintCallable)
-	virtual float GetMoveSpeed() const;
-
-	UFUNCTION(BlueprintCallable)
-	virtual int32 GetLevel() const;
-
-	UFUNCTION(BlueprintCallable)
-	virtual bool SetLevel(int32 NewLevel);
-
-	UFUNCTION(BlueprintCallable)
 	UCharacterAttributes* GetAttributes() { return AttributeSet; }
 
 	UFUNCTION(BlueprintCallable)

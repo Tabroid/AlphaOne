@@ -86,46 +86,6 @@ float ABuildingBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEv
 	return DamageAmount;
 }
 
-float ABuildingBase::GetHealth() const
-{
-	return AttributeSet->GetHealth();
-}
-
-float ABuildingBase::GetMaxHealth() const
-{
-	return AttributeSet->GetMaxHealth();
-}
-
-float ABuildingBase::GetHealthPercentage() const
-{
-    return AttributeSet->GetHealth() / AttributeSet->GetMaxHealth();
-}
-
-float ABuildingBase::GetMana() const
-{
-	return AttributeSet->GetMana();
-}
-
-float ABuildingBase::GetMaxMana() const
-{
-	return AttributeSet->GetMaxMana();
-}
-
-float ABuildingBase::GetManaPercentage() const
-{
-    return AttributeSet->GetMana() / AttributeSet->GetMaxMana();
-}
-
-int32 ABuildingBase::GetLevel() const
-{
-	return AttributeSet->GetLevel();
-}
-
-bool ABuildingBase::SetLevel(int32 NewLevel)
-{
-	return AttributeSet->SetLevel(NewLevel);
-}
-
 void ABuildingBase::SetAction(EUnitActions NewAction, bool State)
 {
 	if (State) {

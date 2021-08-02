@@ -30,10 +30,10 @@ void UMeleeSweeper::NotifyTick(USkeletalMeshComponent* /*Mesh*/, UAnimSequenceBa
         SweepingTimer = 0.f;
     }
 
-    auto Character = Weapon->GetCharacter();
     if (!IsValid(Weapon) || !IsValid(Weapon->GetCharacter())) {
         return;
     }
+    auto Character = Weapon->GetCharacter();
     auto FactionComp = Character->GetFactionComponent();
 
     for (int32 i = 0; i < Weapon->GetCollisionSockets().Num(); ++i) {
