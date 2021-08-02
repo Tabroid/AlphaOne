@@ -49,7 +49,7 @@ void ABuildingBase::BeginPlay()
 
     // auto health = AbilitySystemComponent->GetAttributeSubobject("AttributeSet")->GetHealth();
     // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Health: %d!"), health));
-
+	AttributeSet->InitFromMetaDataTable(Cast<UAlphaOneInstance>(GetGameInstance())->UnitData(), UnitDataRowName);
     Cast<UHealthBar>(HealthBar->GetUserWidgetObject())->SetAttributeSet(AttributeSet);
 }
 
@@ -57,6 +57,7 @@ void ABuildingBase::BeginPlay()
 void ABuildingBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	AttributeSet->RegenOverTime(DeltaTime);
 	RotateHealthBar();
 }
 

@@ -56,33 +56,31 @@ void ATurret::CheckFireCondition()
 
 
     if (!NearestEnemy || Distance > FireRange) return;
-	
+
     RotateTurret(NearestEnemy->GetActorLocation());
     Fire();
-    
 }
 
-float ATurret::GetDistanceToEnemy() 
+float ATurret::GetDistanceToEnemy()
 {
 	if (!EnemyTarget) return 1.e9;
     return FVector::Dist(EnemyTarget->GetActorLocation(), GetActorLocation());
 }
 
-void ATurret::Fire() 
+void ATurret::Fire()
 {
 	//firing the projectiles, only when the pawn is alive
 	if (ProjectileClass && GetStatus() != EUnitStatuses::Dead){
 		//spawning the projectile at the spawn point
 		FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
 		FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
-		AProjectileBase* TempProjectile = 
-		GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation);
-		//set the owner 
+		AProjectileBase* TempProjectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation);
+		//set the owner
 		TempProjectile->SetOwner(this);
 	}
 }
 
-void ATurret::RotateTurret(FVector LookAtTarget) 
+void ATurret::RotateTurret(FVector LookAtTarget)
 {
 	if (!AuraMesh) return;
 	FVector StartLocation = AuraMesh->GetComponentLocation();

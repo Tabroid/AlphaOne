@@ -84,6 +84,9 @@ protected:
 	UPROPERTY()
 	UFactionComponent* FactionSystemComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+	FName UnitDataRowName = "Default_Building";
+
 private:
 	ACharacterBase* PlayerCharacter;
 };

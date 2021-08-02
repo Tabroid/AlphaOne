@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Engine/DataTable.h"
 #include "AlphaOneBattle.h"
 #include "AlphaOneInstance.generated.h"
 
@@ -18,7 +19,10 @@ public:
 
 	// Accessor for C++ & BP. Should be self-explanatory
 	UFUNCTION(BlueprintPure, Category = "Persistence", meta = (DisplayName = "Battle"))
-	UAlphaOneBattle *Battle() const { return BattleInstance; };
+	UAlphaOneBattle* Battle() const { return BattleInstance; }
+
+	UFUNCTION(BlueprintPure, Category = "Persistence", meta = (DisplayName = "Battle"))
+	class UDataTable* UnitData() const { return UnitDataTable; }
 
 protected:
  	// This is where we will clean up, as the game is shut dow
@@ -30,4 +34,7 @@ private:
 	// game starts. Initialization happens later by hand.
 	UPROPERTY(Transient)
 	UAlphaOneBattle *BattleInstance;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data", meta = (AllowPrivateAccess = "true"))
+	class UDataTable* UnitDataTable;
 };

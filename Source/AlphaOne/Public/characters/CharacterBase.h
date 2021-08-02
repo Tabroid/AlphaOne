@@ -137,6 +137,9 @@ protected:
 	UPROPERTY()
 	UAlphaOneAbilitySystem* AbilitySystemComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+	FName UnitDataRowName = "Default_Character";
+
 private:
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 10.0f;

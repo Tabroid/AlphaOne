@@ -4,53 +4,10 @@
 #include "Net/UnrealNetwork.h"
 
 UCharacterAttributes::UCharacterAttributes()
-    : Level(1)
-	, Health(100.f)
-	, MaxHealth(100.f)
-    , HealthRegen(0.f)
-    , Absorption(0.f)
-	, Mana(0.f)
-	, MaxMana(0.f)
-    , ManaRegen(0.f)
-	, AttackPower(1.0f)
-    , CriticalChance(0.05f)
-    , CriticalDamage(0.5f)
-    , ArmorPenetration(0.f)
-    , DamageAmplification(0.f)
-    , HitRate(0.9f)
-	, DefensePower(1.0f)
-    , DamageReduction(0.f)
-    , DodgeRate(0.05f)
-	, MoveSpeed(1.0f)
-	, AttackSpeed(1.0f)
 {
     // unset all flags for action and status
     Action = static_cast<EUnitActions>(0);
     Status = static_cast<EUnitStatuses>(0);
-}
-
-void UCharacterAttributes::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(UCharacterAttributes, Health);
-	DOREPLIFETIME(UCharacterAttributes, MaxHealth);
-    DOREPLIFETIME(UCharacterAttributes, HealthRegen);
-    DOREPLIFETIME(UCharacterAttributes, Absorption);
-	DOREPLIFETIME(UCharacterAttributes, Mana);
-	DOREPLIFETIME(UCharacterAttributes, MaxMana);
-    DOREPLIFETIME(UCharacterAttributes, ManaRegen);
-	DOREPLIFETIME(UCharacterAttributes, AttackPower);
-    DOREPLIFETIME(UCharacterAttributes, CriticalChance);
-    DOREPLIFETIME(UCharacterAttributes, CriticalDamage);
-    DOREPLIFETIME(UCharacterAttributes, ArmorPenetration);
-    DOREPLIFETIME(UCharacterAttributes, DamageAmplification);
-    DOREPLIFETIME(UCharacterAttributes, HitRate);
-	DOREPLIFETIME(UCharacterAttributes, DefensePower);
-    DOREPLIFETIME(UCharacterAttributes, DamageReduction);
-    DOREPLIFETIME(UCharacterAttributes, DodgeRate);
-    DOREPLIFETIME(UCharacterAttributes, MoveSpeed);
-    DOREPLIFETIME(UCharacterAttributes, AttackSpeed);
 }
 
 void UCharacterAttributes::AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute,
@@ -65,18 +22,108 @@ void UCharacterAttributes::PreAttributeChange(const FGameplayAttribute& Attribut
 	// This is called whenever attributes change, so for max health/mana we want to scale the current totals to match
 	Super::PreAttributeChange(Attribute, NewValue);
 
-	if (Attribute == GetMaxHealthAttribute())
-	{
+	if (Attribute == GetMaxHealthAttribute()) {
 		AdjustAttributeForMaxChange(Health, MaxHealth, NewValue, GetHealthAttribute());
-	}
-	else if (Attribute == GetMaxManaAttribute())
-	{
+	} else if (Attribute == GetMaxManaAttribute()) {
 		AdjustAttributeForMaxChange(Mana, MaxMana, NewValue, GetManaAttribute());
 	}
 }
 
-void UCharacterAttributes::NaturalChange(float DeltaTime)
+void UCharacterAttributes::RegenOverTime(float DeltaTime)
 {
     Health.SetCurrentValue(std::min(MaxHealth.GetCurrentValue(), Health.GetCurrentValue() + HealthRegen.GetCurrentValue()*DeltaTime));
+    Absorption.SetCurrentValue(std::min(MaxAbsorption.GetCurrentValue(), Absorption.GetCurrentValue() + AbsorptionRegen.GetCurrentValue()*DeltaTime));
     Mana.SetCurrentValue(std::min(MaxMana.GetCurrentValue(), Mana.GetCurrentValue() + ManaRegen.GetCurrentValue()*DeltaTime));
+}
+
+void UCharacterAttributes::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(UCharacterAttributes, RotationRate);
+    DOREPLIFETIME(UCharacterAttributes, JogSpeed);
+    DOREPLIFETIME(UCharacterAttributes, SprintSpeed);
+
+    DOREPLIFETIME(UCharacterAttributes, Health);
+    DOREPLIFETIME(UCharacterAttributes, MaxHealth);
+    DOREPLIFETIME(UCharacterAttributes, HealthRegen);
+    DOREPLIFETIME(UCharacterAttributes, Absorption);
+    DOREPLIFETIME(UCharacterAttributes, MaxAbsorption);
+    DOREPLIFETIME(UCharacterAttributes, AbsorptionRegen);
+
+    DOREPLIFETIME(UCharacterAttributes, Mana);
+    DOREPLIFETIME(UCharacterAttributes, MaxMana);
+    DOREPLIFETIME(UCharacterAttributes, ManaRegen);
+
+    DOREPLIFETIME(UCharacterAttributes, AttackPower);
+    DOREPLIFETIME(UCharacterAttributes, CriticalChance);
+    DOREPLIFETIME(UCharacterAttributes, CriticalDamage);
+    DOREPLIFETIME(UCharacterAttributes, ArmorPenetration);
+    DOREPLIFETIME(UCharacterAttributes, DamageAmplification);
+    DOREPLIFETIME(UCharacterAttributes, HitRate);
+    DOREPLIFETIME(UCharacterAttributes, AttackSpeed);
+
+    DOREPLIFETIME(UCharacterAttributes, Armor);
+    DOREPLIFETIME(UCharacterAttributes, DamageReduction);
+    DOREPLIFETIME(UCharacterAttributes, DodgeRate);
+}
+
+bool UCharacterAttributes::SetLevel(int32 NewValue)
+{
+    if (Level == NewValue) {
+         return false;
+    }
+    Level = NewValue;
+    return true;
+}
+
+void UCharacterAttributes::InitLevel(int32 NewValue)
+{
+    Level = NewValue;
+}
+
+bool UCharacterAttributes::LevelUp()
+{
+    Level += 1;
+    return true;
+    // @TODO, attributes increase
+}
+
+bool UCharacterAttributes::InitFromMetaDataTable(const UDataTable* DataTable, FName RowName)
+{
+    if (!DataTable) { return false; }
+
+    auto Data = DataTable->FindRow<FUnitDataRow>(RowName, FString::Printf(TEXT("Query UnitData for %s ..."), *RowName.ToString()));
+
+    if (!Data) { return false; }
+
+    InitLevel(Data->Level);
+    InitRotationRate(Data->RotationRate);
+    InitJogSpeed(Data->JogSpeed);
+    InitSprintSpeed(Data->SprintSpeed);
+
+    InitHealth(Data->Health);
+    InitMaxHealth(Data->MaxHealth);
+    InitHealthRegen(Data->HealthRegen);
+    InitAbsorption(Data->Absorption);
+    InitMaxAbsorption(Data->MaxAbsorption);
+    InitAbsorptionRegen(Data->AbsorptionRegen);
+
+    InitMana(Data->Mana);
+    InitMaxMana(Data->MaxMana);
+    InitManaRegen(Data->ManaRegen);
+
+    InitAttackPower(Data->AttackPower);
+    InitCriticalChance(Data->CriticalChance);
+    InitCriticalDamage(Data->CriticalDamage);
+    InitArmorPenetration(Data->ArmorPenetration);
+    InitDamageAmplification(Data->DamageAmplification);
+    InitHitRate(Data->HitRate);
+    InitAttackSpeed(Data->AttackSpeed);
+
+    InitArmor(Data->Armor);
+    InitDamageReduction(Data->DamageReduction);
+    InitDodgeRate(Data->DodgeRate);
+
+    return true;
 }

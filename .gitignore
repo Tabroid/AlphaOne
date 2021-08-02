@@ -6,6 +6,7 @@ Content/*
 !Content/Blueprint
 !Content/Map
 !Content/BSP_Static_Mesh
+!Content/Data
 .vscode
 .vs
 *.VC.db

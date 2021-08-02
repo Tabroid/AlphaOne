@@ -33,13 +33,14 @@ void ACharacterBase::BeginPlay()
 		DefaultWeaponPtr->SetOwner(Cast<AActor>(this));
 		EquipWeapon(DefaultWeaponPtr);
 	}
+	AttributeSet->InitFromMetaDataTable(Cast<UAlphaOneInstance>(GetGameInstance())->UnitData(), UnitDataRowName);
 }
 
 // Called every frame
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	AttributeSet->NaturalChange(DeltaTime);
+	AttributeSet->RegenOverTime(DeltaTime);
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
