@@ -4,7 +4,7 @@
 #include "characters/CharacterBase.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "weapons/RangedWeapon.h"
+#include "weapons/WeaponBase.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values

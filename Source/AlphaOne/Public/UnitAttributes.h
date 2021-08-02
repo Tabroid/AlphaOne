@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "AlphaOne.h"
+#include "CoreMinimal.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
 #include "UnitAttributes.generated.h"

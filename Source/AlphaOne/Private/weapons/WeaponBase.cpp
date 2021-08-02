@@ -7,8 +7,9 @@
 AWeaponBase::AWeaponBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
-
+	PrimaryActorTick.bCanEverTick = true;
+	QueryParams.AddIgnoredActor(this);
+	bWantsToSweep = false;
 }
 
 AWeaponBase::~AWeaponBase()
@@ -19,12 +20,16 @@ AWeaponBase::~AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+	SweepDelegate.BindUObject(this, &AWeaponBase::OnSweepComplete);
 }
 
 // Called every frame
 void AWeaponBase::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	if (bWantsToSweep) {
+
+		RequestAsyncSweep();
+	}
 }
 
 void AWeaponBase::AttachToCharacter(ACharacterBase* Character)
@@ -32,6 +37,7 @@ void AWeaponBase::AttachToCharacter(ACharacterBase* Character)
 	if (Character) {
 		DetachFromCharacter();
 		MyCharacter = Character;
+		QueryParams.AddIgnoredActor(Character);
 	}
 }
 
@@ -39,6 +45,9 @@ void AWeaponBase::DetachFromCharacter()
 {
 	if (MyCharacter) {
 		MyCharacter = nullptr;
+		// clear always follow adding itself
+		QueryParams.ClearIgnoredActors();
+		QueryParams.AddIgnoredActor(this);
 	}
 }
 
@@ -89,5 +98,92 @@ FRotator AWeaponBase::GetSocketRotation(FName name) const
 const TArray<FWeaponSockets>& AWeaponBase::GetCollisionSockets() const
 {
 	// intentionally give error if AttackCombo is out of array
-	return AttackMontages[AttackCombo].Sockets;
+	int32 Index = (AttackCombo >= AttackMontages.Num()) ? 0 : AttackCombo;
+	return AttackMontages[Index].Sockets;
+}
+
+TArray<FWeaponSockets>& AWeaponBase::GetCollisionSockets()
+{
+	// intentionally give error if AttackCombo is out of array
+	int32 Index = (AttackCombo >= AttackMontages.Num()) ? 0 : AttackCombo;
+	return AttackMontages[Index].Sockets;
+}
+
+void AWeaponBase::OnSweepBegin()
+{
+	if (!IsValid(MyCharacter)) {
+		return;
+	}
+
+    for (auto &[Name, Radius, Location_Prev, Rotation_Prev, QueryHandle_Prev] : GetCollisionSockets()) {
+		Location_Prev = GetSocketLocation(Name);
+		Rotation_Prev = GetSocketRotation(Name);
+		QueryHandle_Prev._Data.FrameNumber = 0;
+    }
+    HitActors.Empty();
+	bWantsToSweep = true;
+
+	RequestAsyncSweep();
+}
+
+void AWeaponBase::OnSweepComplete(const FTraceHandle& Handle, FTraceDatum& Data)
+{
+    if (!IsValid(MyCharacter) || !IsValid(GetWorld())) {
+        return;
+    }
+	auto World = GetWorld();
+    auto FactionComp = MyCharacter->GetFactionComponent();
+
+    for (auto &[Name, Radius, Location_Prev, Rotation_Prev, QueryHandle_Prev] : GetCollisionSockets()) {
+        if (!World->QueryTraceData(QueryHandle_Prev, SweepResult)) {
+            continue;
+        }
+        // Clear out handle
+        QueryHandle_Prev._Data.FrameNumber = 0;
+        for (auto &Hit: SweepResult.OutHits) {
+            auto Actor = Hit.GetActor();
+            if (!FactionComp->IsEnemy(Actor)) {
+                continue;
+            }
+            if (!HitActors.Contains(Actor)) {
+                HitActors.Add(Actor);
+                FPointDamageEvent DamageEvent(GetDamage(), Hit, Hit.Normal, GetDamageType());
+                Actor->TakeDamage(GetDamage(), DamageEvent, MyCharacter->GetController(), MyCharacter);
+            }
+        }
+    }
+
+	if (bWantsToSweep) {
+		RequestAsyncSweep();
+	}
+}
+
+void AWeaponBase::OnSweepEnd()
+{
+	bWantsToSweep = false;
+}
+
+// request async sweep, data is available in next tick
+void AWeaponBase::RequestAsyncSweep()
+{
+    if (!IsValid(GetWorld())) {
+        return;
+    }
+
+    for (auto &[Name, Radius, Location_Prev, Rotation_Prev, QueryHandle_Prev] : GetCollisionSockets()) {
+		if (QueryHandle_Prev._Data.FrameNumber != 0) {
+			continue;
+		}
+        auto SocketLocation = GetSocketLocation(Name);
+        auto SocketRotation = GetSocketRotation(Name);
+        QueryHandle_Prev = GetWorld()->AsyncSweepByChannel(EAsyncTraceType::Multi,
+                                                           Location_Prev, SocketLocation, FQuat(SocketRotation - Rotation_Prev),
+                                                           ECC_PhysicsBody,
+                                                           FCollisionShape::MakeSphere(Radius),
+                                                           QueryParams,
+                                                           FCollisionResponseParams::DefaultResponseParam,
+                                                           &SweepDelegate, 0);
+        Location_Prev = SocketLocation;
+        Rotation_Prev = SocketRotation;
+    }
 }

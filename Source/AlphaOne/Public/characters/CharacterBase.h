@@ -5,12 +5,13 @@
 #include "AlphaOne.h"
 #include "GameplayEffect.h"
 #include "abilities/AlphaOneAbilitySystem.h"
-#include "weapons/WeaponBase.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GenericTeamAgentInterface.h"
 #include "Templates/SharedPointer.h"
 #include "CharacterBase.generated.h"
+
+class WeaponBase;
 
 UCLASS()
 class ALPHAONE_API ACharacterBase : public ACharacter, public IGenericTeamAgentInterface

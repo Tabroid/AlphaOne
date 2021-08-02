@@ -2,7 +2,6 @@
 
 #include "UnitAttributes.h"
 #include "Net/UnrealNetwork.h"
-#include <algorithm>
 
 UCharacterAttributes::UCharacterAttributes()
     : Level(1)

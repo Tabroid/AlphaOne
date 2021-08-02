@@ -3,6 +3,7 @@
 #pragma once
 
 #include "AlphaOne.h"
+#include "UnitAttributes.h"
 #include "abilities/AlphaOneAbilitySystem.h"
 #include "GameFramework/Actor.h"
 #include "BuildingBase.generated.h"

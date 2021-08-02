@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "AlphaOneGlobals.h"
+#include "CoreMinimal.h"
+#include "UnitAttributes.h"
 #include "AlphaOneFaction.h"
 #include "AlphaOneBattle.h"
 #include "AlphaOneGameModeBase.h"
