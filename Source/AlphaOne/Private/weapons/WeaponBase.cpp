@@ -124,6 +124,7 @@ void AWeaponBase::OnSweepBegin()
 	RequestAsyncSweep();
 }
 
+// use sweep results
 void AWeaponBase::OnSweepComplete()
 {
     if (!IsValid(MyCharacter) || !IsValid(GetWorld())) {
@@ -152,7 +153,7 @@ void AWeaponBase::OnSweepComplete()
     }
 }
 
-// request async sweep, data is available in next tick
+// request async sweep, data is available in NEXT TICK
 void AWeaponBase::RequestAsyncSweep()
 {
     if (!IsValid(GetWorld())) {
