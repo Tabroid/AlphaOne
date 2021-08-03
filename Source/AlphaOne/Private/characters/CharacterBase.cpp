@@ -202,10 +202,11 @@ float ACharacterBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 	if (!CanBeDamaged() || !IsAbleToAct()) {
 		return 0.f;
 	}
-	DamageAmount = Cast<UAlphaOneInstance>(GetGameInstance())->Battle()->CalcDamage(DamageAmount, DamageCauser, AttributeSet);
-	auto hp = AttributeSet->GetHealth() - DamageAmount;
-	AttributeSet->InitHealth(hp);
-	if (hp <= 0.) {
+	auto Battle = Cast<UAlphaOneInstance>(GetGameInstance())->Battle();
+	DamageAmount = Battle->InflictDamage(DamageAmount, DamageCauser, this);
+
+	// @TODO: call on health changed
+	if (AttributeSet->GetHealth() <= 0.) {
 		Die(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	}
 	return DamageAmount;

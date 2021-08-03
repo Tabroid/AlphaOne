@@ -26,8 +26,8 @@ ABuildingBase::ABuildingBase()
 	AuraMesh->SetupAttachment(BaseMesh);
 	AuraMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 
-	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar"));
-	HealthBar->SetupAttachment(BaseMesh);
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar"));
+	WidgetComponent->SetupAttachment(BaseMesh);
 
 	// Create ability system component, and set it to be explicitly replicated
 	AbilitySystemComponent = CreateDefaultSubobject<UAlphaOneAbilitySystem>(TEXT("AbilitySystemComponent"));
@@ -50,7 +50,7 @@ void ABuildingBase::BeginPlay()
     // auto health = AbilitySystemComponent->GetAttributeSubobject("AttributeSet")->GetHealth();
     // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Health: %d!"), health));
 	AttributeSet->InitFromMetaDataTable(Cast<UAlphaOneInstance>(GetGameInstance())->UnitData(), UnitDataRowName);
-    Cast<UHealthBar>(HealthBar->GetUserWidgetObject())->SetAttributeSet(AttributeSet);
+    Cast<UHealthBar>(WidgetComponent->GetUserWidgetObject())->SetAttributeSet(AttributeSet);
 }
 
 // Called every frame
@@ -58,14 +58,14 @@ void ABuildingBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	AttributeSet->RegenOverTime(DeltaTime);
-	RotateHealthBar();
+	RotateWidgetPlane();
 }
 
-void ABuildingBase::RotateHealthBar()
+void ABuildingBase::RotateWidgetPlane()
 {
 	if (PlayerCharacter) {
 	    FVector LookDirection = PlayerCharacter->GetActorLocation() - GetActorLocation();
-	    HealthBar->SetWorldRotation(LookDirection.Rotation());
+	    WidgetComponent->SetWorldRotation(LookDirection.Rotation());
     }
 }
 
@@ -75,12 +75,11 @@ float ABuildingBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEv
 		return 0.f;
 	}
 
-	DamageAmount = Cast<UAlphaOneInstance>(GetGameInstance())->Battle()->CalcDamage(DamageAmount, DamageCauser, AttributeSet);
+	auto Battle = Cast<UAlphaOneInstance>(GetGameInstance())->Battle();
+	DamageAmount = Battle->InflictDamage(DamageAmount, DamageCauser, this);
 
-	auto hp = AttributeSet->GetHealth() - DamageAmount;
-	AttributeSet->InitHealth(hp);
 	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Damage: %.0f, Health: %.0f!"), DamageAmount, hp));
-	if (hp <= 0.) {
+	if (AttributeSet->GetHealth() <= 0.) {
         // @TODO, to implement
 		; // Die(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	}

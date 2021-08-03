@@ -97,6 +97,7 @@ bool UCharacterAttributes::InitFromMetaDataTable(const UDataTable* DataTable, FN
 
     if (!Data) { return false; }
 
+    Name = RowName;
     InitLevel(Data->Level);
     InitRotationRate(Data->RotationRate);
     InitJogSpeed(Data->JogSpeed);

@@ -28,6 +28,3 @@ protected:
 	UPROPERTY (meta = (BindWidget))
 	UTextBlock* HealthPercentage = nullptr;
 };
-
-
-

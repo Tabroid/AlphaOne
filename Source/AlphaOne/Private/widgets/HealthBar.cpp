@@ -4,7 +4,7 @@
 #include "widgets/HealthBar.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-#include "buildings/Tower.h"
+
 
 void UHealthBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {

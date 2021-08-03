@@ -9,3 +9,5 @@
 #include "AlphaOneGameModeBase.h"
 #include "AlphaOneInstance.h"
 
+
+const static int32 WIDGET_ZORDER_DAMAGE_TEXT = 10;

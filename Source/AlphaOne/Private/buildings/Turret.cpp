@@ -31,7 +31,7 @@ void ATurret::BeginPlay()
 
     //set up the fire rate timer for the turret
     GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, this, &ATurret::CheckFireCondition, FireRate, true);
-    HealthBar->SetVisibility(false);
+    WidgetComponent->SetVisibility(false);
 }
 
 void ATurret::CheckFireCondition()

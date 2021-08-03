@@ -133,6 +133,9 @@ public:
 	virtual void RegenOverTime(float DeltaTime);
 	// @TODO: add effects
 	virtual bool InitFromMetaDataTable(const UDataTable* DataTable, FName RowName);
+	virtual void InitFromMetaDataTable(const UDataTable* DataTable) override {
+		InitFromMetaDataTable(DataTable, Name);
+	}
 
 	// @TODO level may affect other attributes
 	int32 GetLevel() const { return Level; }
