@@ -203,7 +203,7 @@ float ACharacterBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 		return 0.f;
 	}
 	auto Battle = Cast<UAlphaOneInstance>(GetGameInstance())->Battle();
-	auto BattleResult = Battle->InflictDamage(DamageAmount, DamageCauser, this);
+	auto BattleResult = Battle->InflictDamage(DamageAmount, DamageEvent, DamageCauser, this);
 
 	// @TODO: call on health changed
 	if (AttributeSet->GetHealth() <= 0.) {

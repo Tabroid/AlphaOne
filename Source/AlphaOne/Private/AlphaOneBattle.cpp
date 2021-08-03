@@ -33,7 +33,7 @@ UAlphaOneBattle::~UAlphaOneBattle()
 {
 }
 
-FAttackResult UAlphaOneBattle::InflictDamage(float DamageBase, AActor* Causer, AActor* Taker) const
+FAttackResult UAlphaOneBattle::InflictDamage(float DamageBase, const FDamageEvent& DamageEvent, AActor* Causer, AActor* Taker) const
 {
     FAttackResult Result;
     auto CauserAttr = _Attr(Causer);
@@ -42,8 +42,29 @@ FAttackResult UAlphaOneBattle::InflictDamage(float DamageBase, AActor* Causer, A
         return Result;
     }
 
-    // calculation
-    Result.FinalDamage = DamageBase;
+    // calculation block
+    // missed
+    if (FMath::RandRange(0.f, 1.f) > CauserAttr->GetHitRate()) {
+        Result.FinalDamage = 0.f;
+        Result.DamageType = EDamageTypes::Missed;
+    // dodged
+    } else if (TakerAttr->GetDodgeRate() - std::max(0.f, CauserAttr->GetHitRate() - 1.f) > FMath::RandRange(0.f, 1.f)) {
+        Result.FinalDamage = 0.f;
+        Result.DamageType = EDamageTypes::Dodged;
+    // hit
+    } else {
+        // @TODO implement formula, now it is an arbitrary one
+        Result.FinalDamage = DamageBase * (1.f + (CauserAttr->GetAttackPower() - 0.4f*(TakerAttr->GetArmor() - CauserAttr->GetArmorPenetration()))/10.f);
+        Result.FinalDamage *= (1.f + CauserAttr->GetDamageAmplification())*(1. - TakerAttr->GetDamageReduction());
+        Result.FinalDamage = std::max(0.f, Result.FinalDamage);
+
+        // critical
+        if (CauserAttr->GetCriticalChance() > FMath::RandRange(0.f, 1.f)) {
+            Result.DamageType = EDamageTypes::Critical;
+            Result.FinalDamage *= 1.f + CauserAttr->GetCriticalDamage();
+        }
+    }
+
     // @TODO this is just a test
     // Result.DamageType = static_cast<EDamageTypes>(FMath::RandRange(0, static_cast<int32>(EDamageTypes::Max_Types)));
 

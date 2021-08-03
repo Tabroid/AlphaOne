@@ -76,7 +76,7 @@ float ABuildingBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEv
 	}
 
 	auto Battle = Cast<UAlphaOneInstance>(GetGameInstance())->Battle();
-	auto BattleResult = Battle->InflictDamage(DamageAmount, DamageCauser, this);
+	auto BattleResult = Battle->InflictDamage(DamageAmount, DamageEvent, DamageCauser, this);
 
 	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Damage: %.0f, Health: %.0f!"), DamageAmount, hp));
 	if (AttributeSet->GetHealth() <= 0.) {

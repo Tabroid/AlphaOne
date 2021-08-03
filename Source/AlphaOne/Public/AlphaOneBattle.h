@@ -37,7 +37,7 @@ public:
 	UAlphaOneBattle();
 	~UAlphaOneBattle();
 
-	FAttackResult InflictDamage(float DamageBase, AActor* Causer, AActor* Taker) const;
+	FAttackResult InflictDamage(float DamageBase, const FDamageEvent& DamageEvent, AActor* Causer, AActor* Taker) const;
 
 protected:
 	void PopDamageText(const FAttackResult& Result, const AActor* Causer, const AActor* Taker) const;
