@@ -76,14 +76,14 @@ float ABuildingBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEv
 	}
 
 	auto Battle = Cast<UAlphaOneInstance>(GetGameInstance())->Battle();
-	DamageAmount = Battle->InflictDamage(DamageAmount, DamageCauser, this);
+	auto BattleResult = Battle->InflictDamage(DamageAmount, DamageCauser, this);
 
 	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Damage: %.0f, Health: %.0f!"), DamageAmount, hp));
 	if (AttributeSet->GetHealth() <= 0.) {
         // @TODO, to implement
-		; // Die(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+		; // Die(BattleResult.FinalDamage, DamageEvent, EventInstigator, DamageCauser);
 	}
-	return DamageAmount;
+	return BattleResult.FinalDamage;
 }
 
 void ABuildingBase::SetAction(EUnitActions NewAction, bool State)

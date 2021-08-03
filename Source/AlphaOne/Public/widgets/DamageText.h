@@ -7,6 +7,7 @@
 #include "DamageText.generated.h"
 
 class UTextBlock;
+class APlayerController;
 
 UCLASS()
 class ALPHAONE_API UDamageText : public UUserWidget
@@ -14,7 +15,7 @@ class ALPHAONE_API UDamageText : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void PopDamage(float Value, FVector2D Position, FLinearColor Color = FLinearColor::White, float Life = 1.f, float Distance = 200.f);
+	void PopText(const APlayerController* Player, const FText& Text, FVector Position, FLinearColor Color = FLinearColor::White, float Life = 1.f, float Distance = 200.f);
 
 protected:
 	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);

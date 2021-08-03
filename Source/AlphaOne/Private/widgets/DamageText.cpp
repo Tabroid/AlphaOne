@@ -3,22 +3,25 @@
 
 #include "widgets/DamageText.h"
 #include "Components/TextBlock.h"
+#include "controllers/AlphaOnePlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 
-void UDamageText::PopDamage(float Value, FVector2D Position, FLinearColor Color, float Life, float Distance)
+void UDamageText::PopText(const APlayerController* Player, const FText& Text, FVector Position, FLinearColor Color, float Life, float Distance)
 {
     DamageText->SetColorAndOpacity(Color);
-    DamageText->SetText(FText::AsNumber(int32(Value)));
+    DamageText->SetText(Text);
     LifeSpan = Life;
 
-    // find the final location
+    UGameplayStatics::ProjectWorldToScreen(Player, Position, ViewPosition, false);
+    SetPositionInViewport(ViewPosition);
+
+    // define the trace
     float Sign = FMath::RandBool() ? 1.f : -1.f;
     Velocity.X = Sign * FMath::RandRange(Distance / 2.f, Distance) / Life;
     Velocity.Y = -FMath::RandRange(Distance, Distance * 2.f) / Life;
     Acceleration.X = 0.;
     Acceleration.Y = -2.f * Velocity.Y / Life;
-    ViewPosition = Position;
-    SetPositionInViewport(ViewPosition);
 }
 
 void UDamageText::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

@@ -3,8 +3,7 @@
 #include "buildings/BuildingBase.h"
 #include "widgets/DamageText.h"
 #include "controllers/AlphaOnePlayerController.h"
-#include "Blueprint/WidgetLayoutLibrary.h"
-#include "Blueprint/UserWidget.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -34,38 +33,60 @@ UAlphaOneBattle::~UAlphaOneBattle()
 {
 }
 
-float UAlphaOneBattle::InflictDamage(float DamageBase, AActor* Causer, AActor* Taker) const
+FAttackResult UAlphaOneBattle::InflictDamage(float DamageBase, AActor* Causer, AActor* Taker) const
 {
+    FAttackResult Result;
     auto CauserAttr = _Attr(Causer);
     auto TakerAttr = _Attr(Taker);
     if (!TakerAttr || !CauserAttr) {
-        return 0.f;
+        return Result;
     }
 
-    float Damage = DamageBase;
-    auto NewHealth = TakerAttr->GetHealth() - Damage;
+    // calculation
+    Result.FinalDamage = DamageBase;
+    // @TODO this is just a test
+    // Result.DamageType = static_cast<EDamageTypes>(FMath::RandRange(0, static_cast<int32>(EDamageTypes::Max_Types)));
+
+    // inflict damage
+    auto NewHealth = TakerAttr->GetHealth() - Result.FinalDamage;
     TakerAttr->InitHealth(NewHealth);
-    PopDamageText(Damage, Causer, Taker);
-    return Damage;
+    PopDamageText(Result, Causer, Taker);
+    return Result;
 }
 
-void UAlphaOneBattle::PopDamageText(float Damage, AActor* Causer, AActor* Taker) const
+void UAlphaOneBattle::PopDamageText(const FAttackResult& Result, const AActor* Causer, const AActor* Taker) const
 {
-    // cast to player controller, do not display damage if it was not caused by a player
-    // no more safety checks because it is supposed to be done before calling this function
+    // some safety check
+    // if (!DamageTextRef) { return; }
     auto Pawn = Cast<APawn>(Causer);
     if (!IsValid(Pawn)) { return; }
-    auto Controller = Cast<AAlphaOnePlayerController>(Pawn->GetController());
-    if (!IsValid(Controller)) { return; }
+    auto Player = Cast<AAlphaOnePlayerController>(Pawn->GetController());
+    if (!IsValid(Player)) { return; }
 
-    FVector2D Position;
-    auto Success = UGameplayStatics::ProjectWorldToScreen(Controller, Taker->GetActorLocation(), Position, false);
-    // Spawn a user widget
-    auto Text = CreateWidget<UDamageText>(Controller, DamageTextRef);
-    Text->PopDamage(Damage, Position);
+    auto Position = Taker->GetActorLocation();
+    auto Capsule = Cast<UCapsuleComponent>(Taker->GetRootComponent());
+    if (Capsule) { Position.Z += Capsule->GetScaledCapsuleHalfHeight(); }
+
+    auto Text = CreateWidget<UDamageText>(Player, DamageTextRef);
+    switch (Result.DamageType) {
+    case EDamageTypes::Hit:
+        Text->PopText(Player, FText::AsNumber(int32(Result.FinalDamage)), Position, FLinearColor::White);
+        break;
+    case EDamageTypes::Critical:
+        Text->PopText(Player, FText::Format(FText::AsCultureInvariant("{:d}!"), int32(Result.FinalDamage)), Position, FLinearColor::Yellow);
+        break;
+    case EDamageTypes::Missed:
+        Text->PopText(Player, FText::AsCultureInvariant("MISS"), Position, FLinearColor::Red);
+        break;
+    case EDamageTypes::Dodged:
+        Text->PopText(Player, FText::AsCultureInvariant("DODGED"), Position, FLinearColor::White);
+        break;
+    default:
+        break;
+    }
+
     Text->AddToViewport(WIDGET_ZORDER_DAMAGE_TEXT);
-
     // remove for GC
     FTimerHandle TimerHandle;
-    Controller->GetWorldTimerManager().SetTimer(TimerHandle, Text, &UUserWidget::RemoveFromParent, 2.0f, false);
+    Player->GetWorldTimerManager().SetTimer(TimerHandle, Text, &UUserWidget::RemoveFromParent, 2.0f, false);
 }
