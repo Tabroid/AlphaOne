@@ -73,7 +73,7 @@ public:
 	UPROPERTY(EditAnywhere) float DodgeRate = 0.05f;
 };
 
-DECLARE_DELEGATE_TwoParams(FOnAttributeChanged, float, float)
+using FOnAttributeChanged = TDelegate<void(float NewVal, float OldVal)>;
 
 // helper macro for adding an attribute
 #define ADD_ATTRIBUTE(ClassName, PropertyName, Category) \
@@ -91,7 +91,7 @@ DECLARE_DELEGATE_TwoParams(FOnAttributeChanged, float, float)
 	}
 
 // helper macro for adding an attribute with changed
-#define ADD_ATTRIBUTE2(ClassName, PropertyName, Category) \
+#define ADD_ATTRIBUTE_DELEGATED(ClassName, PropertyName, Category) \
 	public: \
 	UPROPERTY(BlueprintReadOnly, Category, ReplicatedUsing=OnRep_##PropertyName) \
 	FGameplayAttributeData PropertyName; \
@@ -102,8 +102,8 @@ DECLARE_DELEGATE_TwoParams(FOnAttributeChanged, float, float)
 		if (ensure(AbilityComp)) { \
 			float OldVal = PropertyName.GetBaseValue(); \
 			AbilityComp->SetNumericAttributeBase(Get##PropertyName##Attribute(), NewVal); \
-			if (PropertyName##ChangedDelegate.IsBound()) { \
-				PropertyName##ChangedDelegate.Execute(NewVal, OldVal); \
+			for (auto& [KeyVal, Delegate] : PropertyName##ChangedDelegates) { \
+				if (Delegate.IsBound()) { Delegate.Execute(NewVal, OldVal); } \
 			} \
 		} \
 	} \
@@ -111,15 +111,21 @@ DECLARE_DELEGATE_TwoParams(FOnAttributeChanged, float, float)
 		float OldVal = PropertyName.GetCurrentValue(); \
 		PropertyName.SetBaseValue(NewVal); \
 		PropertyName.SetCurrentValue(NewVal); \
-		if (PropertyName##ChangedDelegate.IsBound()) { \
-			PropertyName##ChangedDelegate.Execute(NewVal, OldVal); \
+		for (auto &[KeyVal, Delegate] : PropertyName##ChangedDelegates) { \
+			if (Delegate.IsBound()) { Delegate.Execute(NewVal, OldVal); } \
 		} \
 	} \
- 	void Set##PropertyName##ChangedDelegate(FOnAttributeChanged NewDelegate) { \
-		PropertyName##ChangedDelegate = NewDelegate; \
+ 	FORCEINLINE void Add##PropertyName##ChangedDelegate(FOnAttributeChanged NewDelegate, FString KeyVal) { \
+		PropertyName##ChangedDelegates.Add(KeyVal, NewDelegate); \
+	} \
+	FORCEINLINE int32 Remove##PropertyName##ChangedDelegate(FString KeyVal) { \
+		return PropertyName##ChangedDelegates.Remove(KeyVal); \
+	} \
+	FORCEINLINE void Reset##PropertyName##ChangedDelegate() { \
+		PropertyName##ChangedDelegates.Empty(); \
 	} \
 	protected: \
-	FOnAttributeChanged PropertyName##ChangedDelegate; \
+	TMap<FString, FOnAttributeChanged> PropertyName##ChangedDelegates; \
 	UFUNCTION() \
 	virtual void OnRep_##PropertyName(const FGameplayAttributeData& OldValue) { \
 		GAMEPLAYATTRIBUTE_REPNOTIFY(ClassName, PropertyName, OldValue); \
@@ -136,14 +142,14 @@ class ALPHAONE_API UCharacterAttributes : public UAttributeSet
 	ADD_ATTRIBUTE(UCharacterAttributes, JogSpeed, "Basic")
 	ADD_ATTRIBUTE(UCharacterAttributes, SprintSpeed, "Basic")
 
-	ADD_ATTRIBUTE2(UCharacterAttributes, Health, "Health")
+	ADD_ATTRIBUTE_DELEGATED(UCharacterAttributes, Health, "Health")
 	ADD_ATTRIBUTE(UCharacterAttributes, MaxHealth, "Health")
 	ADD_ATTRIBUTE(UCharacterAttributes, HealthRegen, "Health")
-	ADD_ATTRIBUTE2(UCharacterAttributes, Absorption, "Health")
+	ADD_ATTRIBUTE_DELEGATED(UCharacterAttributes, Absorption, "Health")
 	ADD_ATTRIBUTE(UCharacterAttributes, MaxAbsorption, "Health")
 	ADD_ATTRIBUTE(UCharacterAttributes, AbsorptionRegen, "Health")
 
-	ADD_ATTRIBUTE2(UCharacterAttributes, Mana, "Mana")
+	ADD_ATTRIBUTE_DELEGATED(UCharacterAttributes, Mana, "Mana")
 	ADD_ATTRIBUTE(UCharacterAttributes, MaxMana, "Mana")
 	ADD_ATTRIBUTE(UCharacterAttributes, ManaRegen, "Mana")
 

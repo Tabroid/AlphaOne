@@ -18,6 +18,8 @@ public:
 	void SetAttributeSet(UCharacterAttributes* Attr);
 	void UpdatePercentage(float NewVal, float OldVal);
 
+	virtual void BeginDestroy() override;
+
 protected:
 	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 

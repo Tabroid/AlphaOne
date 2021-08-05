@@ -11,6 +11,15 @@ void UHealthBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
     Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
+void UHealthBar::BeginDestroy()
+{
+    // remove the delegate
+    if (AttributeSet.IsValid()) {
+        AttributeSet->RemoveHealthChangedDelegate("HealthBarUpdate");
+    }
+    Super::BeginDestroy();
+}
+
 void UHealthBar::SetAttributeSet(UCharacterAttributes* Attr)
 {
     if (!IsValid(Attr) || (Attr == AttributeSet)) {
@@ -19,13 +28,13 @@ void UHealthBar::SetAttributeSet(UCharacterAttributes* Attr)
 
     // remove the delegate
     if (AttributeSet.IsValid()) {
-        AttributeSet->SetHealthChangedDelegate(FOnAttributeChanged());
+        AttributeSet->RemoveHealthChangedDelegate("HealthBarUpdate");
     }
 
     AttributeSet = Attr;
     FOnAttributeChanged Delegate;
     Delegate.BindUObject(this, &UHealthBar::UpdatePercentage);
-    AttributeSet->SetHealthChangedDelegate(Delegate);
+    AttributeSet->AddHealthChangedDelegate(Delegate, "HealthBarUpdate");
     UpdatePercentage(AttributeSet->GetHealth(), 0.f);
 }
 
