@@ -9,13 +9,30 @@
 void UHealthBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
-
-	if (!AttributeSet.IsValid()) return;
-
-    auto percent = AttributeSet->GetHealth() / AttributeSet->GetMaxHealth();
-    HealthBar->SetPercent(percent);
-
-    FString PrintText = FString::Printf( TEXT("%0.1f %%"), percent * 100.f);
-    HealthPercentage->SetText(FText::FromString(PrintText));
 }
 
+void UHealthBar::SetAttributeSet(UCharacterAttributes* Attr)
+{
+    if (!IsValid(Attr) || (Attr == AttributeSet)) {
+        return;
+    }
+
+    // remove the delegate
+    if (AttributeSet.IsValid()) {
+        AttributeSet->SetHealthChangedDelegate(FOnAttributeChanged());
+    }
+
+    AttributeSet = Attr;
+    FOnAttributeChanged Delegate;
+    Delegate.BindUObject(this, &UHealthBar::UpdatePercentage);
+    AttributeSet->SetHealthChangedDelegate(Delegate);
+    UpdatePercentage(AttributeSet->GetHealth(), 0.f);
+}
+
+void UHealthBar::UpdatePercentage(float NewVal, float OldVal)
+{
+    auto percent = NewVal / AttributeSet->GetMaxHealth();
+    HealthBar->SetPercent(percent);
+
+    HealthPercentage->SetText(FText::Format(FText::AsCultureInvariant("{:d}%"), int32(percent * 100.f)));
+}

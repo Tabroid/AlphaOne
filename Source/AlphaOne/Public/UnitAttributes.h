@@ -1,26 +1,11 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
+#include "Delegates/DelegateSignatureImpl.inl"
 #include "UnitAttributes.generated.h"
 
-// Uses macros from AttributeSet.h
-#define ADD_ATTRIBUTE(ClassName, PropertyName, Category) \
-	public: \
-	UPROPERTY(BlueprintReadOnly, Category, ReplicatedUsing=OnRep_##PropertyName) \
-	FGameplayAttributeData PropertyName; \
-	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
-	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
-	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
-	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName) \
-	protected: \
-	UFUNCTION() \
-	virtual void OnRep_##PropertyName(const FGameplayAttributeData& OldValue) { \
-		GAMEPLAYATTRIBUTE_REPNOTIFY(ClassName, PropertyName, OldValue); \
-	}
 
 // enums for unit types/actions/statuses
 UENUM(BlueprintType)
@@ -88,6 +73,59 @@ public:
 	UPROPERTY(EditAnywhere) float DodgeRate = 0.05f;
 };
 
+DECLARE_DELEGATE_TwoParams(FOnAttributeChanged, float, float)
+
+// helper macro for adding an attribute
+#define ADD_ATTRIBUTE(ClassName, PropertyName, Category) \
+	public: \
+	UPROPERTY(BlueprintReadOnly, Category, ReplicatedUsing=OnRep_##PropertyName) \
+	FGameplayAttributeData PropertyName; \
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName) \
+	protected: \
+	UFUNCTION() \
+	virtual void OnRep_##PropertyName(const FGameplayAttributeData& OldValue) { \
+		GAMEPLAYATTRIBUTE_REPNOTIFY(ClassName, PropertyName, OldValue); \
+	}
+
+// helper macro for adding an attribute with changed
+#define ADD_ATTRIBUTE2(ClassName, PropertyName, Category) \
+	public: \
+	UPROPERTY(BlueprintReadOnly, Category, ReplicatedUsing=OnRep_##PropertyName) \
+	FGameplayAttributeData PropertyName; \
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
+	FORCEINLINE void Set##PropertyName(float NewVal) { \
+		UAbilitySystemComponent* AbilityComp = GetOwningAbilitySystemComponent(); \
+		if (ensure(AbilityComp)) { \
+			float OldVal = PropertyName.GetBaseValue(); \
+			AbilityComp->SetNumericAttributeBase(Get##PropertyName##Attribute(), NewVal); \
+			if (PropertyName##ChangedDelegate.IsBound()) { \
+				PropertyName##ChangedDelegate.Execute(NewVal, OldVal); \
+			} \
+		} \
+	} \
+	FORCEINLINE void Init##PropertyName(float NewVal) { \
+		float OldVal = PropertyName.GetCurrentValue(); \
+		PropertyName.SetBaseValue(NewVal); \
+		PropertyName.SetCurrentValue(NewVal); \
+		if (PropertyName##ChangedDelegate.IsBound()) { \
+			PropertyName##ChangedDelegate.Execute(NewVal, OldVal); \
+		} \
+	} \
+ 	void Set##PropertyName##ChangedDelegate(FOnAttributeChanged NewDelegate) { \
+		PropertyName##ChangedDelegate = NewDelegate; \
+	} \
+	protected: \
+	FOnAttributeChanged PropertyName##ChangedDelegate; \
+	UFUNCTION() \
+	virtual void OnRep_##PropertyName(const FGameplayAttributeData& OldValue) { \
+		GAMEPLAYATTRIBUTE_REPNOTIFY(ClassName, PropertyName, OldValue); \
+	} \
+
+
 // This holds all of the attributes used by abilities, it instantiates a copy of this on every character
 UCLASS()
 class ALPHAONE_API UCharacterAttributes : public UAttributeSet
@@ -98,14 +136,14 @@ class ALPHAONE_API UCharacterAttributes : public UAttributeSet
 	ADD_ATTRIBUTE(UCharacterAttributes, JogSpeed, "Basic")
 	ADD_ATTRIBUTE(UCharacterAttributes, SprintSpeed, "Basic")
 
-	ADD_ATTRIBUTE(UCharacterAttributes, Health, "Health")
+	ADD_ATTRIBUTE2(UCharacterAttributes, Health, "Health")
 	ADD_ATTRIBUTE(UCharacterAttributes, MaxHealth, "Health")
 	ADD_ATTRIBUTE(UCharacterAttributes, HealthRegen, "Health")
-	ADD_ATTRIBUTE(UCharacterAttributes, Absorption, "Health")
+	ADD_ATTRIBUTE2(UCharacterAttributes, Absorption, "Health")
 	ADD_ATTRIBUTE(UCharacterAttributes, MaxAbsorption, "Health")
 	ADD_ATTRIBUTE(UCharacterAttributes, AbsorptionRegen, "Health")
 
-	ADD_ATTRIBUTE(UCharacterAttributes, Mana, "Mana")
+	ADD_ATTRIBUTE2(UCharacterAttributes, Mana, "Mana")
 	ADD_ATTRIBUTE(UCharacterAttributes, MaxMana, "Mana")
 	ADD_ATTRIBUTE(UCharacterAttributes, ManaRegen, "Mana")
 
@@ -157,7 +195,6 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Basic") //, ReplicatedUsing = OnRep_Level)
 	FName Name = "Default";
-
 
 protected:
 	// Helper function to proportionally adjust the value of an attribute when it's associated max attribute changes.

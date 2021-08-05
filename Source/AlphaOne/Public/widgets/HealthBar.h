@@ -15,7 +15,8 @@ class ALPHAONE_API UHealthBar : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void SetAttributeSet(UCharacterAttributes* Attr) { AttributeSet = Attr; }
+	void SetAttributeSet(UCharacterAttributes* Attr);
+	void UpdatePercentage(float NewVal, float OldVal);
 
 protected:
 	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);

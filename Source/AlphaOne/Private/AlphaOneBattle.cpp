@@ -54,7 +54,7 @@ FAttackResult UAlphaOneBattle::InflictDamage(float DamageBase, const FDamageEven
     // hit
     } else {
         // @TODO implement formula, now it is an arbitrary one
-        Result.FinalDamage = DamageBase * (1.f + (CauserAttr->GetAttackPower() - 0.4f*(TakerAttr->GetArmor() - CauserAttr->GetArmorPenetration()))/10.f);
+        Result.FinalDamage = DamageBase * (1.f + 0.16f*(CauserAttr->GetAttackPower() - 0.4f*(TakerAttr->GetArmor() - CauserAttr->GetArmorPenetration())));
         Result.FinalDamage *= (1.f + CauserAttr->GetDamageAmplification())*(1. - TakerAttr->GetDamageReduction());
         Result.FinalDamage = std::max(0.f, Result.FinalDamage);
 
