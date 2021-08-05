@@ -7,7 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 
 
-void UDamageText::PopText(const APlayerController* Player, const FText& Text, FVector Position, FLinearColor Color, float Life, float Distance)
+void UDamageText::PopText(const APlayerController* Player, const FText& Text, FVector Position, FLinearColor Color, bool Parabola, float Life, float Distance)
 {
     DamageText->SetColorAndOpacity(Color);
     DamageText->SetText(Text);
@@ -17,11 +17,15 @@ void UDamageText::PopText(const APlayerController* Player, const FText& Text, FV
     SetPositionInViewport(ViewPosition);
 
     // define the trace
-    float Sign = FMath::RandBool() ? 1.f : -1.f;
-    Velocity.X = Sign * FMath::RandRange(Distance / 2.f, Distance) / Life;
-    Velocity.Y = -FMath::RandRange(Distance, Distance * 2.f) / Life;
-    Acceleration.X = 0.;
-    Acceleration.Y = -2.f * Velocity.Y / Life;
+    if (Parabola) {
+        float Sign = FMath::RandBool() ? 1.f : -1.f;
+        Velocity.X = Sign * FMath::RandRange(Distance / 2.f, Distance) / Life;
+        Velocity.Y = -FMath::RandRange(Distance, Distance * 2.f) / Life;
+        Acceleration.Y = -2.f * Velocity.Y / Life;
+    } else {
+        Velocity.Y = - Distance / Life;
+        Acceleration.Y = - Velocity.Y / Life;
+    }
 }
 
 void UDamageText::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

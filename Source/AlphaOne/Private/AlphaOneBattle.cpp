@@ -97,10 +97,10 @@ void UAlphaOneBattle::PopDamageText(const FAttackResult& Result, const AActor* C
         Text->PopText(Player, FText::Format(FText::AsCultureInvariant("{:d}!"), int32(Result.FinalDamage)), Position, FLinearColor::Yellow);
         break;
     case EDamageTypes::Missed:
-        Text->PopText(Player, FText::AsCultureInvariant("MISS"), Position, FLinearColor::Red);
+        Text->PopText(Player, FText::AsCultureInvariant("MISS"), Position, FLinearColor::Red, false);
         break;
     case EDamageTypes::Dodged:
-        Text->PopText(Player, FText::AsCultureInvariant("DODGED"), Position, FLinearColor::White);
+        Text->PopText(Player, FText::AsCultureInvariant("DODGED"), Position, FLinearColor::White, false);
         break;
     default:
         break;
