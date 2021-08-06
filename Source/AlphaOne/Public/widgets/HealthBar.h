@@ -10,6 +10,8 @@
 class UProgressBar;
 class UTextBlock;
 
+#define ALPHAONE_FULL_HEALTH_HIDDEN_TICK 3.0f
+
 UCLASS(Abstract)
 class ALPHAONE_API UHealthBar : public UUserWidget
 {

@@ -44,7 +44,6 @@ void ABuildingBase::BeginPlay()
 {
 	Super::BeginPlay();
 	FactionSystemComponent->SetFaction(DefaultFaction);
-	PlayerCharacter = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
     // auto health = AbilitySystemComponent->GetAttributeSubobject("AttributeSet")->GetHealth();
     // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Health: %d!"), health));

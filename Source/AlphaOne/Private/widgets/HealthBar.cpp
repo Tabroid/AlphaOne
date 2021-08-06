@@ -2,8 +2,10 @@
 
 
 #include "widgets/HealthBar.h"
+#include "characters/CharacterBase.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void UHealthBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -16,8 +18,19 @@ void UHealthBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
         FullHealthDuration = 0.f;
     }
 
-    if (OwningComponent.IsValid() && OwningComponent->IsVisible() && (FullHealthDuration > 2.f)) {
-        OwningComponent->SetVisibility(false);
+    if (OwningComponent.IsValid() && OwningComponent->IsVisible()) {
+        // hide
+        if (FullHealthDuration > ALPHAONE_FULL_HEALTH_HIDDEN_TICK) {
+            OwningComponent->SetVisibility(false);
+        // rotation
+        } else {
+            auto Actor = OwningComponent->GetOwner();
+            auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(Actor->GetWorld(), 0);
+            if (PlayerCharacter) {
+                FVector LookDirection = PlayerCharacter->GetActorLocation() - Actor->GetActorLocation();
+	            OwningComponent->SetWorldRotation(LookDirection.Rotation());
+            }
+        }
     }
 }
 
