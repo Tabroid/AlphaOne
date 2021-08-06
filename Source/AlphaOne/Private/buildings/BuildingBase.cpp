@@ -4,7 +4,6 @@
 #include "characters/CharacterBase.h"
 #include "abilities/AlphaOneAbilitySystem.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "widgets/HealthBar.h"
 
@@ -26,8 +25,8 @@ ABuildingBase::ABuildingBase()
 	AuraMesh->SetupAttachment(BaseMesh);
 	AuraMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 
-	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar"));
-	WidgetComponent->SetupAttachment(BaseMesh);
+	HealthBarUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar"));
+	HealthBarUI->SetupAttachment(BaseMesh);
 
 	// Create ability system component, and set it to be explicitly replicated
 	AbilitySystemComponent = CreateDefaultSubobject<UAlphaOneAbilitySystem>(TEXT("AbilitySystemComponent"));
@@ -50,7 +49,12 @@ void ABuildingBase::BeginPlay()
     // auto health = AbilitySystemComponent->GetAttributeSubobject("AttributeSet")->GetHealth();
     // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Health: %d!"), health));
 	AttributeSet->InitFromMetaDataTable(Cast<UAlphaOneInstance>(GetGameInstance())->UnitData(), UnitDataRowName);
-    Cast<UHealthBar>(WidgetComponent->GetUserWidgetObject())->SetAttributeSet(AttributeSet);
+	auto HealthBar = Cast<UHealthBar>(HealthBarUI->GetUserWidgetObject());
+	HealthBarUI->SetVisibility(false);
+	if (HealthBar) {
+		HealthBar->SetAttributeSet(AttributeSet);
+		HealthBar->SetOwningComponent(HealthBarUI);
+	}
 }
 
 // Called every frame
@@ -58,15 +62,6 @@ void ABuildingBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	AttributeSet->RegenOverTime(DeltaTime);
-	RotateWidgetPlane();
-}
-
-void ABuildingBase::RotateWidgetPlane()
-{
-	if (PlayerCharacter) {
-	    FVector LookDirection = PlayerCharacter->GetActorLocation() - GetActorLocation();
-	    WidgetComponent->SetWorldRotation(LookDirection.Rotation());
-    }
 }
 
 float ABuildingBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

@@ -31,9 +31,16 @@ void UCharacterAttributes::PreAttributeChange(const FGameplayAttribute& Attribut
 
 void UCharacterAttributes::RegenOverTime(float DeltaTime)
 {
-    Health.SetCurrentValue(std::min(MaxHealth.GetCurrentValue(), Health.GetCurrentValue() + HealthRegen.GetCurrentValue()*DeltaTime));
-    Absorption.SetCurrentValue(std::min(MaxAbsorption.GetCurrentValue(), Absorption.GetCurrentValue() + AbsorptionRegen.GetCurrentValue()*DeltaTime));
-    Mana.SetCurrentValue(std::min(MaxMana.GetCurrentValue(), Mana.GetCurrentValue() + ManaRegen.GetCurrentValue()*DeltaTime));
+    RegenTimer += DeltaTime;
+    if (RegenTimer < ALPHAONE_UNIT_REGEN_TICK) {
+        return;
+    }
+
+    InitHealth(std::min(GetMaxHealth(), GetHealth() + GetHealthRegen()*RegenTimer));
+    InitMana(std::min(GetMaxMana(), GetMana() + GetManaRegen()*RegenTimer));
+    InitAbsorption(std::min(GetMaxAbsorption(), GetAbsorption() + GetAbsorptionRegen()*RegenTimer));
+
+    RegenTimer = 0.;
 }
 
 void UCharacterAttributes::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

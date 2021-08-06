@@ -6,6 +6,8 @@
 #include "Delegates/DelegateSignatureImpl.inl"
 #include "UnitAttributes.generated.h"
 
+// regen is pretty cost because it triggers all delegates
+#define ALPHAONE_UNIT_REGEN_TICK 2.0f
 
 // enums for unit types/actions/statuses
 UENUM(BlueprintType)
@@ -102,8 +104,10 @@ using FOnAttributeChanged = TDelegate<void(float NewVal, float OldVal)>;
 		if (ensure(AbilityComp)) { \
 			float OldVal = PropertyName.GetBaseValue(); \
 			AbilityComp->SetNumericAttributeBase(Get##PropertyName##Attribute(), NewVal); \
-			for (auto& [KeyVal, Delegate] : PropertyName##ChangedDelegates) { \
-				if (Delegate.IsBound()) { Delegate.Execute(NewVal, OldVal); } \
+			if (NewVal != OldVal) { \
+				for (auto& [KeyVal, Delegate] : PropertyName##ChangedDelegates) { \
+					if (Delegate.IsBound()) { Delegate.Execute(NewVal, OldVal); } \
+				} \
 			} \
 		} \
 	} \
@@ -111,8 +115,10 @@ using FOnAttributeChanged = TDelegate<void(float NewVal, float OldVal)>;
 		float OldVal = PropertyName.GetCurrentValue(); \
 		PropertyName.SetBaseValue(NewVal); \
 		PropertyName.SetCurrentValue(NewVal); \
-		for (auto &[KeyVal, Delegate] : PropertyName##ChangedDelegates) { \
-			if (Delegate.IsBound()) { Delegate.Execute(NewVal, OldVal); } \
+		if (NewVal != OldVal) { \
+			for (auto &[KeyVal, Delegate] : PropertyName##ChangedDelegates) { \
+				if (Delegate.IsBound()) { Delegate.Execute(NewVal, OldVal); } \
+			} \
 		} \
 	} \
  	FORCEINLINE void Add##PropertyName##ChangedDelegate(FOnAttributeChanged NewDelegate, FString KeyVal) { \
@@ -207,4 +213,5 @@ protected:
 	// (i.e. When MaxHealth increases, Health increases by an amount that maintains the same percentage as before)
 	void AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute,
 									 float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty);
+	float RegenTimer;
 };

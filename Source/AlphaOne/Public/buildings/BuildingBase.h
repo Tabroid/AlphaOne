@@ -56,8 +56,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void RotateWidgetPlane();
-
 	UPROPERTY()
 	UCharacterAttributes* AttributeSet;
 
@@ -75,7 +73,7 @@ protected:
 	UStaticMeshComponent* AuraMesh = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UWidgetComponent* WidgetComponent = nullptr;
+	UWidgetComponent* HealthBarUI = nullptr;
 
 	// A proxy to FactionSystem component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (AllowPrivateAccess = "true"))
