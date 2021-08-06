@@ -42,6 +42,7 @@ FAttackResult UAlphaOneBattle::InflictDamage(float DamageBase, const FDamageEven
         return Result;
     }
 
+
     // calculation block
     // missed
     if (FMath::RandRange(0.f, 1.f) > CauserAttr->GetHitRate()) {
@@ -64,7 +65,6 @@ FAttackResult UAlphaOneBattle::InflictDamage(float DamageBase, const FDamageEven
             Result.FinalDamage *= 1.f + CauserAttr->GetCriticalDamage();
         }
     }
-
     // @TODO this is just a test
     // Result.DamageType = static_cast<EDamageTypes>(FMath::RandRange(0, static_cast<int32>(EDamageTypes::Max_Types)));
 

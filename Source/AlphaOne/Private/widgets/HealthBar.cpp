@@ -68,6 +68,7 @@ void UHealthBar::SetOwningComponent(UWidgetComponent* Comp)
 
 void UHealthBar::UpdatePercentage(float NewVal, float OldVal)
 {
+    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Update Percentage: %d, %d!"), int(NewVal), int(OldVal)));
     auto percent = NewVal / AttributeSet->GetMaxHealth();
     HealthBar->SetPercent(percent);
     HealthPercentage->SetText(FText::Format(FText::AsCultureInvariant("{:d}%"), int32(percent * 100.f)));

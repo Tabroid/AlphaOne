@@ -25,7 +25,7 @@ ABuildingBase::ABuildingBase()
 	AuraMesh->SetupAttachment(BaseMesh);
 	AuraMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 
-	HealthBarUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar"));
+	HealthBarUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar UI"));
 	HealthBarUI->SetupAttachment(BaseMesh);
 
 	// Create ability system component, and set it to be explicitly replicated
@@ -37,6 +37,7 @@ ABuildingBase::ABuildingBase()
 
 	AttributeSet = CreateDefaultSubobject<UCharacterAttributes>(TEXT("AttributeSet"));
 	SetType(EUnitTypes::Building);
+	DefaultFaction = EUnitFactions::Defenders;
 }
 
 // Called when the game starts or when spawned
@@ -72,7 +73,7 @@ float ABuildingBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEv
 	auto Battle = Cast<UAlphaOneInstance>(GetGameInstance())->Battle();
 	auto BattleResult = Battle->InflictDamage(DamageAmount, DamageEvent, DamageCauser, this);
 
-	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Damage: %.0f, Health: %.0f!"), DamageAmount, hp));
+	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Damage: %.0f, Health: %.0f!"), BattleResult.FinalDamage, AttributeSet->GetHealth()));
 	if (AttributeSet->GetHealth() <= 0.) {
         // @TODO, to implement
 		; // Die(BattleResult.FinalDamage, DamageEvent, EventInstigator, DamageCauser);

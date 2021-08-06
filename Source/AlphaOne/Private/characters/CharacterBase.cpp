@@ -20,7 +20,6 @@ ACharacterBase::ACharacterBase()
 	FactionSystemComponent = CreateDefaultSubobject<UFactionComponent>(TEXT("FactionSystemComponent"));
 
 	AttributeSet = CreateDefaultSubobject<UCharacterAttributes>(TEXT("AttributeSet"));
-	SetType(EUnitTypes::Mob);
 }
 
 // Called when the game starts or when spawned
