@@ -69,11 +69,12 @@ void UHealthBar::SetOwningComponent(UWidgetComponent* Comp)
 void UHealthBar::UpdatePercentage(float NewVal, float OldVal)
 {
     // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Update Percentage: %d, %d!"), int(NewVal), int(OldVal)));
-    auto percent = NewVal / AttributeSet->GetMaxHealth();
-    HealthBar->SetPercent(percent);
-    HealthPercentage->SetText(FText::Format(FText::AsCultureInvariant("{:d}%"), int32(percent * 100.f)));
+    float MaxHealth = AttributeSet->GetMaxHealth();
+    auto Percent = (MaxHealth > 0.f) ? NewVal / MaxHealth: 0.f;
+    HealthBar->SetPercent(Percent);
+    HealthPercentage->SetText(FText::Format(FText::AsCultureInvariant("{:d}%"), int32(Percent * 100.f)));
 
-    if (OwningComponent.IsValid() && !OwningComponent->IsVisible() && percent < 0.9999f) {
+    if (OwningComponent.IsValid() && !OwningComponent->IsVisible() && Percent < 0.9999f) {
         OwningComponent->SetVisibility(true);
     }
 }
