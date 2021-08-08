@@ -12,23 +12,22 @@ AAlphaOneHUD::AAlphaOneHUD(const FObjectInitializer& ObjectInitializer)
 
 }
 
+void AAlphaOneHUD::BeginPlay()
+{
+    if (StatusGaugeClass) {
+        StatusGaugeWidget = CreateWidget<UPlayerStatusGauge>(GetWorld(), StatusGaugeClass);
+        if (StatusGaugeWidget) {
+            StatusGaugeWidget->AddToViewport();
+        }
+    }
+}
+
 void AAlphaOneHUD::DrawHUD()
 {
 	Super::DrawHUD();
-
-	DrawHealth();
 }
 
-void AAlphaOneHUD::DrawHealth()
+void AAlphaOneHUD::Tick(float DeltaTime)
 {
-	ACharacterBase* Player = Cast<ACharacterBase>(GetOwningPawn());
-
-    if (IsValid(Player)) {
-        auto Attr = Player->GetAttributes();
-        auto percent = Attr->GetHealth() / Attr->GetMaxHealth();
-        HealthBar->SetPercent(percent);
-
-        FString Text = FString::Printf(TEXT("%d/%d"), int(Attr->GetHealth()), int(Attr->GetMaxHealth()));
-        HealthText->SetText(FText::FromString(Text));
-    }
+    Super::Tick(DeltaTime);
 }

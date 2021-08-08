@@ -2,6 +2,7 @@
 #pragma once
 
 #include "AlphaOne.h"
+#include "UI/widgets/PlayerStatusGauge.h"
 #include "GameFramework/HUD.h"
 #include "Blueprint/UserWidget.h"
 #include "AlphaOneHUD.generated.h"
@@ -16,14 +17,15 @@ class ALPHAONE_API AAlphaOneHUD : public AHUD
 	GENERATED_UCLASS_BODY()
 
 public:
-
 	virtual void DrawHUD() override;
-	virtual void DrawHealth();
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 
 protected:
-	UPROPERTY (meta = (BindWidget))
-	UProgressBar* HealthBar = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+    TSubclassOf<UPlayerStatusGauge> StatusGaugeClass;
 
-	UPROPERTY (meta = (BindWidget))
-	UTextBlock* HealthText = nullptr;
+private:
+	UPlayerStatusGauge *StatusGaugeWidget;
 };
