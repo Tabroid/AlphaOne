@@ -22,6 +22,9 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void PlayerPossessed(class ACharacterBase *Player);
+	void PlayerUnPossessed();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
     TSubclassOf<UPlayerStatusGauge> StatusGaugeClass;

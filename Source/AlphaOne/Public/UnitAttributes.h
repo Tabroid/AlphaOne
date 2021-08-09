@@ -104,22 +104,14 @@ using FOnAttributeChanged = TDelegate<void(float NewVal, float OldVal)>;
 		if (ensure(AbilityComp)) { \
 			float OldVal = PropertyName.GetBaseValue(); \
 			AbilityComp->SetNumericAttributeBase(Get##PropertyName##Attribute(), NewVal); \
-			if (NewVal != OldVal) { \
-				for (auto& [KeyVal, Delegate] : PropertyName##ChangedDelegates) { \
-					if (Delegate.IsBound()) { Delegate.Execute(NewVal, OldVal); } \
-				} \
-			} \
+			Execute##PropertyName##ChangedDelegates(NewVal, OldVal); \
 		} \
 	} \
 	FORCEINLINE void Init##PropertyName(float NewVal) { \
 		float OldVal = PropertyName.GetCurrentValue(); \
 		PropertyName.SetBaseValue(NewVal); \
 		PropertyName.SetCurrentValue(NewVal); \
-		if (NewVal != OldVal) { \
-			for (auto &[KeyVal, Delegate] : PropertyName##ChangedDelegates) { \
-				if (Delegate.IsBound()) { Delegate.Execute(NewVal, OldVal); } \
-			} \
-		} \
+		Execute##PropertyName##ChangedDelegates(NewVal, OldVal); \
 	} \
  	FORCEINLINE void Add##PropertyName##ChangedDelegate(FOnAttributeChanged NewDelegate, FString KeyVal) { \
 		PropertyName##ChangedDelegates.Add(KeyVal, NewDelegate); \
@@ -129,6 +121,11 @@ using FOnAttributeChanged = TDelegate<void(float NewVal, float OldVal)>;
 	} \
 	FORCEINLINE void Reset##PropertyName##ChangedDelegate() { \
 		PropertyName##ChangedDelegates.Empty(); \
+	} \
+	FORCEINLINE void Execute##PropertyName##ChangedDelegates(float NewVal, float OldVal) { \
+		for (auto& [KeyVal, Delegate] : PropertyName##ChangedDelegates) { \
+			if (Delegate.IsBound()) { Delegate.Execute(NewVal, OldVal); } \
+		} \
 	} \
 	protected: \
 	TMap<FString, FOnAttributeChanged> PropertyName##ChangedDelegates; \

@@ -11,6 +11,29 @@ void UPlayerStatusGauge::BindPlayerCharacter(ACharacterBase* Character)
         return;
     }
 
+    UnBindPlayerCharacter();
+    PlayerCharacter = Character;
+    auto Attr = PlayerCharacter->GetAttributes();
+
+    FOnAttributeChanged HealthDelegate;
+    HealthDelegate.BindUObject(this, &UPlayerStatusGauge::OnHealthChanged);
+    Attr->AddHealthChangedDelegate(HealthDelegate, "StatusGaugeUpdate");
+    OnHealthChanged(Attr->GetHealth(), 0.f);
+
+    FOnAttributeChanged ManaDelegate;
+    HealthDelegate.BindUObject(this, &UPlayerStatusGauge::OnManaChanged);
+    Attr->AddManaChangedDelegate(ManaDelegate, "StatusGaugeUpdate");
+    OnManaChanged(Attr->GetMana(), 0.f);
+
+    FOnAttributeChanged AbsorptionDelegate;
+    HealthDelegate.BindUObject(this, &UPlayerStatusGauge::OnAbsorptionChanged);
+    Attr->AddAbsorptionChangedDelegate(AbsorptionDelegate, "StatusGaugeUpdate");
+    OnAbsorptionChanged(Attr->GetAbsorption(), 0.f);
+    //SetVisibility(ESlateVisibility::Visible);
+}
+
+void UPlayerStatusGauge::UnBindPlayerCharacter()
+{
     // remove the delegate
     if (IsValid(PlayerCharacter) && IsValid(PlayerCharacter->GetAttributes())) {
         auto OldAttr = PlayerCharacter->GetAttributes();
@@ -18,24 +41,7 @@ void UPlayerStatusGauge::BindPlayerCharacter(ACharacterBase* Character)
         OldAttr->RemoveManaChangedDelegate("StatusGaugeUpdate");
         OldAttr->RemoveAbsorptionChangedDelegate("StatusGaugeUpdate");
     }
-
-    PlayerCharacter = Character;
-    auto Attr = PlayerCharacter->GetAttributes();
-
-    FOnAttributeChanged HealthDelegate;
-    HealthDelegate.BindUObject(this, &UPlayerStatusGauge::OnHealthChanged);
-    Attr->AddHealthChangedDelegate(HealthDelegate, "StatusGaugeUpdate");
-    OnHealthChanged(Attr->GetHealth(), Attr->GetHealth());
-
-    FOnAttributeChanged ManaDelegate;
-    HealthDelegate.BindUObject(this, &UPlayerStatusGauge::OnManaChanged);
-    Attr->AddManaChangedDelegate(ManaDelegate, "StatusGaugeUpdate");
-    OnHealthChanged(Attr->GetMana(), Attr->GetMana());
-
-    FOnAttributeChanged AbsorptionDelegate;
-    HealthDelegate.BindUObject(this, &UPlayerStatusGauge::OnAbsorptionChanged);
-    Attr->AddAbsorptionChangedDelegate(AbsorptionDelegate, "StatusGaugeUpdate");
-    OnHealthChanged(Attr->GetAbsorption(), Attr->GetAbsorption());
+    //SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UPlayerStatusGauge::OnHealthChanged(float NewVal, float OldVal)
@@ -45,6 +51,8 @@ void UPlayerStatusGauge::OnHealthChanged(float NewVal, float OldVal)
     }
     // should never get a negative or zero max health
     auto Percent = NewVal / PlayerCharacter->GetAttributes()->GetMaxHealth();
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+        FString::Printf(TEXT("Health Percentage %.2f / %.2f"), NewVal, PlayerCharacter->GetAttributes()->GetMaxHealth()));
     HealthGauge->SetPercent(Percent);
 }
 
@@ -55,6 +63,8 @@ void UPlayerStatusGauge::OnManaChanged(float NewVal, float OldVal)
     }
     float MaxMana = PlayerCharacter->GetAttributes()->GetMaxMana();
     auto Percent = (MaxMana > 0.f) ? NewVal / MaxMana: 0.f;
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+        FString::Printf(TEXT("Mana Percentage %.2f/ %.2f"), NewVal, PlayerCharacter->GetAttributes()->GetMaxMana()));
     ManaGauge->SetPercent(Percent);
 }
 
@@ -64,6 +74,8 @@ void UPlayerStatusGauge::OnAbsorptionChanged(float NewVal, float OldVal)
         return;
     }
     // should never get a negative or zero max health
-    float Percent = std::min(1.f, NewVal / PlayerCharacter->GetAttributes()->GetMaxHealth());
+    float Percent = (NewVal < 1e-5f) ? 0.f: std::min(1.f, NewVal / PlayerCharacter->GetAttributes()->GetMaxHealth());
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+        FString::Printf(TEXT("Absorption Percentage %.2f"), NewVal, PlayerCharacter->GetAttributes()->GetMaxHealth()));
     AbsorptionGauge->SetPercent(Percent);
 }

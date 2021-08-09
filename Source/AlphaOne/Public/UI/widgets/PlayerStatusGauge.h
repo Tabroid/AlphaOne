@@ -13,6 +13,7 @@ class ALPHAONE_API UPlayerStatusGauge : public UUserWidget
 
 public:
 	void BindPlayerCharacter(class ACharacterBase* Character);
+    void UnBindPlayerCharacter();
 
     void OnHealthChanged(float NewVal, float OldVal);
     void OnManaChanged(float NewVal, float OldVal);
@@ -29,5 +30,5 @@ protected:
 	class UProgressBar* AbsorptionGauge = nullptr;
 
 private:
-    ACharacterBase *PlayerCharacter;
+    ACharacterBase *PlayerCharacter = nullptr;
 };

@@ -106,32 +106,43 @@ bool UCharacterAttributes::InitFromMetaDataTable(const UDataTable* DataTable, FN
 
     Name = RowName;
     InitLevel(Data->Level);
-    InitRotationRate(Data->RotationRate);
-    InitJogSpeed(Data->JogSpeed);
-    InitSprintSpeed(Data->SprintSpeed);
 
-    InitHealth(Data->Health);
-    InitMaxHealth(Data->MaxHealth);
-    InitHealthRegen(Data->HealthRegen);
-    InitAbsorption(Data->Absorption);
-    InitMaxAbsorption(Data->MaxAbsorption);
-    InitAbsorptionRegen(Data->AbsorptionRegen);
+// a helper macro to avoid trigger delegates while still in initialization
+#define INIT_FROM_STRUCT(DataStruct, AttributeName) \
+    AttributeName.SetCurrentValue(DataStruct->AttributeName); \
+    AttributeName.SetBaseValue(DataStruct->AttributeName); \
 
-    InitMana(Data->Mana);
-    InitMaxMana(Data->MaxMana);
-    InitManaRegen(Data->ManaRegen);
+    INIT_FROM_STRUCT(Data, RotationRate);
+    INIT_FROM_STRUCT(Data, JogSpeed);
+    INIT_FROM_STRUCT(Data, SprintSpeed);
 
-    InitAttackPower(Data->AttackPower);
-    InitCriticalChance(Data->CriticalChance);
-    InitCriticalDamage(Data->CriticalDamage);
-    InitArmorPenetration(Data->ArmorPenetration);
-    InitDamageAmplification(Data->DamageAmplification);
-    InitHitRate(Data->HitRate);
-    InitAttackSpeed(Data->AttackSpeed);
+    INIT_FROM_STRUCT(Data, Health);
+    INIT_FROM_STRUCT(Data, MaxHealth);
+    INIT_FROM_STRUCT(Data, HealthRegen);
+    INIT_FROM_STRUCT(Data, Absorption);
+    INIT_FROM_STRUCT(Data, MaxAbsorption);
+    INIT_FROM_STRUCT(Data, AbsorptionRegen);
 
-    InitArmor(Data->Armor);
-    InitDamageReduction(Data->DamageReduction);
-    InitDodgeRate(Data->DodgeRate);
+    INIT_FROM_STRUCT(Data, Mana);
+    INIT_FROM_STRUCT(Data, MaxMana);
+    INIT_FROM_STRUCT(Data, ManaRegen);
 
+    INIT_FROM_STRUCT(Data, AttackPower);
+    INIT_FROM_STRUCT(Data, CriticalChance);
+    INIT_FROM_STRUCT(Data, CriticalDamage);
+    INIT_FROM_STRUCT(Data, ArmorPenetration);
+    INIT_FROM_STRUCT(Data, DamageAmplification);
+    INIT_FROM_STRUCT(Data, HitRate);
+    INIT_FROM_STRUCT(Data, AttackSpeed);
+
+    INIT_FROM_STRUCT(Data, Armor);
+    INIT_FROM_STRUCT(Data, DamageReduction);
+    INIT_FROM_STRUCT(Data, DodgeRate);
+
+    ExecuteHealthChangedDelegates(Health.GetCurrentValue(), Health.GetCurrentValue());
+    ExecuteManaChangedDelegates(Mana.GetCurrentValue(), Mana.GetCurrentValue());
+    ExecuteAbsorptionChangedDelegates(Absorption.GetCurrentValue(), Absorption.GetCurrentValue());
+
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%s Initialized!"), *RowName.ToString()));
     return true;
 }
