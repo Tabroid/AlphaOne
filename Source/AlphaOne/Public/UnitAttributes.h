@@ -67,12 +67,12 @@ public:
 	UPROPERTY(EditAnywhere) float CriticalDamage = 1.f;
 	UPROPERTY(EditAnywhere) float ArmorPenetration = 0.f;
 	UPROPERTY(EditAnywhere) float DamageAmplification = 0.f;
-	UPROPERTY(EditAnywhere) float HitRate = 0.95f;
+	UPROPERTY(EditAnywhere) float HitRate = 1.f;
 	UPROPERTY(EditAnywhere) float AttackSpeed = 1.f;
 
 	UPROPERTY(EditAnywhere) float Armor = 0.f;
 	UPROPERTY(EditAnywhere) float DamageReduction = 0.f;
-	UPROPERTY(EditAnywhere) float DodgeRate = 0.05f;
+	UPROPERTY(EditAnywhere) float DodgeRate = 0.f;
 };
 
 using FOnAttributeChanged = TDelegate<void(float NewVal, float OldVal)>;
