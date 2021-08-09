@@ -20,6 +20,8 @@ public:
     void OnAbsorptionChanged(float NewVal, float OldVal);
 
 protected:
+	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
+
 	UPROPERTY (meta = (BindWidget))
 	class UProgressBar* HealthGauge = nullptr;
 
@@ -31,4 +33,6 @@ protected:
 
 private:
     ACharacterBase *PlayerCharacter = nullptr;
+
+    bool bNeedsInit = false;
 };

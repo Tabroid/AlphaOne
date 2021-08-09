@@ -143,6 +143,6 @@ bool UCharacterAttributes::InitFromMetaDataTable(const UDataTable* DataTable, FN
     ExecuteManaChangedDelegates(Mana.GetCurrentValue(), Mana.GetCurrentValue());
     ExecuteAbsorptionChangedDelegates(Absorption.GetCurrentValue(), Absorption.GetCurrentValue());
 
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%s Initialized!"), *RowName.ToString()));
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%s Initialized, Bindings: %d!"), *RowName.ToString(), ManaChangedDelegates.Num()));
     return true;
 }

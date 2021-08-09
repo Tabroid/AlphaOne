@@ -18,18 +18,21 @@ void UPlayerStatusGauge::BindPlayerCharacter(ACharacterBase* Character)
     FOnAttributeChanged HealthDelegate;
     HealthDelegate.BindUObject(this, &UPlayerStatusGauge::OnHealthChanged);
     Attr->AddHealthChangedDelegate(HealthDelegate, "StatusGaugeUpdate");
-    OnHealthChanged(Attr->GetHealth(), 0.f);
 
     FOnAttributeChanged ManaDelegate;
-    HealthDelegate.BindUObject(this, &UPlayerStatusGauge::OnManaChanged);
+    ManaDelegate.BindUObject(this, &UPlayerStatusGauge::OnManaChanged);
     Attr->AddManaChangedDelegate(ManaDelegate, "StatusGaugeUpdate");
-    OnManaChanged(Attr->GetMana(), 0.f);
 
     FOnAttributeChanged AbsorptionDelegate;
-    HealthDelegate.BindUObject(this, &UPlayerStatusGauge::OnAbsorptionChanged);
+    AbsorptionDelegate.BindUObject(this, &UPlayerStatusGauge::OnAbsorptionChanged);
     Attr->AddAbsorptionChangedDelegate(AbsorptionDelegate, "StatusGaugeUpdate");
-    OnAbsorptionChanged(Attr->GetAbsorption(), 0.f);
-    //SetVisibility(ESlateVisibility::Visible);
+
+    // SetVisibility(ESlateVisibility::Visible);
+}
+
+void UPlayerStatusGauge::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+    Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
 void UPlayerStatusGauge::UnBindPlayerCharacter()
@@ -41,7 +44,7 @@ void UPlayerStatusGauge::UnBindPlayerCharacter()
         OldAttr->RemoveManaChangedDelegate("StatusGaugeUpdate");
         OldAttr->RemoveAbsorptionChangedDelegate("StatusGaugeUpdate");
     }
-    //SetVisibility(ESlateVisibility::Hidden);
+    // SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UPlayerStatusGauge::OnHealthChanged(float NewVal, float OldVal)
@@ -51,8 +54,8 @@ void UPlayerStatusGauge::OnHealthChanged(float NewVal, float OldVal)
     }
     // should never get a negative or zero max health
     auto Percent = NewVal / PlayerCharacter->GetAttributes()->GetMaxHealth();
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-        FString::Printf(TEXT("Health Percentage %.2f / %.2f"), NewVal, PlayerCharacter->GetAttributes()->GetMaxHealth()));
+    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+    //     FString::Printf(TEXT("Health Percentage %.2f / %.2f"), NewVal, PlayerCharacter->GetAttributes()->GetMaxHealth()));
     HealthGauge->SetPercent(Percent);
 }
 
@@ -63,8 +66,8 @@ void UPlayerStatusGauge::OnManaChanged(float NewVal, float OldVal)
     }
     float MaxMana = PlayerCharacter->GetAttributes()->GetMaxMana();
     auto Percent = (MaxMana > 0.f) ? NewVal / MaxMana: 0.f;
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-        FString::Printf(TEXT("Mana Percentage %.2f/ %.2f"), NewVal, PlayerCharacter->GetAttributes()->GetMaxMana()));
+    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+    //     FString::Printf(TEXT("Mana Percentage %.2f/ %.2f"), NewVal, PlayerCharacter->GetAttributes()->GetMaxMana()));
     ManaGauge->SetPercent(Percent);
 }
 
@@ -75,7 +78,7 @@ void UPlayerStatusGauge::OnAbsorptionChanged(float NewVal, float OldVal)
     }
     // should never get a negative or zero max health
     float Percent = (NewVal < 1e-5f) ? 0.f: std::min(1.f, NewVal / PlayerCharacter->GetAttributes()->GetMaxHealth());
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-        FString::Printf(TEXT("Absorption Percentage %.2f"), NewVal, PlayerCharacter->GetAttributes()->GetMaxHealth()));
+    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+    //     FString::Printf(TEXT("Absorption Percentage %.2f"), NewVal, PlayerCharacter->GetAttributes()->GetMaxHealth()));
     AbsorptionGauge->SetPercent(Percent);
 }
