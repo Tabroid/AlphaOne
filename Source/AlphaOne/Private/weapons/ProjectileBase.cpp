@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "weapons/ProjectileBase.h"
-#include "AlphaOneFaction.h"
 // UE4
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -24,6 +23,7 @@ AProjectileBase::AProjectileBase()
 	CollisionComp->AlwaysLoadOnServer = true;
 	CollisionComp->bTraceComplexOnMove = true;
 	CollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CollisionComp->SetCollisionObjectType(COLLISION_PROJECTILE);
 	CollisionComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	CollisionComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	CollisionComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
@@ -31,6 +31,8 @@ AProjectileBase::AProjectileBase()
 	RootComponent = CollisionComp;
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile Mesh"));
+	ProjectileMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	ProjectileMesh->SetCollisionObjectType(COLLISION_PROJECTILE);
 	ProjectileMesh->SetupAttachment(RootComponent);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
@@ -43,6 +45,8 @@ AProjectileBase::AProjectileBase()
 
 
 	ParticleTrail = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Particle Trail"));
+	ParticleTrail->SetCollisionResponseToAllChannels(ECR_Ignore);
+	ParticleTrail->SetCollisionObjectType(COLLISION_PROJECTILE);
 	ParticleTrail->SetupAttachment(RootComponent);
 
 	SpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("Spawn Point"));

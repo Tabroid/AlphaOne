@@ -11,3 +11,5 @@
 
 
 const static int32 WIDGET_ZORDER_DAMAGE_TEXT = 10;
+
+#define COLLISION_PROJECTILE	ECC_GameTraceChannel1

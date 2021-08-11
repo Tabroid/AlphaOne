@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "AlphaOne.h"
 #include "GameFramework/Actor.h"
 #include "GameplayTags.h"
 #include "Components/ArrowComponent.h"
