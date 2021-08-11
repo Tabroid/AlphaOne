@@ -23,7 +23,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	virtual USceneComponent* GetProjectileSpawnComponent() const { return ProjectileSpawnPoint; }
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,13 +31,6 @@ protected:
 private:
 	void CameraIn();
 	void CameraOut();
-
-	//the location where the projectile will spawn
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	USceneComponent* ProjectileSpawnPoint = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	FName ProjectileSpawnSocket;
 };
 
 

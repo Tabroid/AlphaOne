@@ -98,7 +98,7 @@ protected:
 
 	// Used for assigning the collision mesh
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component", meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* CollisionMesh;
+	UStaticMeshComponent* WeaponMesh;
 
 	FCollisionQueryParams QueryParams;
 	TArray<AActor*> HitActors;

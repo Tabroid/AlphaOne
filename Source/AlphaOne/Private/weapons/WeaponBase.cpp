@@ -72,8 +72,8 @@ bool AWeaponBase::Attack()
 
 FVector AWeaponBase::GetSocketLocation(FName name) const
 {
-	if (CollisionMesh) {
-		return CollisionMesh->GetSocketLocation(name);
+	if (WeaponMesh) {
+		return WeaponMesh->GetSocketLocation(name);
 	} else if (MyCharacter && MyCharacter->GetMesh()) {
 		return MyCharacter->GetMesh()->GetSocketLocation(name);
 	} else {
@@ -83,8 +83,8 @@ FVector AWeaponBase::GetSocketLocation(FName name) const
 
 FRotator AWeaponBase::GetSocketRotation(FName name) const
 {
-	if (CollisionMesh) {
-		return CollisionMesh->GetSocketRotation(name);
+	if (WeaponMesh) {
+		return WeaponMesh->GetSocketRotation(name);
 	} else if (MyCharacter && MyCharacter->GetMesh()) {
 		return MyCharacter->GetMesh()->GetSocketRotation(name);
 	} else {

@@ -36,6 +36,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMass() const;
 
+	UFUNCTION(BlueprintCallable)
+	virtual void AddIgnoreActors(TArray<AActor*> IgnoreActors);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void ClearIgnoreActors();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -94,7 +100,6 @@ private:
 	AController* GetOwnerController() const;
 
 	UFUNCTION()
-	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
-	                   FVector NormalImpulse, const FHitResult& Hit);
+	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 };

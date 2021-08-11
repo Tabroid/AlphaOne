@@ -39,7 +39,7 @@ void UComboResetNotify::Notify(USkeletalMeshComponent* Mesh, UAnimSequenceBase* 
 
 void UProjectileFireNotify::Notify(USkeletalMeshComponent* Mesh, UAnimSequenceBase* Animation)
 {
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot Projectile!"));
+    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot Projectile!"));
     auto Player = Cast<ACharacterBase>(Mesh->GetOwner());
     if (Player && Player->GetCurrentWeapon()) {
         Player->GetCurrentWeapon()->ShootProjectile();

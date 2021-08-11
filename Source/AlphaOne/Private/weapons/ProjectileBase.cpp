@@ -82,12 +82,11 @@ float AProjectileBase::GetMass() const
 	return Mass;
 }
 
-
 void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			   				FVector NormalImpulse, const FHitResult& Hit)
 {
 	AActor* MyOwner = GetOwner();
-	if (IsValid(MyOwner) && IsValid(OtherActor) && OtherActor != MyOwner) {
+	if (IsValid(MyOwner) && IsValid(OtherActor)) {
 		//apply the damage to the target that the projectile hits.
 		//UGameplayStatics::ApplyDamage(OtherActor, Damage, MyOwner->GetInstigatorController(), this, DamageType);
 		auto FactionComp = MyOwner->FindComponentByClass<UFactionComponent>();
@@ -98,7 +97,7 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		if (HitParticle) {
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitParticle, GetActorLocation());
 		}
-	    Destroy();
+		Destroy();
 	}
 }
 
@@ -133,4 +132,16 @@ void AProjectileBase::HandleMoveSpeedChanged(float DeltaValue, const struct FGam
 	if (bInitialized) {
 		OnMoveSpeedChanged(DeltaValue, EventTags);
 	}
+}
+
+void AProjectileBase::AddIgnoreActors(TArray<AActor*> IgnoreActors)
+{
+	for (auto Actor : IgnoreActors) {
+		CollisionComp->IgnoreActorWhenMoving(Actor, true);
+	}
+}
+
+void AProjectileBase::ClearIgnoreActors()
+{
+	CollisionComp->ClearMoveIgnoreActors();
 }

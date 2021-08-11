@@ -17,18 +17,27 @@ void ARangedWeapon::DetachFromCharacter()
      Super::DetachFromCharacter();
 }
 
+bool ARangedWeapon::Attack()
+{
+    // can only attack when aiming
+    /*
+    if (!MyCharacter->CheckAction(EUnitActions::Aiming)) {
+        return false;
+    }
+    */
+    return Super::Attack();
+}
+
 bool ARangedWeapon::ShootProjectile()
 {
     // TODO move the spawn component to ranged weapon class
-    auto Archer = Cast<AArcher>(MyCharacter);
-    if (!Projectile || !Archer) {
+    if (!ProjectileClass) {
         return false;
     }
-    auto ProjectileSpawn = Archer->GetProjectileSpawnComponent();
-	FVector SpawnLocation = ProjectileSpawn->GetComponentLocation();
-	FRotator SpawnRotation = ProjectileSpawn->GetComponentRotation();
-	AProjectileBase* TempProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation);
+	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, GetEmitterLocation(), GetEmitterRotation());
 	//set the owner
-	TempProjectile->SetOwner(Archer);
+	Projectile->SetOwner(MyCharacter);
+    Projectile->AddIgnoreActors({MyCharacter, this});
+
 	return true;
 }
