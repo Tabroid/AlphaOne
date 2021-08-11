@@ -16,9 +16,9 @@ class ALPHAONE_API ATurret : public ABuildingBase
 	GENERATED_BODY()
 
 public:
-	virtual void Tick(float DeltaTime) override;
 	ATurret();
-	
+	virtual void Tick(float DeltaTime) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

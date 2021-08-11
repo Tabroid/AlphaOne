@@ -68,14 +68,13 @@ float ATurret::GetDistanceToEnemy()
 
 void ATurret::Fire()
 {
-	//firing the projectiles, only when the pawn is alive
-	if (ProjectileClass && !CheckStatus(EUnitStatuses::Dead)) {
-		//spawning the projectile at the spawn point
-		FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
-		FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();
-		AProjectileBase* TempProjectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, SpawnLocation, SpawnRotation);
-		//set the owner
-		TempProjectile->SetOwner(this);
+    FTransform SpawnTM(ProjectileSpawnPoint->GetComponentRotation(), ProjectileSpawnPoint->GetComponentLocation());
+	auto Projectile = Cast<AProjectileBase>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ProjectileClass, SpawnTM));
+	if (Projectile) {
+		Projectile->SetInstigator(this);
+		Projectile->SetOwner(this);
+        Projectile->AddIgnoreActors({this});
+		UGameplayStatics::FinishSpawningActor(Projectile, SpawnTM);
 	}
 }
 

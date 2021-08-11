@@ -6,7 +6,6 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
-#include "Components/ArrowComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
@@ -19,8 +18,6 @@ AProjectileBase::AProjectileBase()
  	// no need to tick
 	PrimaryActorTick.bCanEverTick = false;
 
-	RootComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("Spawn Point"));
-
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(CollisionSize);
 	CollisionComp->AlwaysLoadOnClient = true;
@@ -31,14 +28,10 @@ AProjectileBase::AProjectileBase()
 	CollisionComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	CollisionComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	CollisionComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
-	CollisionComp->SetupAttachment(RootComponent);
-
-
-	//dynamic binding the OnHit function when the projectile hit something
-	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHit);
+	RootComponent = CollisionComp;
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile Mesh"));
-	ProjectileMesh->SetupAttachment(CollisionComp);
+	ProjectileMesh->SetupAttachment(RootComponent);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
@@ -50,7 +43,10 @@ AProjectileBase::AProjectileBase()
 
 
 	ParticleTrail = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Particle Trail"));
-	ParticleTrail->SetupAttachment(ProjectileMesh);
+	ParticleTrail->SetupAttachment(RootComponent);
+
+	SpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("Spawn Point"));
+	SpawnPoint->SetupAttachment(RootComponent);
 	//if (ParticleTrail)
 	//UNiagaraFunctionLibrary::SpawnSystemAttached(ParticleTrail, RootComponent,
 	//TEXT("SphereComp"), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepRelativeOffset, true);
@@ -60,6 +56,10 @@ AProjectileBase::AProjectileBase()
 void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//dynamic binding the OnHit function when the projectile hit something
+	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectileBase::OnHit);
+	SetLifeSpan(20.f);
 }
 
 AController* AProjectileBase::GetOwnerController() const
@@ -99,16 +99,8 @@ void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitParticle, CollisionComp->GetComponentLocation());
 			}
 		}
-		CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle, this, &AProjectileBase::DestroyAfterHit, 2.f, false);
+		SetLifeSpan(2.f);
 	}
-}
-
-
-void AProjectileBase::DestroyAfterHit()
-{
-	Destroy();
 }
 
 // Called every frame

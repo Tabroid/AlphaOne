@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameplayTags.h"
+#include "Components/ArrowComponent.h"
 #include "ProjectileBase.generated.h"
 
 class UProjectileMovementComponent;
 class USphereComponent;
-class UArrowComponent;
 class UParticleSystem;
 class UNiagaraSystem;
 class UNiagaraComponent;
@@ -43,10 +43,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void ClearIgnoreActors();
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE FVector GetSpawnLocation() const { return SpawnPoint->GetRelativeLocation(); }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE FRotator GetSpawnRotation() const { return SpawnPoint->GetRelativeRotation(); }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	virtual void DestroyAfterHit();
 
 	virtual void HandleCollesionSizeChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 	virtual void HandleMassChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
@@ -72,6 +77,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ProjectileMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
+	UArrowComponent* SpawnPoint;
+
 	//particle effect when the projectile hit
 	UPROPERTY(EditAnywhere, Category = "Effects")
 	UNiagaraComponent* ParticleTrail = nullptr;
@@ -83,7 +91,7 @@ protected:
 	float CollisionSize = 5.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move", meta = (AllowPrivateAccess = "true"))
-	float MoveSpeed = 1000.f;
+	float MoveSpeed = 3000.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move", meta = (AllowPrivateAccess = "true"))
 	float Mass = 0.f;

@@ -1,6 +1,7 @@
 
 #include "weapons/RangedWeapon.h"
 #include "characters/Archer.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ARangedWeapon::ARangedWeapon()
@@ -20,24 +21,22 @@ void ARangedWeapon::DetachFromCharacter()
 bool ARangedWeapon::Attack()
 {
     // can only attack when aiming
-    /*
     if (!MyCharacter->CheckAction(EUnitActions::Aiming)) {
         return false;
     }
-    */
     return Super::Attack();
 }
 
 bool ARangedWeapon::ShootProjectile()
 {
-    if (!ProjectileClass) {
-        return false;
-    }
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot Projectile!"));
-	auto Projectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, GetEmitterLocation(), GetEmitterRotation());
-	//set the owner
-	Projectile->SetOwner(MyCharacter);
-    Projectile->AddIgnoreActors({MyCharacter, this});
-
-	return true;
+    FTransform SpawnTM(GetEmitterRotation(), GetEmitterLocation());
+	auto Projectile = Cast<AProjectileBase>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ProjectileClass, SpawnTM));
+	if (Projectile) {
+		Projectile->SetInstigator(MyCharacter);
+		Projectile->SetOwner(MyCharacter);
+        Projectile->AddIgnoreActors({MyCharacter, this});
+        UGameplayStatics::FinishSpawningActor(Projectile, SpawnTM);
+        return true;
+	}
+    return false;
 }
