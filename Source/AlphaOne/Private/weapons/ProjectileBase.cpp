@@ -91,6 +91,7 @@ float AProjectileBase::GetMass() const
 void AProjectileBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 			   				FVector NormalImpulse, const FHitResult& Hit)
 {
+	CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AActor* MyOwner = GetOwner();
 	if (IsValid(MyOwner) && IsValid(OtherActor)) {
 		//apply the damage to the target that the projectile hits.
