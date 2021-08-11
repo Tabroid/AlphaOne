@@ -9,6 +9,7 @@
 
 class UProjectileMovementComponent;
 class USphereComponent;
+class UArrowComponent;
 class UParticleSystem;
 class UNiagaraSystem;
 class UNiagaraComponent;
@@ -45,6 +46,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void DestroyAfterHit();
 
 	virtual void HandleCollesionSizeChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
 	virtual void HandleMassChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
@@ -81,7 +83,7 @@ protected:
 	float CollisionSize = 5.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move", meta = (AllowPrivateAccess = "true"))
-	float MoveSpeed = 5000.f;
+	float MoveSpeed = 1000.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move", meta = (AllowPrivateAccess = "true"))
 	float Mass = 0.f;

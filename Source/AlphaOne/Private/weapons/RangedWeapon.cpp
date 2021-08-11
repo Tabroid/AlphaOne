@@ -30,11 +30,11 @@ bool ARangedWeapon::Attack()
 
 bool ARangedWeapon::ShootProjectile()
 {
-    // TODO move the spawn component to ranged weapon class
     if (!ProjectileClass) {
         return false;
     }
-	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, GetEmitterLocation(), GetEmitterRotation());
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot Projectile!"));
+	auto Projectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass, GetEmitterLocation(), GetEmitterRotation());
 	//set the owner
 	Projectile->SetOwner(MyCharacter);
     Projectile->AddIgnoreActors({MyCharacter, this});

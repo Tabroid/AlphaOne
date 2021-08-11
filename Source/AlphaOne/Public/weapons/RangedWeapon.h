@@ -32,7 +32,5 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (AllowPrivateAccess = "true"))
-    FName ProjectileSocketBase = "bow_string_mid";
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (AllowPrivateAccess = "true"))
     FName ProjectileSocketEmitter = "BowEmitterSocket";
 };
