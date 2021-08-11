@@ -15,8 +15,8 @@ UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true
 enum class EControllStates: uint8
 {
     NONE            = 0          UMETA(Hidden),
-    WantsToAttack   = 1 << 0     UMETA(DisplayName = "WantsToAttack"),
-    WantsToSprint   = 1 << 1     UMETA(DisplayName = "WantsToSprint"),
+    WantsToAttack   = 1 << 0     UMETA(DisplayName = "Wants to attack"),
+    WantsToSprint   = 1 << 1     UMETA(DisplayName = "Wants to sprint"),
 };
 ENUM_CLASS_FLAGS(EControllStates);
 

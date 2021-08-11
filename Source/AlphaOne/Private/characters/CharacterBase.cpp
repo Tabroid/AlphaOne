@@ -217,7 +217,7 @@ void ACharacterBase::OnStopSprinting()
 
 bool ACharacterBase::Attack()
 {
-	if (IsAbleToAct() && CurrentWeapon && !(GetAction() & EUnitActions::Attacking)) {
+	if (IsAbleToAct() && CurrentWeapon && !CheckAction(EUnitActions::Attacking)) {
 		return CurrentWeapon->Attack();
 	}
 	return false;
@@ -323,6 +323,7 @@ void ACharacterBase::OnDeath(float KillingDamage, const FDamageEvent& DamageEven
 	// disable collisions on capsule
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SetStatus(EUnitStatuses::Dead);
 	// @TODO need test the right timing to call destroy
 	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("DESTROY!"));
 	// Destroy();

@@ -24,6 +24,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void Die(float DamageAmount, const FDamageEvent& DamageEvent, class AController* EventInstigator, AActor* DamageCauser);
 
 	// Implement IAbilitySystemInterface
 	UAbilitySystemComponent* GetAbilitySystemComponent() const;
@@ -32,22 +33,22 @@ public:
 	UCharacterAttributes* GetAttributes() { return AttributeSet; }
 
 	UFUNCTION(BlueprintCallable)
-	EUnitActions GetAction() const { return AttributeSet->Action; }
-
-	UFUNCTION(BlueprintCallable)
 	void SetAction(EUnitActions NewAction, bool State = true);
-
-	UFUNCTION(BlueprintCallable)
-	EUnitStatuses GetStatus() const { return AttributeSet->Status; }
 
 	UFUNCTION(BlueprintCallable)
 	void SetStatus(EUnitStatuses NewStatus, bool State = true);
 
 	UFUNCTION(BlueprintCallable)
-	EUnitTypes GetType() const { return AttributeSet->Type; }
+	void SetType(EUnitTypes NewType);
 
 	UFUNCTION(BlueprintCallable)
-	void SetType(EUnitTypes NewType);
+	FORCEINLINE bool CheckType(EUnitTypes Type) const { return (AttributeSet->Type == Type); }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool CheckAction(EUnitActions Action) const { return static_cast<bool>(AttributeSet->Action & Action); }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool CheckStatus(EUnitStatuses Status) const { return static_cast<bool>(AttributeSet->Status & Status); }
 
 	UFUNCTION(BlueprintCallable)
 	UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }

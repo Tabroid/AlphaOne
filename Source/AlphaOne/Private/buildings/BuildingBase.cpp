@@ -75,8 +75,7 @@ float ABuildingBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageEv
 
 	// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Damage: %.0f, Health: %.0f!"), BattleResult.FinalDamage, AttributeSet->GetHealth()));
 	if (AttributeSet->GetHealth() <= 0.) {
-        // @TODO, to implement
-		; // Die(BattleResult.FinalDamage, DamageEvent, EventInstigator, DamageCauser);
+		Die(BattleResult.FinalDamage, DamageEvent, EventInstigator, DamageCauser);
 	}
 	return BattleResult.FinalDamage;
 }
@@ -102,4 +101,13 @@ void ABuildingBase::SetStatus(EUnitStatuses NewStatus, bool State)
 void ABuildingBase::SetType(EUnitTypes NewType)
 {
 	AttributeSet->Type = NewType;
+}
+
+
+void ABuildingBase::Die(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	// @TODO: implement destroy animations
+	SetStatus(EUnitStatuses::Dead);
+	Destroy();
+	return;
 }

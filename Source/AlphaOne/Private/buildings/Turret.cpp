@@ -44,7 +44,7 @@ void ATurret::CheckFireCondition()
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacterBase::StaticClass(), AllEnemy);
     for (auto Enemy : AllEnemy){
         ACharacterBase* CurrentEnemy = Cast<ACharacterBase>(Enemy);
-        if (!CurrentEnemy || CurrentEnemy->GetStatus() == EUnitStatuses::Dead) continue;
+        if (!CurrentEnemy || CheckStatus(EUnitStatuses::Dead)) continue;
         if (!GetFactionComponent()->IsEnemy(Cast<AActor>(CurrentEnemy))) continue;
         float CurrentDistance = FVector::Dist(CurrentEnemy->GetActorLocation(), GetActorLocation());
         if (CurrentDistance < Distance) {
@@ -69,7 +69,7 @@ float ATurret::GetDistanceToEnemy()
 void ATurret::Fire()
 {
 	//firing the projectiles, only when the pawn is alive
-	if (ProjectileClass && GetStatus() != EUnitStatuses::Dead){
+	if (ProjectileClass && !CheckStatus(EUnitStatuses::Dead)) {
 		//spawning the projectile at the spawn point
 		FVector SpawnLocation = ProjectileSpawnPoint->GetComponentLocation();
 		FRotator SpawnRotation = ProjectileSpawnPoint->GetComponentRotation();

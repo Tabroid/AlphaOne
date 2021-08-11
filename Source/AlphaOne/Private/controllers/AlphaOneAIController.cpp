@@ -24,7 +24,7 @@ void AAlphaOneAIController::BeginPlay()
 
         for (auto Tower : AllTower) {
             ATower* CurrentTower = Cast<ATower>(Tower);
-            if (!CurrentTower || !CurrentTower->CanBeDamaged() || CurrentTower->GetStatus() == EUnitStatuses::Dead) {
+            if (!CurrentTower || !CurrentTower->CanBeDamaged() || CurrentTower->CheckStatus(EUnitStatuses::Dead)) {
                 continue;
             }
 
@@ -52,7 +52,7 @@ bool AAlphaOneAIController::IsDead() const
     //Get the controlled pawn of this controller
     ACharacterBase* ControlledPawn = Cast<ACharacterBase>(GetPawn());
 
-    if (!ControlledPawn || ControlledPawn->GetStatus() == EUnitStatuses::Dead) {
+    if (!ControlledPawn || ControlledPawn->CheckStatus(EUnitStatuses::Dead)) {
         return true;
     }
 
