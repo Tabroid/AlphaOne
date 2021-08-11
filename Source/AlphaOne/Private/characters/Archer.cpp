@@ -12,11 +12,6 @@ AArcher::AArcher()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
-    SpringArm->SetupAttachment(RootComponent);
-    Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-    Camera->SetupAttachment(SpringArm);
-
 	// @TODO move this to weapon if weapon mesh implemented
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile Spawn Point"));
 	ProjectileSpawnPoint->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform ,TEXT("bow_base"));
@@ -27,10 +22,6 @@ AArcher::AArcher()
 // Called when the game starts or when spawned
 void AArcher::BeginPlay()
 {
-	/*ProjectileSpawnPoint->AttachToComponent(GetMesh(),
-                                            FAttachmentTransformRules::KeepRelativeTransform,
-                                            ProjectileSpawnSocket);
-	*/
 	Super::BeginPlay();
 }
 
@@ -49,10 +40,10 @@ void AArcher::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompon
 
 void AArcher::CameraIn()
 {
-	SpringArm->TargetArmLength = 0.0f;
+	CameraBoom->TargetArmLength = 100.0f;
 }
 
 void AArcher::CameraOut()
 {
-	SpringArm->TargetArmLength = 200.0f;
+	CameraBoom->TargetArmLength = 300.0f;
 }

@@ -11,7 +11,14 @@
 #include "Templates/SharedPointer.h"
 #include "CharacterBase.generated.h"
 
-class WeaponBase;
+UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
+enum class EControllStates: uint8
+{
+    NONE            = 0          UMETA(Hidden),
+    WantsToAttack   = 1 << 0     UMETA(DisplayName = "WantsToAttack"),
+    WantsToSprint   = 1 << 1     UMETA(DisplayName = "WantsToSprint"),
+};
+ENUM_CLASS_FLAGS(EControllStates);
 
 UCLASS()
 class ALPHAONE_API ACharacterBase : public ACharacter, public IGenericTeamAgentInterface
@@ -31,28 +38,16 @@ public:
 	UAbilitySystemComponent* GetAbilitySystemComponent() const;
 
 	UFUNCTION(BlueprintCallable)
-	virtual AWeaponBase *GetCurrentWeapon() const;
-
-	UFUNCTION(BlueprintCallable)
 	virtual bool EquipWeapon(AWeaponBase* NewWeapon = nullptr);
 
 	UFUNCTION(BlueprintCallable)
-	UCharacterAttributes* GetAttributes() { return AttributeSet; }
+	void SetAction(EUnitActions Action, bool NewState = true);
 
 	UFUNCTION(BlueprintCallable)
-	EUnitActions GetAction() const { return AttributeSet->Action; }
+	void SetStatus(EUnitStatuses Status, bool NewState = true);
 
 	UFUNCTION(BlueprintCallable)
-	void SetAction(EUnitActions NewAction, bool State = true);
-
-	UFUNCTION(BlueprintCallable)
-	EUnitStatuses GetStatus() const { return AttributeSet->Status; }
-
-	UFUNCTION(BlueprintCallable)
-	void SetStatus(EUnitStatuses NewStatus, bool State = true);
-
-	UFUNCTION(BlueprintCallable)
-	EUnitTypes GetType() const { return AttributeSet->Type; }
+	void SetControll(EControllStates Controll, bool NewState = true);
 
 	UFUNCTION(BlueprintCallable)
 	void SetType(EUnitTypes NewType);
@@ -63,12 +58,34 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual AWeaponBase *GetCurrentWeapon() const;
+
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UCharacterAttributes* GetAttributes() { return AttributeSet; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool CheckType(EUnitTypes Type) const { return (AttributeSet->Type == Type); }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool CheckAction(EUnitActions Action) const { return static_cast<bool>(AttributeSet->Action & Action); }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool CheckStatus(EUnitStatuses Status) const { return static_cast<bool>(AttributeSet->Status & Status); }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool CheckControll(EControllStates Controll) const { return static_cast<bool>(ControllState & Controll); }
+
+
 	// @TODO: item slots, equipment slots
 	// setupItems()
 	UFUNCTION(BlueprintCallable)
 	virtual bool IsAbleToAct() const;
 	virtual bool Attack();
-	void SetSprinting(bool bNewSprinting, bool bToggle);
 	virtual float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual bool Die(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
@@ -96,20 +113,9 @@ protected:
 	virtual void OnStartAttack();
 	virtual void OnStopAttack();
 	virtual void OnStartSprinting();
-	virtual void OnStartSprintingToggle();
 	virtual void OnStopSprinting();
 	virtual void OnDeath(float KillingDamage, const FDamageEvent& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
 	virtual void SetRagdollPhysics();
-
-	// current running state
-	UPROPERTY(Transient, BlueprintReadOnly, Replicated)
-	uint8 bWantsToSprint : 1;
-
-	UPROPERTY(Transient, BlueprintReadOnly)
-	uint8 bWantsToSprintToggled : 1;
-
-	UPROPERTY(Transient, BlueprintReadOnly)
-	uint8 bWantsToAttack : 1;
 
 	// Passive gameplay effects applied on creation
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
@@ -137,16 +143,15 @@ protected:
 	UPROPERTY()
 	UAlphaOneAbilitySystem* AbilitySystemComponent;
 
+	UPROPERTY()
+	EControllStates ControllState;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	class USpringArmComponent* CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* FollowCamera;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	FName UnitDataRowName = "Default_Character";
-
-private:
-	UPROPERTY(EditAnywhere)
-	float RotationRate = 10.0f;
-
-	UPROPERTY(EditAnywhere)
-	float JogSpeed = 350.0f;
-
-	UPROPERTY(EditAnywhere)
-	float SprintSpeed = 700.0f;
 };

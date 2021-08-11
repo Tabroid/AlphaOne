@@ -33,6 +33,4 @@ protected:
 
 private:
     ACharacterBase *PlayerCharacter = nullptr;
-
-    bool bNeedsInit = false;
 };

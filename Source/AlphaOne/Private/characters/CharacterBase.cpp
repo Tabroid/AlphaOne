@@ -6,12 +6,37 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "weapons/WeaponBase.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
 	: DefaultFaction(EUnitFactions::Protagonist)
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Don't rotate when the controller rotates. Let that just affect the camera.
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+	// Configure character movement
+	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->JumpZVelocity = 600.f;
+	GetCharacterMovement()->AirControl = 0.2f;
+
+	// Create a camera boom (pulls in towards the player if there is a collision)
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom->SetupAttachment(RootComponent);
+	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character
+	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+
+	// Create a follow camera
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
 
 	// Create ability system component, and set it to be explicitly replicated
 	AbilitySystemComponent = CreateDefaultSubobject<UAlphaOneAbilitySystem>(TEXT("AbilitySystemComponent"));
@@ -33,6 +58,7 @@ void ACharacterBase::BeginPlay()
 		EquipWeapon(DefaultWeaponPtr);
 	}
 	AttributeSet->InitFromMetaDataTable(Cast<UAlphaOneInstance>(GetGameInstance())->UnitData(), UnitDataRowName);
+	GetCharacterMovement()->MaxWalkSpeed = AttributeSet->GetJogSpeed();
 }
 
 // Called every frame
@@ -66,8 +92,6 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ACharacterBase::OnStartSprinting);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &ACharacterBase::OnStopSprinting);
-	PlayerInputComponent->BindAction("RunToggle", IE_Pressed, this, &ACharacterBase::OnStartSprintingToggle);
-
 }
 
 
@@ -90,21 +114,30 @@ void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
-void ACharacterBase::SetAction(EUnitActions NewAction, bool State)
+void ACharacterBase::SetAction(EUnitActions Action, bool NewState)
 {
-	if (State) {
-		AttributeSet->Action |= NewAction;
+	if (NewState) {
+		AttributeSet->Action |= Action;
 	} else {
-		AttributeSet->Action &= ~NewAction;
+		AttributeSet->Action &= ~Action;
 	}
 }
 
-void ACharacterBase::SetStatus(EUnitStatuses NewStatus, bool State)
+void ACharacterBase::SetStatus(EUnitStatuses Status, bool NewState)
 {
-	if (State) {
-		AttributeSet->Status |= NewStatus;
+	if (NewState) {
+		AttributeSet->Status |= Status;
 	} else {
-		AttributeSet->Status &= ~NewStatus;
+		AttributeSet->Status &= ~Status;
+	}
+}
+
+void ACharacterBase::SetControll(EControllStates Controll, bool NewState)
+{
+	if (NewState) {
+		ControllState |= Controll;
+	} else {
+		ControllState &= ~Controll;
 	}
 }
 
@@ -122,59 +155,64 @@ FGenericTeamId ACharacterBase::GetGenericTeamId() const
 
 void ACharacterBase::MoveForward(float AxisValue)
 {
-	AddMovementInput(GetActorForwardVector() * AxisValue);
+	if ((Controller != nullptr) && (AxisValue != 0.0f))	{
+		// find out which way is forward
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+		// get forward vector
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, AxisValue);
+	}
 }
 
 void ACharacterBase::MoveRight(float AxisValue)
 {
-	AddMovementInput(GetActorRightVector() * AxisValue);
+	if ((Controller != nullptr) && (AxisValue != 0.0f)) {
+		// find out which way is right
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+		// get right vector
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		// add movement in that direction
+		AddMovementInput(Direction, AxisValue);
+	}
 }
 
 void ACharacterBase::LookUpRate(float AxisValue)
 {
-	AddControllerPitchInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
+	AddControllerPitchInput(AxisValue * AttributeSet->GetRotationRate() * GetWorld()->GetDeltaSeconds());
 }
 
 void ACharacterBase::TurnRate(float AxisValue)
 {
-	AddControllerYawInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
+	AddControllerYawInput(AxisValue * AttributeSet->GetRotationRate() * GetWorld()->GetDeltaSeconds());
 }
 
 void ACharacterBase::OnStartAttack()
 {
-	bWantsToAttack = true;
+	SetControll(EControllStates::WantsToAttack, true);
+	SetControll(EControllStates::WantsToSprint, false);
 	Attack();
-	SetSprinting(false, false);
 }
 
 void ACharacterBase::OnStopAttack()
 {
-	bWantsToAttack = false;
-}
-
-void ACharacterBase::SetSprinting(bool bNewSprinting, bool bToggle)
-{
-	bWantsToSprint = bNewSprinting;
-	bWantsToSprintToggled = bNewSprinting && bToggle;
+	SetControll(EControllStates::WantsToAttack, false);
 }
 
 void ACharacterBase::OnStartSprinting()
 {
 	OnStopAttack();
-	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-	SetSprinting(true, false);
-}
-
-void ACharacterBase::OnStartSprintingToggle()
-{
-	OnStopAttack();
-	SetSprinting(true, true);
+	GetCharacterMovement()->MaxWalkSpeed = AttributeSet->GetSprintSpeed();
+	SetControll(EControllStates::WantsToSprint, true);
 }
 
 void ACharacterBase::OnStopSprinting()
 {
-	GetCharacterMovement()->MaxWalkSpeed = JogSpeed;
-	SetSprinting(false, false);
+	GetCharacterMovement()->MaxWalkSpeed = AttributeSet->GetJogSpeed();
+	SetControll(EControllStates::WantsToSprint, false);
 }
 
 bool ACharacterBase::Attack()
@@ -190,7 +228,7 @@ void ACharacterBase::OnAttackEnd(bool Interrupted)
 	SetAction(EUnitActions::Attacking, false);
 	if (CurrentWeapon) {
 		CurrentWeapon->AttackEnd(Interrupted);
-		if (bWantsToAttack && !Interrupted) {
+		if (CheckControll(EControllStates::WantsToAttack)  && !Interrupted) {
 			Attack();
 		}
 	}
@@ -213,9 +251,9 @@ float ACharacterBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 
 bool ACharacterBase::IsAbleToAct() const
 {
-	if (GetAction() == EUnitActions::Dying				// already dying
+	if (CheckAction(EUnitActions::Dying)				// already dying
 		|| IsPendingKill()								// object already destroyed
-		|| GetWorld()->GetAuthGameMode<AAlphaOneGameModeBase>() == NULL) {
+		|| GetWorld()->GetAuthGameMode<AAlphaOneGameModeBase>() == nullptr) {
 		return false;
 	}
 
