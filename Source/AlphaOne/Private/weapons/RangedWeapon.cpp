@@ -17,21 +17,18 @@ void ARangedWeapon::DetachFromCharacter()
      Super::DetachFromCharacter();
 }
 
-bool ARangedWeapon::Attack()
+bool ARangedWeapon::ShootProjectile()
 {
+    // TODO move the spawn component to ranged weapon class
     auto Archer = Cast<AArcher>(MyCharacter);
     if (!Projectile || !Archer) {
         return false;
     }
-    // this controls the animation
-    Super::Attack();
-    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Spawn arrows"));
-    //spawning the projectile at the spawn point
     auto ProjectileSpawn = Archer->GetProjectileSpawnComponent();
 	FVector SpawnLocation = ProjectileSpawn->GetComponentLocation();
 	FRotator SpawnRotation = ProjectileSpawn->GetComponentRotation();
 	AProjectileBase* TempProjectile = GetWorld()->SpawnActor<AProjectileBase>(Projectile, SpawnLocation, SpawnRotation);
 	//set the owner
-	TempProjectile->SetOwner(Cast<AActor>(Archer));
+	TempProjectile->SetOwner(Archer);
 	return true;
 }

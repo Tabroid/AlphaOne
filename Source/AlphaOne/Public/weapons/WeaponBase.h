@@ -62,6 +62,9 @@ public:
 	virtual void OnSweepEnd();
 	virtual void RequestAsyncSweep(int32 Index);
 
+	// a pure virtual function to be overrided
+	virtual bool ShootProjectile() { return false; }
+
 	// @TODO: implment
 	float GetDamage() const { return 50; }
 

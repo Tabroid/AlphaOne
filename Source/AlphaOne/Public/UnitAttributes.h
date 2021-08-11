@@ -29,6 +29,7 @@ enum class EUnitActions: uint8
     Running         = 1 << 1     UMETA(DisplayName = "Running"),
     BeingAttacked   = 1 << 2     UMETA(DisplayName = "BeingAttacked"),
     Dying           = 1 << 3     UMETA(DisplayName = "Dying"),
+	Aiming			= 1 << 4     UMETA(DisplayName = "Aiming"),
 };
 ENUM_CLASS_FLAGS(EUnitActions);
 

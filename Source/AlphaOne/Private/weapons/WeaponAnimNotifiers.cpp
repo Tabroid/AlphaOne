@@ -21,20 +21,27 @@ void USweepEndNotify::Notify(USkeletalMeshComponent* Mesh, UAnimSequenceBase* An
 
 void UComboReadyNotify::Notify(USkeletalMeshComponent* Mesh, UAnimSequenceBase* Animation)
 {
-    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("NOTIFY BEGIN!"));
+    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Combo Ready!"));
     auto Player = Cast<ACharacterBase>(Mesh->GetOwner());
     if (Player) {
         Player->OnAttackEnd();
     }
 }
 
-
 void UComboResetNotify::Notify(USkeletalMeshComponent* Mesh, UAnimSequenceBase* Animation)
 {
-    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("NOTIFY BEGIN!"));
+    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Combo Reset!"));
     auto Player = Cast<ACharacterBase>(Mesh->GetOwner());
     if (Player) {
         Player->OnAttackEnd(true);
     }
 }
 
+void UProjectileFireNotify::Notify(USkeletalMeshComponent* Mesh, UAnimSequenceBase* Animation)
+{
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Shoot Projectile!"));
+    auto Player = Cast<ACharacterBase>(Mesh->GetOwner());
+    if (Player && Player->GetCurrentWeapon()) {
+        Player->GetCurrentWeapon()->ShootProjectile();
+    }
+}

@@ -17,7 +17,7 @@ public:
 
     virtual void AttachToCharacter(ACharacterBase *Character) override;
     virtual void DetachFromCharacter() override;
-    virtual bool Attack() override;
+    virtual bool ShootProjectile() override;
 
 	//projectile of this pawn
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile Type", meta = (AllowPrivateAccess = "true"))

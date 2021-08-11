@@ -9,35 +9,39 @@
 UCLASS()
 class ALPHAONE_API USweepBeginNotify : public UAnimNotify
 {
-  GENERATED_BODY()
-
+    GENERATED_BODY()
 public:
-  virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+    virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 };
 
 UCLASS()
 class ALPHAONE_API USweepEndNotify : public UAnimNotify
 {
-  GENERATED_BODY()
-
+    GENERATED_BODY()
 public:
-  virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+    virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 };
 
 UCLASS()
 class ALPHAONE_API UComboReadyNotify : public UAnimNotify
 {
-  GENERATED_BODY()
-
+    GENERATED_BODY()
 public:
-  virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+    virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 };
 
 UCLASS()
 class ALPHAONE_API UComboResetNotify : public UAnimNotify
 {
-  GENERATED_BODY()
-
+    GENERATED_BODY()
 public:
-  virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+    virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+};
+
+UCLASS()
+class ALPHAONE_API UProjectileFireNotify : public UAnimNotify
+{
+    GENERATED_BODY()
+public:
+    virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 };
