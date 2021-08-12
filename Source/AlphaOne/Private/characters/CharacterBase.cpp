@@ -23,7 +23,6 @@ ACharacterBase::ACharacterBase()
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
-	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->bUseSeparateBrakingFriction = true;
 	GetCharacterMovement()->BrakingFrictionFactor = 0.f;
@@ -60,9 +59,6 @@ void ACharacterBase::BeginPlay()
 		EquipWeapon(DefaultWeaponPtr);
 	}
 	AttributeSet->InitFromMetaDataTable(Cast<UAlphaOneInstance>(GetGameInstance())->UnitData(), UnitDataRowName);
-	GetCharacterMovement()->MaxWalkSpeed = AttributeSet->GetJogSpeed();
-	GetCharacterMovement()->MaxAcceleration = AttributeSet->GetJogSpeed();
-	GetCharacterMovement()->BrakingDecelerationWalking = AttributeSet->GetSprintSpeed()/1.3f;
 }
 
 // Called every frame
@@ -209,13 +205,13 @@ void ACharacterBase::OnStopAttack()
 void ACharacterBase::OnStartSprinting()
 {
 	OnStopAttack();
-	GetCharacterMovement()->MaxWalkSpeed = AttributeSet->GetSprintSpeed();
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 	SetControll(EControllStates::WantsToSprint, true);
 }
 
 void ACharacterBase::OnStopSprinting()
 {
-	GetCharacterMovement()->MaxWalkSpeed = AttributeSet->GetJogSpeed();
+	GetCharacterMovement()->MaxWalkSpeed = JogSpeed;
 	SetControll(EControllStates::WantsToSprint, false);
 }
 
@@ -405,4 +401,11 @@ bool ACharacterBase::EquipWeapon(AWeaponBase* NewWeapon)
 	CurrentWeapon = NewWeapon;
 	CurrentWeapon->AttachToCharacter(this);
 	return true;
+}
+
+void ACharacterBase::SetJogSpeed(float Value)
+{
+	JogSpeed = Value;
+	// @TODO: should bind this as a delegate
+	GetCharacterMovement()->MaxWalkSpeed = JogSpeed;
 }

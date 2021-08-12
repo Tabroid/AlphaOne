@@ -102,6 +102,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }
 
+	UFUNCTION(BlueprintCallable)
+	void SetJogSpeed(float Value);
+	UFUNCTION(BlueprintCallable)
+	float GetJogSpeed() const { return JogSpeed; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetSprintSpeed(float Value) { SprintSpeed = Value; }
+	UFUNCTION(BlueprintCallable)
+	float GetSprintSpeed() const { return SprintSpeed; }
 
 protected:
 	// Called when the game starts or when spawned
@@ -157,4 +166,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	FName UnitDataRowName = "Default_Character";
+
+private:
+	float JogSpeed = 350.f;
+	float SprintSpeed = 700.f;
 };

@@ -48,9 +48,9 @@ struct FUnitDataRow : public FTableRowBase
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere) int32 Level = 1;
-	UPROPERTY(EditAnywhere) float RotationRate = 10.f;
-	UPROPERTY(EditAnywhere) float JogSpeed = 350.f;
-	UPROPERTY(EditAnywhere) float SprintSpeed = 700.f;
+	UPROPERTY(EditAnywhere) float RotationRate = 1.f;
+	UPROPERTY(EditAnywhere) float JogSpeed = 1.f;
+	UPROPERTY(EditAnywhere) float SprintSpeed = 1.f;
 
 	UPROPERTY(EditAnywhere) float Health = 100.f;
 	UPROPERTY(EditAnywhere) float MaxHealth = 100.f;
