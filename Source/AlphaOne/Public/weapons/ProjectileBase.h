@@ -91,7 +91,7 @@ protected:
 	float CollisionSize = 5.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move", meta = (AllowPrivateAccess = "true"))
-	float MoveSpeed = 3000.f;
+	float MoveSpeed = 5000.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move", meta = (AllowPrivateAccess = "true"))
 	float Mass = 0.f;
