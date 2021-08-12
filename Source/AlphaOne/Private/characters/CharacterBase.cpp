@@ -155,7 +155,7 @@ FGenericTeamId ACharacterBase::GetGenericTeamId() const
 void ACharacterBase::Jump()
 {
 	if (!CheckAction(EUnitActions::Jumping)) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("JUMP!"));
+		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("JUMP!"));
 		Super::Jump();
 		SetAction(EUnitActions::Jumping);
 	}
