@@ -37,7 +37,7 @@ void AArcher::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompon
 void AArcher::CameraIn()
 {
 	SetAction(EUnitActions::Aiming);
-	CameraBoom->TargetArmLength = 100.0f;
+	CameraBoom->TargetArmLength = DefaultArmLength;// 100.0f;
 
 	// In aiming mode, actor rotates with view direction
 	bUseControllerRotationYaw = true;

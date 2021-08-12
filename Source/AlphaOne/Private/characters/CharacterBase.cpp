@@ -25,6 +25,8 @@ ACharacterBase::ACharacterBase()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+	GetCharacterMovement()->bUseSeparateBrakingFriction = true;
+	GetCharacterMovement()->BrakingFrictionFactor = 0.f;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -59,6 +61,8 @@ void ACharacterBase::BeginPlay()
 	}
 	AttributeSet->InitFromMetaDataTable(Cast<UAlphaOneInstance>(GetGameInstance())->UnitData(), UnitDataRowName);
 	GetCharacterMovement()->MaxWalkSpeed = AttributeSet->GetJogSpeed();
+	GetCharacterMovement()->MaxAcceleration = AttributeSet->GetJogSpeed();
+	GetCharacterMovement()->BrakingDecelerationWalking = AttributeSet->GetSprintSpeed()/1.3f;
 }
 
 // Called every frame
