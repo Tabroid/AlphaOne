@@ -30,23 +30,30 @@ void AArcher::Tick(float DeltaTime)
 void AArcher::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, this, &AArcher::CameraIn);
-	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Released, this, &AArcher::CameraOut);
+	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, this, &AArcher::AimingOn);
+	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Released, this, &AArcher::AimingOff);
 }
 
-void AArcher::CameraIn()
+void AArcher::AimingOn()
 {
 	SetAction(EUnitActions::Aiming);
+	OnStopSprinting();
 	CameraBoom->TargetArmLength = DefaultArmLength;// 100.0f;
 
 	// In aiming mode, actor rotates with view direction
 	bUseControllerRotationYaw = true;
 }
 
-void AArcher::CameraOut()
+void AArcher::AimingOff()
 {
 	CameraBoom->TargetArmLength = DefaultArmLength;
 	SetAction(EUnitActions::Aiming, false);
 
 	bUseControllerRotationYaw = false;
+}
+
+void AArcher::OnStartSprinting()
+{
+	AimingOff();
+	Super::OnStartSprinting();
 }

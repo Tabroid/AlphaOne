@@ -27,10 +27,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-private:
-	void CameraIn();
-	void CameraOut();
+	virtual void OnStartSprinting();
+	virtual void AimingOn();
+	virtual void AimingOff();
 };
 
 
