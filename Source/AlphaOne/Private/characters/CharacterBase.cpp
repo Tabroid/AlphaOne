@@ -89,7 +89,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacterBase::OnStartAttack);
 	PlayerInputComponent->BindAction("Attack", IE_Released, this, &ACharacterBase::OnStopAttack);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacterBase::Jump);
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ACharacterBase::OnStartSprinting);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &ACharacterBase::OnStopSprinting);
 }
@@ -151,6 +151,15 @@ FGenericTeamId ACharacterBase::GetGenericTeamId() const
 	static const FGenericTeamId PlayerTeam(0);
 	static const FGenericTeamId AITeam(1);
 	return Cast<APlayerController>(GetController()) ? PlayerTeam : AITeam;
+}
+
+void ACharacterBase::Jump()
+{
+	if (!CheckAction(EUnitActions::Jumping)) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("JUMP!"));
+		Super::Jump();
+		SetAction(EUnitActions::Jumping);
+	}
 }
 
 void ACharacterBase::MoveForward(float AxisValue)

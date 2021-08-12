@@ -91,6 +91,7 @@ public:
 
 	virtual void StopAllAnimMontages();
 	// Controller responses
+	void Jump() override;
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void LookUpRate(float AxisValue);
