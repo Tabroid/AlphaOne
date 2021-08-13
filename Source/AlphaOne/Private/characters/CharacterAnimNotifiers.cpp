@@ -1,5 +1,6 @@
 #include "characters/CharacterAnimNotifiers.h"
 #include "characters/CharacterBase.h"
+#include "GameFramework/SpringArmComponent.h"
 
 
 void UJumpEndNotify::Notify(USkeletalMeshComponent* Mesh, UAnimSequenceBase* Animation)

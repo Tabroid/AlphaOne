@@ -163,7 +163,7 @@ protected:
 	class UCameraComponent* FollowCamera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-	float DefaultArmLength = 300.f;
+	float DefaultArmLength = 500.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	FName UnitDataRowName = "Default_Character";
