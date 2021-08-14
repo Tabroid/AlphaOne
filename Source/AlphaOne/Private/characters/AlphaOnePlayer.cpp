@@ -53,10 +53,11 @@ void AAlphaOnePlayer::BeginPlay()
 // NOTE: action needs to be reset by animations
 void AAlphaOnePlayer::Jump()
 {
+    // do not repeat jumping, let animation resets the state
 	if (!CheckAction(EUnitActions::Jumping)) {
 		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("JUMP!"));
 		Super::Jump();
-		SetAction(EUnitActions::Jumping);
+        SetAction(EUnitActions::Jumping);
 	}
 }
 
