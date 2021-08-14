@@ -41,7 +41,7 @@ void AArcher::AimingOn()
 	CameraBoom->TargetArmLength = DefaultArmLength; // 100.f;
 
 	// In aiming mode, actor rotates with view direction
-	// bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = true;
 }
 
 void AArcher::AimingOff()
@@ -49,7 +49,7 @@ void AArcher::AimingOff()
 	CameraBoom->TargetArmLength = DefaultArmLength;
 	SetAction(EUnitActions::Aiming, false);
 
-	// bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = false;
 }
 
 void AArcher::OnStartSprinting()
