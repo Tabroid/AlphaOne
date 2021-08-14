@@ -29,7 +29,6 @@ protected:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	virtual void OnStartSprinting();
 	virtual void AimingOn();
 	virtual void AimingOff();
 };

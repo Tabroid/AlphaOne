@@ -103,14 +103,16 @@ public:
 	UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }
 
 	UFUNCTION(BlueprintCallable)
-	void SetJogSpeed(float Value);
+	void SetMoveSpeed(float Value);
 	UFUNCTION(BlueprintCallable)
-	float GetJogSpeed() const { return JogSpeed; }
+	float GetMoveSpeed() const { return MoveSpeed; }
 
+/*
 	UFUNCTION(BlueprintCallable)
 	void SetSprintSpeed(float Value) { SprintSpeed = Value; }
 	UFUNCTION(BlueprintCallable)
 	float GetSprintSpeed() const { return SprintSpeed; }
+*/
 
 protected:
 	// Called when the game starts or when spawned
@@ -121,8 +123,8 @@ protected:
 	virtual void OnMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags) { /* place holder */ }
 	virtual void OnStartAttack();
 	virtual void OnStopAttack();
-	virtual void OnStartSprinting();
-	virtual void OnStopSprinting();
+	// virtual void OnStartSprinting();
+	// virtual void OnStopSprinting();
 	virtual void OnDeath(float KillingDamage, const FDamageEvent& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
 	virtual void SetRagdollPhysics();
 
@@ -159,6 +161,5 @@ protected:
 	FName UnitDataRowName = "Default_Character";
 
 private:
-	float JogSpeed = 350.f;
-	float SprintSpeed = 700.f;
+	float MoveSpeed = 500.f;
 };

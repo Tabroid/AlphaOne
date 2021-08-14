@@ -70,8 +70,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Attack", IE_Released, this, &ACharacterBase::OnStopAttack);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacterBase::Jump);
-	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ACharacterBase::OnStartSprinting);
-	PlayerInputComponent->BindAction("Run", IE_Released, this, &ACharacterBase::OnStopSprinting);
+	// PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ACharacterBase::OnStartSprinting);
+	// PlayerInputComponent->BindAction("Run", IE_Released, this, &ACharacterBase::OnStopSprinting);
 }
 
 
@@ -173,7 +173,7 @@ void ACharacterBase::TurnRate(float AxisValue)
 void ACharacterBase::OnStartAttack()
 {
 	SetControl(EControlStates::WantsToAttack, true);
-	OnStopSprinting();
+	// OnStopSprinting();
 	Attack();
 }
 
@@ -182,6 +182,7 @@ void ACharacterBase::OnStopAttack()
 	SetControl(EControlStates::WantsToAttack, false);
 }
 
+/*
 void ACharacterBase::OnStartSprinting()
 {
 	OnStopAttack();
@@ -194,6 +195,7 @@ void ACharacterBase::OnStopSprinting()
 	GetCharacterMovement()->MaxWalkSpeed = JogSpeed;
 	SetControl(EControlStates::WantsToSprint, false);
 }
+*/
 
 bool ACharacterBase::Attack()
 {
@@ -383,9 +385,9 @@ bool ACharacterBase::EquipWeapon(AWeaponBase* NewWeapon)
 	return true;
 }
 
-void ACharacterBase::SetJogSpeed(float Value)
+void ACharacterBase::SetMoveSpeed(float Value)
 {
-	JogSpeed = Value;
+	MoveSpeed = Value;
 	// @TODO: should bind this as a delegate
-	GetCharacterMovement()->MaxWalkSpeed = JogSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
 }
