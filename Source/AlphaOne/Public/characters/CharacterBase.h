@@ -107,6 +107,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetMoveSpeed() const { return MoveSpeed; }
 
+	UFUNCTION(BlueprintCallable)
+	void SetCombatMoveSpeedFactr(float Value) { CombatMoveSpeedFactor = Value; }
+	UFUNCTION(BlueprintCallable)
+	float GetCombatMoveSpeedFactr() const { return CombatMoveSpeedFactor; }
+
 /*
 	UFUNCTION(BlueprintCallable)
 	void SetSprintSpeed(float Value) { SprintSpeed = Value; }
@@ -159,6 +164,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	FName UnitDataRowName = "Default_Character";
+
+	float CombatMoveSpeedFactor = 1.0f;
 
 private:
 	float MoveSpeed = 500.f;
