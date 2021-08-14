@@ -3,12 +3,12 @@
 #pragma once
 
 #include "AlphaOne.h"
-#include "characters/CharacterBase.h"
+#include "characters/AlphaOnePlayer.h"
 #include "Warrior.generated.h"
 
 
 UCLASS()
-class ALPHAONE_API AWarrior : public ACharacterBase
+class ALPHAONE_API AWarrior : public AAlphaOnePlayer
 {
 	GENERATED_BODY()
 

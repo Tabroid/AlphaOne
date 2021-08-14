@@ -36,19 +36,18 @@ void AArcher::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompon
 
 void AArcher::AimingOn()
 {
+
 	SetAction(EUnitActions::Aiming);
 	OnStopSprinting();
-	CameraBoom->TargetArmLength = DefaultArmLength; // 100.f;
-
+	CameraArm->TargetArmLength = DefaultArmLength; // 100.f;
 	// In aiming mode, actor rotates with view direction
 	bUseControllerRotationYaw = true;
 }
 
 void AArcher::AimingOff()
 {
-	CameraBoom->TargetArmLength = DefaultArmLength;
+	CameraArm->TargetArmLength = DefaultArmLength;
 	SetAction(EUnitActions::Aiming, false);
-
 	bUseControllerRotationYaw = false;
 }
 

@@ -6,36 +6,18 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "weapons/WeaponBase.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
+
 
 // Sets default values
 ACharacterBase::ACharacterBase()
-	: DefaultFaction(EUnitFactions::Protagonist)
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	// Don't rotate when the controller rotates. Let that just affect the camera.
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->bUseSeparateBrakingFriction = true;
-
-	// Create a camera boom (pulls in towards the player if there is a collision)
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-
-	// Create a follow camera
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
-
 
 	// Create ability system component, and set it to be explicitly replicated
 	AbilitySystemComponent = CreateDefaultSubobject<UAlphaOneAbilitySystem>(TEXT("AbilitySystemComponent"));
@@ -50,7 +32,6 @@ ACharacterBase::ACharacterBase()
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	CameraBoom->TargetArmLength = DefaultArmLength; // The camera follows at this distance behind the character
 	FactionSystemComponent->SetFaction(DefaultFaction);
 	if (DefaultWeapon) {
 		DefaultWeaponPtr = GetWorld()->SpawnActor<AWeaponBase>(DefaultWeapon, GetMesh()->GetComponentLocation(), GetMesh()->GetComponentRotation());
@@ -131,12 +112,12 @@ void ACharacterBase::SetStatus(EUnitStatuses Status, bool NewState)
 	}
 }
 
-void ACharacterBase::SetControll(EControllStates Controll, bool NewState)
+void ACharacterBase::SetControl(EControlStates Control, bool NewState)
 {
 	if (NewState) {
-		ControllState |= Controll;
+		ControlState |= Control;
 	} else {
-		ControllState &= ~Controll;
+		ControlState &= ~Control;
 	}
 }
 
@@ -150,15 +131,6 @@ FGenericTeamId ACharacterBase::GetGenericTeamId() const
 	static const FGenericTeamId PlayerTeam(0);
 	static const FGenericTeamId AITeam(1);
 	return Cast<APlayerController>(GetController()) ? PlayerTeam : AITeam;
-}
-
-void ACharacterBase::Jump()
-{
-	if (!CheckAction(EUnitActions::Jumping)) {
-		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("JUMP!"));
-		Super::Jump();
-		SetAction(EUnitActions::Jumping);
-	}
 }
 
 void ACharacterBase::MoveForward(float AxisValue)
@@ -200,27 +172,27 @@ void ACharacterBase::TurnRate(float AxisValue)
 
 void ACharacterBase::OnStartAttack()
 {
-	SetControll(EControllStates::WantsToAttack, true);
+	SetControl(EControlStates::WantsToAttack, true);
 	OnStopSprinting();
 	Attack();
 }
 
 void ACharacterBase::OnStopAttack()
 {
-	SetControll(EControllStates::WantsToAttack, false);
+	SetControl(EControlStates::WantsToAttack, false);
 }
 
 void ACharacterBase::OnStartSprinting()
 {
 	OnStopAttack();
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-	SetControll(EControllStates::WantsToSprint, true);
+	SetControl(EControlStates::WantsToSprint, true);
 }
 
 void ACharacterBase::OnStopSprinting()
 {
 	GetCharacterMovement()->MaxWalkSpeed = JogSpeed;
-	SetControll(EControllStates::WantsToSprint, false);
+	SetControl(EControlStates::WantsToSprint, false);
 }
 
 bool ACharacterBase::Attack()
@@ -236,7 +208,7 @@ void ACharacterBase::OnAttackEnd(bool Interrupted)
 	SetAction(EUnitActions::Attacking, false);
 	if (CurrentWeapon) {
 		CurrentWeapon->AttackEnd(Interrupted);
-		if (CheckControll(EControllStates::WantsToAttack)  && !Interrupted) {
+		if (CheckControl(EControlStates::WantsToAttack)  && !Interrupted) {
 			Attack();
 		}
 	}

@@ -12,13 +12,17 @@
 #include "CharacterBase.generated.h"
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EControllStates: uint8
+enum class EControlStates: uint8
 {
     NONE            = 0          UMETA(Hidden),
     WantsToAttack   = 1 << 0     UMETA(DisplayName = "Wants to attack"),
     WantsToSprint   = 1 << 1     UMETA(DisplayName = "Wants to sprint"),
+	WantsToAim		= 1 << 2	 UMETA(DisplayName = "Wants to aim"),
+	WantsToClimb    = 1 << 3	 UMETA(DisplayName = "Wants to climb"),
+	WantsToSwim     = 1 << 4	 UMETA(DisplayName = "Wants to swim"),
+	WantsToJump     = 1 << 5	 UMETA(DisplayName = "Wants to jump"),
 };
-ENUM_CLASS_FLAGS(EControllStates);
+ENUM_CLASS_FLAGS(EControlStates);
 
 UCLASS()
 class ALPHAONE_API ACharacterBase : public ACharacter, public IGenericTeamAgentInterface
@@ -47,7 +51,7 @@ public:
 	void SetStatus(EUnitStatuses Status, bool NewState = true);
 
 	UFUNCTION(BlueprintCallable)
-	void SetControll(EControllStates Controll, bool NewState = true);
+	void SetControl(EControlStates Control, bool NewState = true);
 
 	UFUNCTION(BlueprintCallable)
 	void SetType(EUnitTypes NewType);
@@ -60,10 +64,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual AWeaponBase *GetCurrentWeapon() const;
-
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UCharacterAttributes* GetAttributes() { return AttributeSet; }
@@ -78,7 +78,7 @@ public:
 	FORCEINLINE bool CheckStatus(EUnitStatuses Status) const { return static_cast<bool>(AttributeSet->Status & Status); }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool CheckControll(EControllStates Controll) const { return static_cast<bool>(ControllState & Controll); }
+	FORCEINLINE bool CheckControl(EControlStates Control) const { return static_cast<bool>(ControlState & Control); }
 
 
 	// @TODO: item slots, equipment slots
@@ -91,7 +91,6 @@ public:
 
 	virtual void StopAllAnimMontages();
 	// Controller responses
-	void Jump() override;
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void LookUpRate(float AxisValue);
@@ -154,16 +153,7 @@ protected:
 	UAlphaOneAbilitySystem* AbilitySystemComponent;
 
 	UPROPERTY()
-	EControllStates ControllState;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = "true"))
-	float DefaultArmLength = 500.f;
+	EControlStates ControlState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	FName UnitDataRowName = "Default_Character";

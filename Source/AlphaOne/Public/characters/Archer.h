@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "characters/CharacterBase.h"
+#include "AlphaOne.h"
+#include "characters/AlphaOnePlayer.h"
 #include "Archer.generated.h"
 
 class AProjectileBase;
@@ -12,7 +12,7 @@ class USpringArmComponent;
 class UCameraComponent;
 
 UCLASS()
-class ALPHAONE_API AArcher : public ACharacterBase
+class ALPHAONE_API AArcher : public AAlphaOnePlayer
 {
 	GENERATED_BODY()
 
@@ -25,6 +25,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
+    // virtual void OnCameraResetEnd_Impl() override;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void OnStartSprinting();
