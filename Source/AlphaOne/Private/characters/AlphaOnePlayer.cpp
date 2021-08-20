@@ -50,6 +50,11 @@ void AAlphaOnePlayer::BeginPlay()
     }
 }
 
+void AAlphaOnePlayer::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+}
+
 // NOTE: action needs to be reset by animations
 void AAlphaOnePlayer::Jump()
 {

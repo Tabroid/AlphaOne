@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "weapons/WeaponBase.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 // Sets default values
@@ -45,7 +46,14 @@ void ACharacterBase::BeginPlay()
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	AnimStateTick(DeltaTime);
 	AttributeSet->RegenOverTime(DeltaTime);
+}
+
+void ACharacterBase::AnimStateTick(float DeltaTime)
+{
+	AimDeltaRotator = GetBaseAimRotation() - GetActorRotation();
+	MoveDeltaRotator = UKismetMathLibrary::MakeRotFromX(GetVelocity()) - GetActorRotation();
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const

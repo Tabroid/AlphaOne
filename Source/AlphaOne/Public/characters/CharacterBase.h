@@ -80,7 +80,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool CheckControl(EControlStates Control) const { return static_cast<bool>(ControlState & Control); }
 
-
 	// @TODO: item slots, equipment slots
 	// setupItems()
 	UFUNCTION(BlueprintCallable)
@@ -102,22 +101,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }
 
-	UFUNCTION(BlueprintCallable)
-	void SetMoveSpeed(float Value);
-	UFUNCTION(BlueprintCallable)
-	float GetMoveSpeed() const { return MoveSpeed; }
-
-	UFUNCTION(BlueprintCallable)
-	void SetCombatMoveSpeedFactr(float Value) { CombatMoveSpeedFactor = Value; }
-	UFUNCTION(BlueprintCallable)
-	float GetCombatMoveSpeedFactr() const { return CombatMoveSpeedFactor; }
-
 /*
 	UFUNCTION(BlueprintCallable)
 	void SetSprintSpeed(float Value) { SprintSpeed = Value; }
 	UFUNCTION(BlueprintCallable)
 	float GetSprintSpeed() const { return SprintSpeed; }
 */
+	float MoveForwardInput_Prev = 0.f;
+	float MoveRightInput_Prev = 0.f;
+	int32 MoveForwardPivot = 0;
+	int32 MoveRightPivot = 0;
 
 protected:
 	// Called when the game starts or when spawned
@@ -138,9 +131,6 @@ protected:
 	TArray<TSubclassOf<UGameplayEffect>> PassiveGameplayEffects;
 
 	virtual FGenericTeamId GetGenericTeamId() const override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* DeathMontage = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AWeaponBase> DefaultWeapon;
@@ -165,8 +155,32 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	FName UnitDataRowName = "Default_Character";
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* DeathMontage = nullptr;
+
+
+// variables and functions for animations
+public:
+	UFUNCTION(BlueprintCallable)
+	void SetMoveSpeed(float Value);
+	UFUNCTION(BlueprintCallable)
+	float GetMoveSpeed() const { return MoveSpeed; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetCombatMoveSpeedFactr(float Value) { CombatMoveSpeedFactor = Value; }
+	UFUNCTION(BlueprintCallable)
+	float GetCombatMoveSpeedFactr() const { return CombatMoveSpeedFactor; }
+
+protected:
+	virtual void AnimStateTick(float DeltaTime);
+
+	float MoveSpeed = 500.f;
+
 	float CombatMoveSpeedFactor = 1.0f;
 
-private:
-	float MoveSpeed = 500.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	FRotator AimDeltaRotator;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	FRotator MoveDeltaRotator;
 };

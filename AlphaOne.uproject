@@ -41,6 +41,10 @@
 				"Mac",
 				"Linux"
 			]
+		},
+		{
+			"Name": "VirtualHeightfieldMesh",
+			"Enabled": true
 		}
 	]
 }
