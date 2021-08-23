@@ -46,12 +46,10 @@ void ACharacterBase::BeginPlay()
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	AnimStateTick(DeltaTime);
-	AttributeSet->RegenOverTime(DeltaTime);
-}
 
-void ACharacterBase::AnimStateTick(float DeltaTime)
-{
+	AttributeSet->RegenOverTime(DeltaTime);
+
+	// update variables for animation graphs
 	AimDeltaRotator = GetBaseAimRotation() - GetActorRotation();
 	AimDeltaRotator.Normalize();
 	MoveDeltaRotator = UKismetMathLibrary::MakeRotFromX(GetVelocity()) - GetActorRotation();

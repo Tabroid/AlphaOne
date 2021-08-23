@@ -172,8 +172,6 @@ public:
 	float GetCombatMoveSpeedFactr() const { return CombatMoveSpeedFactor; }
 
 protected:
-	virtual void AnimStateTick(float DeltaTime);
-
 	float MoveSpeed = 500.f;
 
 	float CombatMoveSpeedFactor = 1.0f;
