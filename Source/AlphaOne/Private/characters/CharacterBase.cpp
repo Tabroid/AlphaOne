@@ -53,7 +53,9 @@ void ACharacterBase::Tick(float DeltaTime)
 void ACharacterBase::AnimStateTick(float DeltaTime)
 {
 	AimDeltaRotator = GetBaseAimRotation() - GetActorRotation();
+	AimDeltaRotator.Normalize();
 	MoveDeltaRotator = UKismetMathLibrary::MakeRotFromX(GetVelocity()) - GetActorRotation();
+	MoveDeltaRotator.Normalize();
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const

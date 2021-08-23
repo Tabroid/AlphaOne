@@ -40,7 +40,7 @@ void AArcher::AimingOn()
 	GetCharacterMovement()->MaxWalkSpeed = GetMoveSpeed() * CombatMoveSpeedFactor;
 	CameraArm->TargetArmLength = DefaultArmLength; // 100.f;
 	// In aiming mode, actor rotates with view direction
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = false;
 }
 
 void AArcher::AimingOff()
