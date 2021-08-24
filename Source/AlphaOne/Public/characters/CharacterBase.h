@@ -24,6 +24,7 @@ enum class EControlStates: uint8
 };
 ENUM_CLASS_FLAGS(EControlStates);
 
+
 UCLASS()
 class ALPHAONE_API ACharacterBase : public ACharacter, public IGenericTeamAgentInterface
 {
@@ -173,8 +174,10 @@ public:
 
 protected:
 	float MoveSpeed = 500.f;
-
 	float CombatMoveSpeedFactor = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	ECardinalDirection MoveDirection;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	FRotator AimDeltaRotator;

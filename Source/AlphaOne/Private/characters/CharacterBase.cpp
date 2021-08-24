@@ -52,8 +52,12 @@ void ACharacterBase::Tick(float DeltaTime)
 	// update variables for animation graphs
 	AimDeltaRotator = GetBaseAimRotation() - GetActorRotation();
 	AimDeltaRotator.Normalize();
+
+	// moving direction
 	MoveDeltaRotator = UKismetMathLibrary::MakeRotFromX(GetVelocity()) - GetActorRotation();
 	MoveDeltaRotator.Normalize();
+
+	MoveDirection = AngleToDirection(MoveDeltaRotator.Yaw);
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
