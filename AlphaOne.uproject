@@ -14,6 +14,16 @@
 				"AIModule",
 				"UMG"
 			]
+		},
+		{
+			"Name": "Strider",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "StriderEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [

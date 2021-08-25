@@ -9,6 +9,6 @@ public class AlphaOneTarget : TargetRules
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
-		ExtraModuleNames.AddRange( new string[] { "AlphaOne" } );
+		ExtraModuleNames.AddRange( new string[] { "AlphaOne", "Strider" } );
 	}
 }
