@@ -22,7 +22,7 @@
 		},
 		{
 			"Name": "StriderEditor",
-			"Type": "Editor",
+			"Type": "UncookedOnly",
 			"LoadingPhase": "Default"
 		}
 	],

@@ -13,5 +13,5 @@ void FStriderEditorModule::ShutdownModule()
 }
 
 #undef LOCTEXT_NAMESPACE
-	
+
 IMPLEMENT_MODULE(FStriderEditorModule, StriderEditor)

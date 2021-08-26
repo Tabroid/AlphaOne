@@ -15,7 +15,8 @@ ACharacterBase::ACharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...
+	GetCharacterMovement()->bUseControllerDesiredRotation = true; // Character moves in the direction of input...
+	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->bUseSeparateBrakingFriction = true;
@@ -57,7 +58,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	MoveDeltaRotator = UKismetMathLibrary::MakeRotFromX(GetVelocity()) - GetActorRotation();
 	MoveDeltaRotator.Normalize();
 
-	MoveDirection = AngleToDirection(MoveDeltaRotator.Yaw);
+	MoveDirection = AngleToDirection(MoveDeltaRotator.Yaw, MoveDirection);
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
@@ -147,27 +148,22 @@ FGenericTeamId ACharacterBase::GetGenericTeamId() const
 
 void ACharacterBase::MoveForward(float AxisValue)
 {
-	if ((Controller != nullptr) && (AxisValue != 0.0f))	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	if (Controller && AxisValue != 0.f)
+	{
+		// Limit pitch when walking or falling
+		const bool bLimitRotation = (GetCharacterMovement()->IsMovingOnGround() || GetCharacterMovement()->IsFalling());
+		const FRotator Rotation = bLimitRotation ? GetActorRotation() : Controller->GetControlRotation();
+		const FVector Direction = FRotationMatrix(Rotation).GetScaledAxis(EAxis::X);
 		AddMovementInput(Direction, AxisValue);
 	}
 }
 
 void ACharacterBase::MoveRight(float AxisValue)
 {
-	if ((Controller != nullptr) && (AxisValue != 0.0f)) {
-		// find out which way is right
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get right vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		// add movement in that direction
+	if (AxisValue != 0.f)
+	{
+		const FQuat Rotation = GetActorQuat();
+		const FVector Direction = FQuatRotationMatrix(Rotation).GetScaledAxis(EAxis::Y);
 		AddMovementInput(Direction, AxisValue);
 	}
 }

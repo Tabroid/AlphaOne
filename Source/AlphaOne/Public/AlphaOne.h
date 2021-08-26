@@ -23,15 +23,37 @@ enum class ECardinalDirection : uint8
     West = 3,
 };
 
-static inline ECardinalDirection AngleToDirection(float Angle)
+// Convert absolute angle to cardinal direction and relative angle
+// Stay the same direction for a wider range to avoid a clear separation point
+// Input angle is normalized (-180 to 180)
+static ECardinalDirection AngleToDirection(float NormalizedAngle, ECardinalDirection CurrentDirection)
 {
-    if (Angle >= -45.f && Angle < 45.f) {
-        return ECardinalDirection::North;
-    } else if (Angle >= 45.f && Angle < 135.f) {
-        return ECardinalDirection::East;
-    } else if (Angle >= 135.f || Angle < -135.f) {
-        return ECardinalDirection::South;
-    } else {
-        return ECardinalDirection::West;
+    // maintain the current direction for a wider range
+    switch (CurrentDirection) {
+    case ECardinalDirection::North:
+        if (NormalizedAngle < 60.f && NormalizedAngle >= -60.f) {
+            return CurrentDirection;
+        }
+        break;
+    case ECardinalDirection::East:
+        if (NormalizedAngle < 130.f && NormalizedAngle >= 30.f) {
+            return CurrentDirection;
+        }
+        break;
+    case ECardinalDirection::South:
+        if (NormalizedAngle < -120.f || NormalizedAngle >= 120.f) {
+            return CurrentDirection;
+        }
+        break;
+    case ECardinalDirection::West:
+        if (NormalizedAngle < -30.f && NormalizedAngle >= -130.f) {
+            return CurrentDirection;
+        }
+        break;
     }
+    NormalizedAngle += 45.f;
+    if (NormalizedAngle < 0.f) { NormalizedAngle += 360.f; }
+
+    uint8 DirectionIndex = uint8(NormalizedAngle / 90.f);
+    return static_cast<ECardinalDirection>(DirectionIndex);
 }
