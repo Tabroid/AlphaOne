@@ -20,6 +20,7 @@ ACharacterBase::ACharacterBase()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->bUseSeparateBrakingFriction = true;
+	bUseControllerRotationYaw = true;
 
 	// Create ability system component, and set it to be explicitly replicated
 	AbilitySystemComponent = CreateDefaultSubobject<UAlphaOneAbilitySystem>(TEXT("AbilitySystemComponent"));
