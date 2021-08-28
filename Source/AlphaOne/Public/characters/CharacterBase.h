@@ -173,8 +173,20 @@ public:
 	float GetCombatMoveSpeedFactr() const { return CombatMoveSpeedFactor; }
 
 protected:
+	virtual void AnimationStatesUpdate(float DeltaTime);
+
 	float MoveSpeed = 500.f;
 	float CombatMoveSpeedFactor = 1.0f;
+	float RotationYawLastTick = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	float RotationYawOffset = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	float VelocitySize;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	float AccelerationSize;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	ECardinalDirection MoveDirection;
@@ -184,4 +196,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	FRotator MoveDeltaRotator;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	FRotator AccDeltaRotator;
 };

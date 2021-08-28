@@ -50,16 +50,42 @@ void ACharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	AttributeSet->RegenOverTime(DeltaTime);
+	AnimationStatesUpdate(DeltaTime);
+}
 
-	// update variables for animation graphs
-	AimDeltaRotator = GetBaseAimRotation() - GetActorRotation();
+// update variables for animation graphs
+void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
+{
+	auto Velocity = GetVelocity();
+	auto VelocityRotX = UKismetMathLibrary::MakeRotFromX(Velocity);
+	VelocitySize = Velocity.Size();
+
+	auto Acceleration = GetCharacterMovement()->GetCurrentAcceleration();
+	AccelerationSize = Acceleration.Size();
+
+	SetAction(EUnitActions::Running, AccelerationSize > 0.f);
+
+	AccDeltaRotator =  VelocityRotX - UKismetMathLibrary::MakeRotFromX(Acceleration);
+	AccDeltaRotator.Normalize();
+
+	auto ActorRotation = GetActorRotation();
+	AimDeltaRotator = GetBaseAimRotation() - ActorRotation;
 	AimDeltaRotator.Normalize();
 
 	// moving direction
-	MoveDeltaRotator = UKismetMathLibrary::MakeRotFromX(GetVelocity()) - GetActorRotation();
+	MoveDeltaRotator = VelocityRotX - ActorRotation;
 	MoveDeltaRotator.Normalize();
 
 	MoveDirection = AngleToDirection(MoveDeltaRotator.Yaw, MoveDirection);
+
+	if (CheckAction(EUnitActions::Running) ||  GetMesh()->GetAnimInstance()->IsAnyMontagePlaying()) {
+		RotationYawOffset = 0.f;
+	} else {
+		RotationYawOffset += RotationYawLastTick - ActorRotation.Yaw;
+		RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
+	}
+	// update last tick information in the end
+	RotationYawLastTick = ActorRotation.Yaw;
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
