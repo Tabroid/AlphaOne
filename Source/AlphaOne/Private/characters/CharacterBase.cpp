@@ -42,6 +42,7 @@ void ACharacterBase::BeginPlay()
 		EquipWeapon(DefaultWeaponPtr);
 	}
 	AttributeSet->InitFromMetaDataTable(Cast<UAlphaOneInstance>(GetGameInstance())->UnitData(), UnitDataRowName);
+	AnimInstance = GetMesh()->GetAnimInstance();
 }
 
 // Called every frame
@@ -78,11 +79,28 @@ void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 
 	MoveDirection = AngleToDirection(MoveDeltaRotator.Yaw, MoveDirection);
 
-	if (CheckAction(EUnitActions::Running) ||  GetMesh()->GetAnimInstance()->IsAnyMontagePlaying()) {
+	if (CheckAction(EUnitActions::Running) ||  AnimInstance->IsAnyMontagePlaying()) {
 		RotationYawOffset = 0.f;
 	} else {
 		RotationYawOffset += RotationYawLastTick - ActorRotation.Yaw;
 		RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
+	}
+
+	if (CheckAction(EUnitActions::Turning)) {
+		float DistanceCurveValue, MaskGeo;
+		if (AnimInstance->GetCurveValue(DistanceCurveName, DistanceCurveValue) && AnimInstance->GetCurveValue("mask_geo", MaskGeo) && MaskGeo > 0.9f) {
+			if (!DistanceCurveValueInit) {
+				DistanceCurveValueLastTick = DistanceCurveValue;
+				DistanceCurveValueInit = true;
+			} else {
+				RotationYawOffset -= DistanceCurveValueLastTick - DistanceCurveValue;
+				// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Last Tick %.2f!"), DistanceCurveValueLastTick - DistanceCurveValue));
+				RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
+			}
+		}
+		DistanceCurveValueLastTick = DistanceCurveValue;
+	} else {
+		DistanceCurveValueInit = false;
 	}
 	// update last tick information in the end
 	RotationYawLastTick = ActorRotation.Yaw;
@@ -316,7 +334,6 @@ void ACharacterBase::OnDeath(float KillingDamage, const FDamageEvent& DamageEven
 	SetActorEnableCollision(true);
 
 	// Death anim
-	auto AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && DeathMontage) {
 		float DeathAnimDuration = AnimInstance->Montage_Play(DeathMontage);
 		// Ragdoll
@@ -390,7 +407,6 @@ void ACharacterBase::SetRagdollPhysics()
 
 void ACharacterBase::StopAllAnimMontages()
 {
-	auto AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Stop(0.0f);
 }
 

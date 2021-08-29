@@ -11,6 +11,8 @@
 #include "Templates/SharedPointer.h"
 #include "CharacterBase.generated.h"
 
+class UAnimInstance;
+
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EControlStates: uint8
 {
@@ -159,6 +161,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage = nullptr;
 
+private:
+	UAnimInstance *AnimInstance;
 
 // variables and functions for animations
 public:
@@ -173,11 +177,17 @@ public:
 	float GetCombatMoveSpeedFactr() const { return CombatMoveSpeedFactor; }
 
 protected:
+
 	virtual void AnimationStatesUpdate(float DeltaTime);
 
 	float MoveSpeed = 500.f;
 	float CombatMoveSpeedFactor = 1.0f;
 	float RotationYawLastTick = 0.f;
+	float DistanceCurveValueLastTick = 0.f;
+	float DistanceCurveValueInit = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	FName DistanceCurveName = "DistanceCurve";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	float RotationYawOffset = 0.f;
