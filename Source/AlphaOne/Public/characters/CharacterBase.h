@@ -23,9 +23,9 @@ enum class EControlStates: uint8
 	WantsToClimb    = 1 << 3	 UMETA(DisplayName = "Wants to climb"),
 	WantsToSwim     = 1 << 4	 UMETA(DisplayName = "Wants to swim"),
 	WantsToJump     = 1 << 5	 UMETA(DisplayName = "Wants to jump"),
+	WantsToTurn		= 1 << 6	 UMETA(DisplayName = "Wants to turn"),
 };
 ENUM_CLASS_FLAGS(EControlStates);
-
 
 UCLASS()
 class ALPHAONE_API ACharacterBase : public ACharacter, public IGenericTeamAgentInterface
@@ -104,17 +104,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }
 
-/*
-	UFUNCTION(BlueprintCallable)
-	void SetSprintSpeed(float Value) { SprintSpeed = Value; }
-	UFUNCTION(BlueprintCallable)
-	float GetSprintSpeed() const { return SprintSpeed; }
-*/
-	float MoveForwardInput_Prev = 0.f;
-	float MoveRightInput_Prev = 0.f;
-	int32 MoveForwardPivot = 0;
-	int32 MoveRightPivot = 0;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -190,6 +179,9 @@ protected:
 	FName DistanceCurveName = "DistanceCurve";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	float DistanceCurveValueScale = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	float RotationYawOffset = 0.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
@@ -199,7 +191,7 @@ protected:
 	float AccelerationSize;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	ECardinalDirection MoveDirection;
+	ECardinalDirections MoveDirection;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	FRotator AimDeltaRotator;

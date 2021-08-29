@@ -77,7 +77,7 @@ void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 	MoveDeltaRotator = VelocityRotX - ActorRotation;
 	MoveDeltaRotator.Normalize();
 
-	MoveDirection = AngleToDirection(MoveDeltaRotator.Yaw, MoveDirection);
+	MoveDirection = UAlphaOneMath::AngleToDirection(MoveDeltaRotator.Yaw, MoveDirection);
 
 	if (CheckAction(EUnitActions::Running) ||  AnimInstance->IsAnyMontagePlaying()) {
 		RotationYawOffset = 0.f;
@@ -93,7 +93,7 @@ void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 				DistanceCurveValueLastTick = DistanceCurveValue;
 				DistanceCurveValueInit = true;
 			} else {
-				RotationYawOffset -= DistanceCurveValueLastTick - DistanceCurveValue;
+				RotationYawOffset += DistanceCurveValueScale*(DistanceCurveValue - DistanceCurveValueLastTick);
 				// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Last Tick %.2f!"), DistanceCurveValueLastTick - DistanceCurveValue));
 				RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
 			}
@@ -234,21 +234,6 @@ void ACharacterBase::OnStopAttack()
 {
 	SetControl(EControlStates::WantsToAttack, false);
 }
-
-/*
-void ACharacterBase::OnStartSprinting()
-{
-	OnStopAttack();
-	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-	SetControl(EControlStates::WantsToSprint, true);
-}
-
-void ACharacterBase::OnStopSprinting()
-{
-	GetCharacterMovement()->MaxWalkSpeed = JogSpeed;
-	SetControl(EControlStates::WantsToSprint, false);
-}
-*/
 
 bool ACharacterBase::Attack()
 {
