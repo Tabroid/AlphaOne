@@ -57,28 +57,34 @@ void ACharacterBase::Tick(float DeltaTime)
 // update variables for animation graphs
 void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 {
-	auto Velocity = GetVelocity();
-	auto VelocityRotX = UKismetMathLibrary::MakeRotFromX(Velocity);
-	VelocitySize = Velocity.Size();
-
-	auto Acceleration = GetCharacterMovement()->GetCurrentAcceleration();
-	AccelerationSize = Acceleration.Size();
-
-	SetAction(EUnitActions::Running, AccelerationSize > 0.f);
-
-	AccDeltaRotator =  VelocityRotX - UKismetMathLibrary::MakeRotFromX(Acceleration);
-	AccDeltaRotator.Normalize();
-
+	static const float NearZero = 0.01f;
+	// aim delta, not dependent on states
 	auto ActorRotation = GetActorRotation();
 	AimDeltaRotator = GetBaseAimRotation() - ActorRotation;
 	AimDeltaRotator.Normalize();
 
-	// moving direction
-	MoveDeltaRotator = VelocityRotX - ActorRotation;
-	MoveDeltaRotator.Normalize();
+	auto Velocity = GetVelocity();
+	auto VelocityRotX = UKismetMathLibrary::MakeRotFromX(Velocity);
+	VelocitySize = Velocity.Size();
 
-	MoveDirection = UAlphaOneMath::AngleToDirection(MoveDeltaRotator.Yaw, MoveDirection);
+	// character has a velocity
+	if (VelocitySize > NearZero) {
+		// moving direction
+		MoveDeltaRotator = VelocityRotX - ActorRotation;
+		MoveDeltaRotator.Normalize();
+		MoveDirection = UAlphaOneMath::AngleToDirection(MoveDeltaRotator.Yaw, MoveDirection);
+	}
 
+	// character is running
+	auto Acceleration = GetCharacterMovement()->GetCurrentAcceleration();
+	AccelerationSize = Acceleration.Size();
+	SetAction(EUnitActions::Running, AccelerationSize > NearZero);
+	if (AccelerationSize > NearZero && VelocitySize > NearZero) {
+		AccDeltaRotator =  VelocityRotX - UKismetMathLibrary::MakeRotFromX(Acceleration);
+		AccDeltaRotator.Normalize();
+	}
+
+	// yaw offset for mesh
 	if (CheckAction(EUnitActions::Running) ||  AnimInstance->IsAnyMontagePlaying()) {
 		RotationYawOffset = 0.f;
 	} else {
