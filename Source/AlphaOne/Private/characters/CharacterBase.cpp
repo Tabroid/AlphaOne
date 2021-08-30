@@ -87,20 +87,22 @@ void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 	}
 
 	if (CheckAction(EUnitActions::Turning)) {
-		float DistanceCurveValue, MaskGeo;
-		if (AnimInstance->GetCurveValue(DistanceCurveName, DistanceCurveValue) && AnimInstance->GetCurveValue("mask_geo", MaskGeo) && MaskGeo > 0.9f) {
-			if (!DistanceCurveValueInit) {
-				DistanceCurveValueLastTick = DistanceCurveValue;
-				DistanceCurveValueInit = true;
-			} else {
-				RotationYawOffset += DistanceCurveValueScale*(DistanceCurveValue - DistanceCurveValueLastTick);
-				// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Last Tick %.2f!"), DistanceCurveValueLastTick - DistanceCurveValue));
+		float DistanceCurveValue;
+		if (AnimInstance->GetCurveValue(DistanceCurveName, DistanceCurveValue)) {
+			float DeltaDistance = DistanceCurveValue - DistanceCurveValueLastTick;
+			DistanceCurveValueLastTick = DistanceCurveValue;
+			// rotation distance curve is always increasing
+			if (DeltaDistance > 0.f) {
+				DistanceCurveValueSum += DistanceDeltaMultiplier*DeltaDistance;
+				RotationYawOffset += DistanceDeltaMultiplier*DeltaDistance;
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+					FString::Printf(TEXT("%.2f, %.2f, %.2f!"), DistanceCurveValue, DistanceCurveValueLastTick - DistanceCurveValue, DistanceCurveValueSum));
 				RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
 			}
 		}
 		DistanceCurveValueLastTick = DistanceCurveValue;
 	} else {
-		DistanceCurveValueInit = false;
+		DistanceCurveValueSum = 0.f;
 	}
 	// update last tick information in the end
 	RotationYawLastTick = ActorRotation.Yaw;

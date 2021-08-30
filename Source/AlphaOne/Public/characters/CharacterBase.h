@@ -173,13 +173,13 @@ protected:
 	float CombatMoveSpeedFactor = 1.0f;
 	float RotationYawLastTick = 0.f;
 	float DistanceCurveValueLastTick = 0.f;
-	float DistanceCurveValueInit = false;
+	float DistanceCurveValueSum = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	FName DistanceCurveName = "DistanceCurve";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float DistanceCurveValueScale = 1.f;
+	float DistanceDeltaMultiplier = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	float RotationYawOffset = 0.f;
