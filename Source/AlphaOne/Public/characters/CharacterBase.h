@@ -87,7 +87,9 @@ public:
 	// setupItems()
 	UFUNCTION(BlueprintCallable)
 	virtual bool IsAbleToAct() const;
+
 	virtual bool Attack();
+	virtual void OnAttackEnd(bool Interrupted = false);
 	virtual float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual bool Die(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
@@ -97,9 +99,6 @@ public:
 	void MoveRight(float AxisValue);
 	void LookUpRate(float AxisValue);
 	void TurnRate(float AxisValue);
-
-	UFUNCTION(BlueprintCallable)
-	virtual void OnAttackEnd(bool Interrupted = false);
 
 	UFUNCTION(BlueprintCallable)
 	UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }
