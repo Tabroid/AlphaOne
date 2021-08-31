@@ -117,7 +117,7 @@ void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 	} else {
 		DistanceCurveValueSum = 0.f;
 	}
-	RotationYawOffset += MeleeTwist;
+	// RotationYawOffset += MeleeTwist;
 	// update last tick information in the end
 	RotationYawLastTick = ActorRotation.Yaw;
 }
