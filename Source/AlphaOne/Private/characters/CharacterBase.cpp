@@ -58,22 +58,10 @@ void ACharacterBase::Tick(float DeltaTime)
 void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 {
 	static const float NearZero = 0.01f;
-	// aim delta, not dependent on states
-	auto ActorRotation = GetActorRotation();
-	AimDeltaRotator = GetBaseAimRotation() - ActorRotation;
-	AimDeltaRotator.Normalize();
 
 	auto Velocity = GetVelocity();
 	auto VelocityRotX = UKismetMathLibrary::MakeRotFromX(Velocity);
 	VelocitySize = Velocity.Size();
-
-	// character has a velocity
-	if (VelocitySize > NearZero) {
-		// moving direction
-		MoveDeltaRotator = VelocityRotX - ActorRotation;
-		MoveDeltaRotator.Normalize();
-		MoveDirection = UAlphaOneMath::AngleToDirection(MoveDeltaRotator.Yaw, MoveDirection);
-	}
 
 	// character is running
 	auto Acceleration = GetCharacterMovement()->GetCurrentAcceleration();
@@ -82,6 +70,25 @@ void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 	if (AccelerationSize > NearZero && VelocitySize > NearZero) {
 		AccDeltaRotator =  VelocityRotX - UKismetMathLibrary::MakeRotFromX(Acceleration);
 		AccDeltaRotator.Normalize();
+		if (!AnimInstance->GetCurveValue(MeleeTwistCurveName, MeleeTwist)) {
+			MeleeTwist = 0.f;
+		}
+	} else {
+		MeleeTwist = 0.f;
+	}
+
+	// aim delta, not dependent on states
+	auto ActorRotation = GetActorRotation();
+	AimDeltaRotator = GetBaseAimRotation() - ActorRotation;
+	AimDeltaRotator.Normalize();
+
+	// character has a velocity
+	if (VelocitySize > NearZero) {
+		// moving direction
+		MoveDeltaRotator = VelocityRotX - ActorRotation;
+		MoveDeltaRotator.Yaw -= MeleeTwist;
+		MoveDeltaRotator.Normalize();
+		MoveDirection = UAlphaOneMath::AngleToDirection(MoveDeltaRotator.Yaw, MoveDirection);
 	}
 
 	// yaw offset for mesh
@@ -110,6 +117,7 @@ void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 	} else {
 		DistanceCurveValueSum = 0.f;
 	}
+	RotationYawOffset += MeleeTwist;
 	// update last tick information in the end
 	RotationYawLastTick = ActorRotation.Yaw;
 }
