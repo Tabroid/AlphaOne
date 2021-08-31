@@ -142,6 +142,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacterBase::OnStartAttack);
 	PlayerInputComponent->BindAction("Attack", IE_Released, this, &ACharacterBase::OnStopAttack);
+	PlayerInputComponent->BindAction("SpecialAttack", IE_Pressed, this, &ACharacterBase::OnStartSpecial);
+	PlayerInputComponent->BindAction("SpecialAttack", IE_Pressed, this, &ACharacterBase::OnStopSpecial);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacterBase::Jump);
 	// PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ACharacterBase::OnStartSprinting);
@@ -282,6 +284,7 @@ float ACharacterBase::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 	if (AttributeSet->GetHealth() <= 0.) {
 		Die(BattleResult.FinalDamage, DamageEvent, EventInstigator, DamageCauser);
 	}
+	SetAction(EUnitActions::BeingAttacked);
 	return BattleResult.FinalDamage;
 }
 

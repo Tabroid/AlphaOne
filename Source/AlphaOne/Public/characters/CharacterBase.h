@@ -112,6 +112,8 @@ protected:
 	virtual void OnMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags) { /* place holder */ }
 	virtual void OnStartAttack();
 	virtual void OnStopAttack();
+	virtual void OnStartSpecial() {}
+	virtual void OnStopSpecial() {}
 	// virtual void OnStartSprinting();
 	// virtual void OnStopSprinting();
 	virtual void OnDeath(float KillingDamage, const FDamageEvent& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);

@@ -27,14 +27,8 @@ void AArcher::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AArcher::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Pressed, this, &AArcher::AimingOn);
-	PlayerInputComponent->BindAction("Targeting", EInputEvent::IE_Released, this, &AArcher::AimingOff);
-}
-
-void AArcher::AimingOn()
+// aiming
+void AArcher::OnStartSpecial()
 {
 	SetAction(EUnitActions::Aiming);
 	GetCharacterMovement()->MaxWalkSpeed = GetMoveSpeed() * CombatMoveSpeedFactor;
@@ -43,7 +37,8 @@ void AArcher::AimingOn()
 	bUseControllerRotationYaw = false;
 }
 
-void AArcher::AimingOff()
+// aiming off
+void AArcher::OnStopSpecial()
 {
 	SetAction(EUnitActions::Aiming, false);
 	GetCharacterMovement()->MaxWalkSpeed = GetMoveSpeed();
