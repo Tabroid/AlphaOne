@@ -15,8 +15,6 @@ class ALPHAONE_API AAlphaOnePlayer : public ACharacterBase
 public:
     AAlphaOnePlayer();
 
-    void Jump() override;
-
     bool ResetCamera();
 
     FORCEINLINE class USpringArmComponent* GetCameraArm() const { return CameraArm; }

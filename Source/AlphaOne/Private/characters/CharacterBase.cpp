@@ -215,6 +215,17 @@ FGenericTeamId ACharacterBase::GetGenericTeamId() const
 	return Cast<APlayerController>(GetController()) ? PlayerTeam : AITeam;
 }
 
+void ACharacterBase::Jump()
+{
+    // do not repeat jumping, let animation resets the state
+	if (!CheckAction(EUnitActions::Jumping)) {
+		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("JUMP!"));
+		Super::Jump();
+        // let animation graph control
+        // SetAction(EUnitActions::Jumping);
+	}
+}
+
 void ACharacterBase::MoveForward(float AxisValue)
 {
 	if (Controller && AxisValue != 0.f)

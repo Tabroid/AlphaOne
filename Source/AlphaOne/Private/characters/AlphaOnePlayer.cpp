@@ -55,17 +55,6 @@ void AAlphaOnePlayer::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-// NOTE: action needs to be reset by animations
-void AAlphaOnePlayer::Jump()
-{
-    // do not repeat jumping, let animation resets the state
-	if (!CheckAction(EUnitActions::Jumping)) {
-		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("JUMP!"));
-		Super::Jump();
-        SetAction(EUnitActions::Jumping);
-	}
-}
-
 bool AAlphaOnePlayer::ResetCamera()
 {
     // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Reset Camera"));

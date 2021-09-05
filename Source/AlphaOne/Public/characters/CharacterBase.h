@@ -99,6 +99,7 @@ public:
 	void MoveRight(float AxisValue);
 	void LookUpRate(float AxisValue);
 	void TurnRate(float AxisValue);
+	void Jump() override;
 
 	UFUNCTION(BlueprintCallable)
 	UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }
