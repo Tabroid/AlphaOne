@@ -118,8 +118,8 @@ void ACharacterBase::TurnInPlaceUpdate(float DeltaTime)
 			if (DeltaDistance > 0.f) {
 				DistanceCurveValueSum += DistanceDeltaMultiplier*DeltaDistance;
 				RotationYawOffset += DistanceDeltaMultiplier*DeltaDistance;
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-				 	FString::Printf(TEXT("%.2f, %.2f, %.2f!"), DistanceCurveValue, DistanceCurveValueLastTick - DistanceCurveValue, DistanceCurveValueSum));
+				// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+				//  	FString::Printf(TEXT("%.2f, %.2f, %.2f!"), DistanceCurveValue, DistanceCurveValueLastTick - DistanceCurveValue, DistanceCurveValueSum));
 			}
 		}
 		DistanceCurveValueLastTick = DistanceCurveValue;
@@ -149,7 +149,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ACharacterBase::OnStartAttack);
 	PlayerInputComponent->BindAction("Attack", IE_Released, this, &ACharacterBase::OnStopAttack);
 	PlayerInputComponent->BindAction("SpecialAttack", IE_Pressed, this, &ACharacterBase::OnStartSpecial);
-	PlayerInputComponent->BindAction("SpecialAttack", IE_Pressed, this, &ACharacterBase::OnStopSpecial);
+	PlayerInputComponent->BindAction("SpecialAttack", IE_Released, this, &ACharacterBase::OnStopSpecial);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacterBase::Jump);
 	// PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ACharacterBase::OnStartSprinting);
