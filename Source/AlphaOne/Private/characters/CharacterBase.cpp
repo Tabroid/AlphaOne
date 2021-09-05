@@ -99,6 +99,16 @@ void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 		RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
 	}
 
+	// RotationYawOffset += MeleeTwist;
+	// update last tick information in the end
+	TurnInPlaceUpdate(DeltaTime);
+	RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
+	RotationYawLastTick = ActorRotation.Yaw;
+}
+
+// update turn in place offset
+void ACharacterBase::TurnInPlaceUpdate(float DeltaTime)
+{
 	if (CheckAction(EUnitActions::Turning)) {
 		float DistanceCurveValue;
 		if (AnimInstance->GetCurveValue(DistanceCurveName, DistanceCurveValue)) {
@@ -109,17 +119,13 @@ void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 				DistanceCurveValueSum += DistanceDeltaMultiplier*DeltaDistance;
 				RotationYawOffset += DistanceDeltaMultiplier*DeltaDistance;
 				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-					FString::Printf(TEXT("%.2f, %.2f, %.2f!"), DistanceCurveValue, DistanceCurveValueLastTick - DistanceCurveValue, DistanceCurveValueSum));
-				RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
+				 	FString::Printf(TEXT("%.2f, %.2f, %.2f!"), DistanceCurveValue, DistanceCurveValueLastTick - DistanceCurveValue, DistanceCurveValueSum));
 			}
 		}
 		DistanceCurveValueLastTick = DistanceCurveValue;
 	} else {
 		DistanceCurveValueSum = 0.f;
 	}
-	// RotationYawOffset += MeleeTwist;
-	// update last tick information in the end
-	RotationYawLastTick = ActorRotation.Yaw;
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const

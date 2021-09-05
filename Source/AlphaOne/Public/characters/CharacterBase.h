@@ -167,8 +167,8 @@ public:
 	float GetCombatMoveSpeedFactr() const { return CombatMoveSpeedFactor; }
 
 protected:
-
 	virtual void AnimationStatesUpdate(float DeltaTime);
+	virtual void TurnInPlaceUpdate(float DeltaTime);
 
 	float MoveSpeed = 500.f;
 	float CombatMoveSpeedFactor = 1.0f;
