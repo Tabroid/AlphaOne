@@ -56,14 +56,14 @@ void UCharacterAnimComponent::AnimationStatesUpdate(float DeltaTime)
 	}
 
 	// yaw offset for mesh
-	if (MyCharacter->CheckAction(EUnitActions::Running) ||  AnimInstance->IsAnyMontagePlaying()) {
-		// RotationYawOffset = 0.f;
-		RotationYawOffset = FMath::FInterpTo(RotationYawOffset, 0.f, DeltaTime, 5.f);
-		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%.2f"), RotationYawOffset));
-	} else {
-		RotationYawOffset += RotationYawLastTick - ActorRotation.Yaw;
+	if (!MyCharacter->CheckAction(EUnitActions::Running) && !AnimInstance->IsAnyMontagePlaying()) {
+        RotationYawOffset += RotationYawLastTick - ActorRotation.Yaw;
 		RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
-	}
+    } else {
+		// RotationYawOffset = 0.f;
+		; // RotationYawOffset = FMath::FInterpTo(RotationYawOffset, 0.f, DeltaTime, 5.f);
+		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%.2f"), RotationYawOffset));
+    }
 
 	// RotationYawOffset += MeleeTwist;
 	// update last tick information in the end
@@ -83,20 +83,20 @@ void UCharacterAnimComponent::TurnInPlaceUpdate(float DeltaTime)
 {
 	if (MyCharacter->CheckAction(EUnitActions::Turning)) {
         auto AnimInstance = MyCharacter->GetMesh()->GetAnimInstance();
-		float DistanceCurveValue;
-		if (AnimInstance->GetCurveValue(DistanceCurveName, DistanceCurveValue)) {
-			float DeltaDistance = DistanceCurveValue - DistanceCurveValueLastTick;
-			DistanceCurveValueLastTick = DistanceCurveValue;
-			// rotation distance curve is always increasing
-			if (DeltaDistance > 0.f) {
-				DistanceCurveValueSum += DistanceDeltaMultiplier*DeltaDistance;
-				RotationYawOffset += DistanceDeltaMultiplier*DeltaDistance;
-				// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-				//  	FString::Printf(TEXT("%.2f, %.2f, %.2f!"), DistanceCurveValue, DistanceCurveValueLastTick - DistanceCurveValue, DistanceCurveValueSum));
-			}
+		float RotationCurveValue;
+		if (AnimInstance->GetCurveValue(RotationCurveName, RotationCurveValue)) {
+			float DeltaRotation = RotationCurveValue - RotationCurveValueLastTick;
+			RotationCurveValueLastTick = RotationCurveValue;
+			// rotation Rotation curve is always increasing
+            if (DeltaRotation > 0.f) {
+                RotationCurveValueSum += RotationDeltaMultiplier*DeltaRotation;
+                RotationYawOffset += RotationDeltaMultiplier*DeltaRotation;
+                // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+                //  	FString::Printf(TEXT("%.2f, %.2f, %.2f!"), RotationCurveValue, RotationCurveValueLastTick - RotationCurveValue, RotationCurveValueSum));
+            }
 		}
-		DistanceCurveValueLastTick = DistanceCurveValue;
+		RotationCurveValueLastTick = RotationCurveValue;
 	} else {
-		DistanceCurveValueSum = 0.f;
+		RotationCurveValueSum = 0.f;
 	}
 }

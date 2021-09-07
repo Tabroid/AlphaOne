@@ -27,15 +27,15 @@ protected:
     ACharacterBase* MyCharacter;
 
 	float RotationYawLastTick = 0.f;
-	float DistanceCurveValueLastTick = 0.f;
-	float DistanceCurveValueSum = 0.f;
+	float RotationCurveValueLastTick = 0.f;
+	float RotationCurveValueSum = 0.f;
 	float RotationYawOffsetLastTick = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FName DistanceCurveName = "DistanceCurve";
+	FName RotationCurveName = "DistanceCurve";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float DistanceDeltaMultiplier = 1.f;
+	float RotationDeltaMultiplier = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	FName MeleeTwistCurveName = "MeleeTwist";
