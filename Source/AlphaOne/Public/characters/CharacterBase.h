@@ -176,6 +176,7 @@ protected:
 	float RotationYawLastTick = 0.f;
 	float DistanceCurveValueLastTick = 0.f;
 	float DistanceCurveValueSum = 0.f;
+	float RotationYawOffsetLastTick = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	FName DistanceCurveName = "DistanceCurve";
@@ -191,6 +192,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	float RotationYawOffset = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+	float RotationYawOffsetTimer = 0.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	float VelocitySize;

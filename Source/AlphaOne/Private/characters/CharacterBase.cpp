@@ -93,7 +93,9 @@ void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 
 	// yaw offset for mesh
 	if (CheckAction(EUnitActions::Running) ||  AnimInstance->IsAnyMontagePlaying()) {
-		RotationYawOffset = 0.f;
+		// RotationYawOffset = 0.f;
+		RotationYawOffset = FMath::FInterpTo(RotationYawOffset, 0.f, DeltaTime, 5.f);
+		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%.2f"), RotationYawOffset));
 	} else {
 		RotationYawOffset += RotationYawLastTick - ActorRotation.Yaw;
 		RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
@@ -102,8 +104,14 @@ void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
 	// RotationYawOffset += MeleeTwist;
 	// update last tick information in the end
 	TurnInPlaceUpdate(DeltaTime);
+	if (std::abs(RotationYawOffset - RotationYawOffsetLastTick) < NearZero) {
+		RotationYawOffsetTimer += DeltaTime;
+	} else {
+		RotationYawOffsetTimer = 0.f;
+	}
 	RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
 	RotationYawLastTick = ActorRotation.Yaw;
+	RotationYawOffsetLastTick = RotationYawOffset;
 }
 
 // update turn in place offset

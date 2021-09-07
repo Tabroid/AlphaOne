@@ -33,12 +33,12 @@ class ALPHAONE_API UAlphaOneMath : public UBlueprintFunctionLibrary
 public:
     // Convert absolute angle to cardinal direction. Stay the same direction for a wider range defined by the tolerance.
     // Assuming input angle is normalized to axis (-180 to 180)
-    UFUNCTION(BlueprintCallable, Category = "AlphaOne Math")
+    UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
     static ECardinalDirections AngleToDirection(float NormalizedAngle, ECardinalDirections CurrentDirection, float ChangeTolerance = 15.f);
 
     // Determine the turn in place type according to the offset angle
     // Assuming input angle is normalized to axis (-180 to 180)
-    UFUNCTION(BlueprintCallable, Category = "AlphaOne Math")
+    UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
     static ETurnInPlaceTypes AngleToTurnType(float NormalizedAngle, float TurnStart = 75.f, float PivotStart = 150.f);
 };
 
