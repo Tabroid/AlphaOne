@@ -2,6 +2,7 @@
 
 
 #include "characters/CharacterBase.h"
+#include "characters/CharacterAnimComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "weapons/WeaponBase.h"
@@ -28,6 +29,8 @@ ACharacterBase::ACharacterBase()
 
 	FactionSystemComponent = CreateDefaultSubobject<UFactionComponent>(TEXT("FactionSystemComponent"));
 
+	AnimationComponent = CreateDefaultSubobject<UCharacterAnimComponent>(TEXT("AnimationComponent"));
+
 	AttributeSet = CreateDefaultSubobject<UCharacterAttributes>(TEXT("AttributeSet"));
 }
 
@@ -51,89 +54,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	AttributeSet->RegenOverTime(DeltaTime);
-	AnimationStatesUpdate(DeltaTime);
-}
-
-// update variables for animation graphs
-void ACharacterBase::AnimationStatesUpdate(float DeltaTime)
-{
-	static const float NearZero = 0.01f;
-
-	auto Velocity = GetVelocity();
-	auto VelocityRotX = UKismetMathLibrary::MakeRotFromX(Velocity);
-	VelocitySize = Velocity.Size();
-
-	// character is running
-	auto Acceleration = GetCharacterMovement()->GetCurrentAcceleration();
-	AccelerationSize = Acceleration.Size();
-	SetAction(EUnitActions::Running, AccelerationSize > NearZero);
-	if (AccelerationSize > NearZero && VelocitySize > NearZero) {
-		AccDeltaRotator =  VelocityRotX - UKismetMathLibrary::MakeRotFromX(Acceleration);
-		AccDeltaRotator.Normalize();
-		if (!AnimInstance->GetCurveValue(MeleeTwistCurveName, MeleeTwist)) {
-			MeleeTwist = 0.f;
-		}
-	} else {
-		MeleeTwist = 0.f;
-	}
-
-	// aim delta, not dependent on states
-	auto ActorRotation = GetActorRotation();
-	AimDeltaRotator = GetBaseAimRotation() - ActorRotation;
-	AimDeltaRotator.Normalize();
-
-	// character has a velocity
-	if (VelocitySize > NearZero) {
-		// moving direction
-		MoveDeltaRotator = VelocityRotX - ActorRotation;
-		MoveDeltaRotator.Yaw -= MeleeTwist;
-		MoveDeltaRotator.Normalize();
-		MoveDirection = UAlphaOneMath::AngleToDirection(MoveDeltaRotator.Yaw, MoveDirection);
-	}
-
-	// yaw offset for mesh
-	if (CheckAction(EUnitActions::Running) ||  AnimInstance->IsAnyMontagePlaying()) {
-		// RotationYawOffset = 0.f;
-		RotationYawOffset = FMath::FInterpTo(RotationYawOffset, 0.f, DeltaTime, 5.f);
-		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%.2f"), RotationYawOffset));
-	} else {
-		RotationYawOffset += RotationYawLastTick - ActorRotation.Yaw;
-		RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
-	}
-
-	// RotationYawOffset += MeleeTwist;
-	// update last tick information in the end
-	TurnInPlaceUpdate(DeltaTime);
-	if (std::abs(RotationYawOffset - RotationYawOffsetLastTick) < NearZero) {
-		RotationYawOffsetTimer += DeltaTime;
-	} else {
-		RotationYawOffsetTimer = 0.f;
-	}
-	RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
-	RotationYawLastTick = ActorRotation.Yaw;
-	RotationYawOffsetLastTick = RotationYawOffset;
-}
-
-// update turn in place offset
-void ACharacterBase::TurnInPlaceUpdate(float DeltaTime)
-{
-	if (CheckAction(EUnitActions::Turning)) {
-		float DistanceCurveValue;
-		if (AnimInstance->GetCurveValue(DistanceCurveName, DistanceCurveValue)) {
-			float DeltaDistance = DistanceCurveValue - DistanceCurveValueLastTick;
-			DistanceCurveValueLastTick = DistanceCurveValue;
-			// rotation distance curve is always increasing
-			if (DeltaDistance > 0.f) {
-				DistanceCurveValueSum += DistanceDeltaMultiplier*DeltaDistance;
-				RotationYawOffset += DistanceDeltaMultiplier*DeltaDistance;
-				// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-				//  	FString::Printf(TEXT("%.2f, %.2f, %.2f!"), DistanceCurveValue, DistanceCurveValueLastTick - DistanceCurveValue, DistanceCurveValueSum));
-			}
-		}
-		DistanceCurveValueLastTick = DistanceCurveValue;
-	} else {
-		DistanceCurveValueSum = 0.f;
-	}
+	AnimationComponent->AnimationStatesUpdate(DeltaTime);
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const

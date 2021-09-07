@@ -12,6 +12,7 @@
 #include "CharacterBase.generated.h"
 
 class UAnimInstance;
+class UCharacterAnimComponent;
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EControlStates: uint8
@@ -104,6 +105,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }
 
+	UFUNCTION(BlueprintCallable)
+	UCharacterAnimComponent *GetAnimationComponent() { return AnimationComponent; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetMoveSpeed(float Value);
+	UFUNCTION(BlueprintCallable)
+	float GetMoveSpeed() const { return MoveSpeed; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetCombatMoveSpeedFactr(float Value) { CombatMoveSpeedFactor = Value; }
+	UFUNCTION(BlueprintCallable)
+	float GetCombatMoveSpeedFactr() const { return CombatMoveSpeedFactor; }
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -137,6 +152,9 @@ protected:
 	UPROPERTY()
 	UFactionComponent* FactionSystemComponent;
 
+	UPROPERTY()
+	UCharacterAnimComponent *AnimationComponent;
+
 	// properties of the character
 	UPROPERTY()
 	UCharacterAttributes* AttributeSet;
@@ -152,65 +170,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage = nullptr;
 
-private:
 	UAnimInstance *AnimInstance;
-
-// variables and functions for animations
-public:
-	UFUNCTION(BlueprintCallable)
-	void SetMoveSpeed(float Value);
-	UFUNCTION(BlueprintCallable)
-	float GetMoveSpeed() const { return MoveSpeed; }
-
-	UFUNCTION(BlueprintCallable)
-	void SetCombatMoveSpeedFactr(float Value) { CombatMoveSpeedFactor = Value; }
-	UFUNCTION(BlueprintCallable)
-	float GetCombatMoveSpeedFactr() const { return CombatMoveSpeedFactor; }
-
-protected:
-	virtual void AnimationStatesUpdate(float DeltaTime);
-	virtual void TurnInPlaceUpdate(float DeltaTime);
 
 	float MoveSpeed = 500.f;
 	float CombatMoveSpeedFactor = 1.0f;
-	float RotationYawLastTick = 0.f;
-	float DistanceCurveValueLastTick = 0.f;
-	float DistanceCurveValueSum = 0.f;
-	float RotationYawOffsetLastTick = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FName DistanceCurveName = "DistanceCurve";
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float DistanceDeltaMultiplier = 1.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FName MeleeTwistCurveName = "MeleeTwist";
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float MeleeTwist = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float RotationYawOffset = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float RotationYawOffsetTimer = 0.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float VelocitySize;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float AccelerationSize;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	ECardinalDirections MoveDirection;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FRotator AimDeltaRotator;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FRotator MoveDeltaRotator;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FRotator AccDeltaRotator;
 };
