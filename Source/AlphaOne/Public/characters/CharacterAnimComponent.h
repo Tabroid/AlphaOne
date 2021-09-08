@@ -30,12 +30,14 @@ protected:
 	float RotationCurveValueLastTick = 0.f;
 	float RotationCurveValueSum = 0.f;
 	float RotationYawOffsetLastTick = 0.f;
+    float RotationDeltaMultiplier = 1.f;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	FName RotationCurveName = "DistanceCurve";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float RotationDeltaMultiplier = 1.f;
+	uint8 bRotationCurveInit : 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	FName MeleeTwistCurveName = "MeleeTwist";

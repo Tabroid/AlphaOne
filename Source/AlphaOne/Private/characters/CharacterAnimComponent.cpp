@@ -6,6 +6,7 @@
 static const float NearZero = 0.01f;
 
 UCharacterAnimComponent::UCharacterAnimComponent()
+    : bRotationCurveInit(0)
 {
     // should be tick from owner
     PrimaryComponentTick.bCanEverTick = false;
@@ -89,6 +90,10 @@ void UCharacterAnimComponent::TurnInPlaceUpdate(float DeltaTime)
 			RotationCurveValueLastTick = RotationCurveValue;
 			// rotation Rotation curve is always increasing
             if (DeltaRotation > 0.f) {
+                if (!bRotationCurveInit) {
+                    RotationDeltaMultiplier = RotationYawOffset / RotationCurveValueLastTick;
+                    bRotationCurveInit = 1;
+                }
                 RotationCurveValueSum += RotationDeltaMultiplier*DeltaRotation;
                 RotationYawOffset += RotationDeltaMultiplier*DeltaRotation;
                 // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
