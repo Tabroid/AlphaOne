@@ -89,15 +89,17 @@ void UCharacterAnimComponent::TurnInPlaceUpdate(float DeltaTime)
 			float DeltaRotation = RotationCurveValue - RotationCurveValueLastTick;
 			RotationCurveValueLastTick = RotationCurveValue;
 			// rotation Rotation curve is always increasing
-            if (DeltaRotation > 0.f) {
+            if (DeltaRotation > 0.f && RotationCurveValue < 0.f) {
                 if (!bRotationCurveInit) {
                     RotationDeltaMultiplier = RotationYawOffset / RotationCurveValueLastTick;
                     bRotationCurveInit = 1;
+                    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+                        FString::Printf(TEXT("%.2f, %.2f, %.2f!"), RotationDeltaMultiplier, RotationYawOffset, RotationCurveValueLastTick));
                 }
                 RotationCurveValueSum += RotationDeltaMultiplier*DeltaRotation;
                 RotationYawOffset += RotationDeltaMultiplier*DeltaRotation;
-                // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-                //  	FString::Printf(TEXT("%.2f, %.2f, %.2f!"), RotationCurveValue, RotationCurveValueLastTick - RotationCurveValue, RotationCurveValueSum));
+                GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green,
+                 	FString::Printf(TEXT("%.2f, %.2f, %.2f!"), RotationCurveValue, RotationDeltaMultiplier*DeltaRotation, RotationCurveValueSum));
             }
 		}
 		RotationCurveValueLastTick = RotationCurveValue;
