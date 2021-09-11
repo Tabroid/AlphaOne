@@ -153,3 +153,20 @@ ETurnInPlaceTypes UCharacterAnimComponent::AngleToTurnType(float NormalizedAngle
     }
     return ETurnInPlaceTypes::Idle;
 }
+
+EJogSpinTypes UCharacterAnimComponent::CalculateSpinType(ECardinalDirections JogDirection, float YawOffset, float SpinThreshold)
+{
+    if (std::abs(YawOffset) < SpinThreshold) {
+        return EJogSpinTypes::None;
+    }
+
+    switch (JogDirection) {
+    case ECardinalDirections::North:
+        return (YawOffset < 0.f) ? EJogSpinTypes::FwdToBwd_CW : EJogSpinTypes::FwdToBwd_CCW;
+    case ECardinalDirections::South:
+        return (YawOffset < 0.f) ? EJogSpinTypes::BwdToFwd_CW : EJogSpinTypes::BwdToFwd_CCW;
+    default:
+        break;
+    }
+    return EJogSpinTypes::None;
+}

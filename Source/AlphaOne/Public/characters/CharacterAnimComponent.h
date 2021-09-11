@@ -27,6 +27,16 @@ enum class ETurnInPlaceTypes : uint8
     LeftPivot = 4,
 };
 
+UENUM(BlueprintType)
+enum class EJogSpinTypes : uint8
+{
+    None = 0,
+    FwdToBwd_CW = 1,
+    FwdToBwd_CCW = 2,
+    BwdToFwd_CW = 3,
+    BwdToFwd_CCW = 4,
+};
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ALPHAONE_API UCharacterAnimComponent : public UActorComponent
 {
@@ -97,4 +107,8 @@ public:
     // Assuming input angle is normalized to axis (-180 to 180)
     UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
     static ETurnInPlaceTypes AngleToTurnType(float NormalizedAngle, float TurnStart = 75.f, float PivotStart = 150.f);
+
+    // Determine the jog spin state
+    UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
+    static EJogSpinTypes CalculateSpinType(ECardinalDirections JogDirection, float YawOffset, float SpinThreshold = 90.f);
 };
