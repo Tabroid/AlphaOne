@@ -8,6 +8,25 @@
 
 class ACharacterBase;
 
+UENUM(BlueprintType)
+enum class ECardinalDirections : uint8
+{
+	North = 0,
+    East = 1,
+    South = 2,
+    West = 3,
+};
+
+UENUM(BlueprintType)
+enum class ETurnInPlaceTypes : uint8
+{
+	Idle = 0,
+    RightTurn = 1,
+    RightPivot = 2,
+    LeftTurn = 3,
+    LeftPivot = 4,
+};
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ALPHAONE_API UCharacterAnimComponent : public UActorComponent
 {
@@ -65,4 +84,17 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	FRotator AccDeltaRotator;
+
+
+// *** static functions to help calculate animaton states ***
+public:
+    // Convert absolute angle to cardinal direction. Stay the same direction for a wider range defined by the tolerance.
+    // Assuming input angle is normalized to axis (-180 to 180)
+    UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
+    static ECardinalDirections AngleToDirection(float NormalizedAngle, ECardinalDirections CurrentDirection, float ChangeTolerance = 15.f);
+
+    // Determine the turn in place type according to the offset angle
+    // Assuming input angle is normalized to axis (-180 to 180)
+    UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
+    static ETurnInPlaceTypes AngleToTurnType(float NormalizedAngle, float TurnStart = 75.f, float PivotStart = 150.f);
 };
