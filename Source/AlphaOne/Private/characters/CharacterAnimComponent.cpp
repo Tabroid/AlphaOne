@@ -53,7 +53,6 @@ void UCharacterAnimComponent::AnimationStatesUpdate(float DeltaTime)
 		MoveDeltaRotator = VelocityRotX - ActorRotation;
 		MoveDeltaRotator.Yaw -= MeleeTwist;
 		MoveDeltaRotator.Normalize();
-		MoveDirection = UAlphaOneMath::AngleToDirection(MoveDeltaRotator.Yaw, MoveDirection);
 	}
 
 	// yaw offset for mesh
