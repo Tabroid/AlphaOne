@@ -92,13 +92,13 @@ void UCharacterAnimComponent::TurnInPlaceUpdate(float DeltaTime)
                 if (!bRotationCurveInit) {
                     RotationDeltaMultiplier = RotationYawOffset / RotationCurveValueLastTick;
                     bRotationCurveInit = 1;
-                    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-                        FString::Printf(TEXT("%.2f, %.2f, %.2f!"), RotationDeltaMultiplier, RotationYawOffset, RotationCurveValueLastTick));
+                    // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+                    //     FString::Printf(TEXT("%.2f, %.2f, %.2f!"), RotationDeltaMultiplier, RotationYawOffset, RotationCurveValueLastTick));
                 }
                 RotationCurveValueSum += RotationDeltaMultiplier*DeltaRotation;
                 RotationYawOffset += RotationDeltaMultiplier*DeltaRotation;
-                GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green,
-                 	FString::Printf(TEXT("%.2f, %.2f, %.2f!"), RotationCurveValue, RotationDeltaMultiplier*DeltaRotation, RotationCurveValueSum));
+                // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green,
+                //  	FString::Printf(TEXT("%.2f, %.2f, %.2f!"), RotationCurveValue, RotationDeltaMultiplier*DeltaRotation, RotationCurveValueSum));
             }
 		}
 		RotationCurveValueLastTick = RotationCurveValue;
