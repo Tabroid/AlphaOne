@@ -50,6 +50,10 @@ public:
     virtual void BeginPlay() override;
     virtual bool IsNavigationRelevant() const override { return true; }
 
+    // Determine the lean angle
+    UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
+    float CalculateLeanAngle(float LeanAngle, float DeltaTime, float LeanIntensity = 0.08f, float ChangeSpeed = 6.f) const;
+
 protected:
     virtual void TurnInPlaceUpdate(float DeltaTime);
 
@@ -96,7 +100,7 @@ protected:
 	FRotator AccDeltaRotator;
 
 
-// *** static functions to help calculate animaton states ***
+// *** blueprint pure functions to help calculate animaton states ***
 public:
     // Convert absolute angle to cardinal direction. Stay the same direction for a wider range defined by the tolerance.
     // Assuming input angle is normalized to axis (-180 to 180)
@@ -111,4 +115,5 @@ public:
     // Determine the jog spin state
     UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
     static EJogSpinTypes CalculateSpinType(ECardinalDirections JogDirection, float YawOffset, float SpinThreshold = 90.f);
+
 };

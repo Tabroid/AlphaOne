@@ -120,7 +120,7 @@ ECardinalDirections UCharacterAnimComponent::AngleToDirection(float NormalizedAn
         }
         break;
     case ECardinalDirections::East:
-        if (NormalizedAngle < 135.f - ChangeTolerance && NormalizedAngle >= 45.f - ChangeTolerance) {
+        if (NormalizedAngle < 135.f + ChangeTolerance && NormalizedAngle >= 45.f - ChangeTolerance) {
             return CurrentDirection;
         }
         break;
@@ -130,7 +130,7 @@ ECardinalDirections UCharacterAnimComponent::AngleToDirection(float NormalizedAn
         }
         break;
     case ECardinalDirections::West:
-        if (NormalizedAngle < -45.f + ChangeTolerance && NormalizedAngle >= -135.f + ChangeTolerance) {
+        if (NormalizedAngle < -45.f + ChangeTolerance && NormalizedAngle >= -135.f - ChangeTolerance) {
             return CurrentDirection;
         }
         break;
@@ -169,4 +169,11 @@ EJogSpinTypes UCharacterAnimComponent::CalculateSpinType(ECardinalDirections Jog
         break;
     }
     return EJogSpinTypes::None;
+}
+
+float UCharacterAnimComponent::CalculateLeanAngle(float LeanAngle, float DeltaTime, float LeanIntensity, float ChangeSpeed) const
+{
+    float LeanAngleTarget = - AccDeltaRotator.Yaw / DeltaTime * LeanIntensity;
+    float VelocityScale = FMath::Clamp(VelocitySize / MyCharacter->GetMoveSpeed(), 0.f, 1.f);
+    return FMath::FInterpTo(LeanAngle, LeanAngleTarget, DeltaTime, ChangeSpeed);
 }
