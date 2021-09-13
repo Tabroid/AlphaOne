@@ -50,9 +50,21 @@ public:
     virtual void BeginPlay() override;
     virtual bool IsNavigationRelevant() const override { return true; }
 
-    // Determine the lean angle
-    UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
-    float CalculateLeanAngle(float LeanAngle, float DeltaTime, float LeanIntensity = 0.08f, float ChangeSpeed = 6.f) const;
+    // *** some parameters ***
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation Parameter")
+	float TurnInPlaceTime = 0.5f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation Parameter")
+	float JogDirectionChangeTolerance = 15.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation Parameter")
+	float TurnMinAngle = 75.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation Parameter")
+	float PivotMinAngle = 75.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation Parameter")
+	float JogSpinMinAngle = 90.f;
 
 protected:
     virtual void TurnInPlaceUpdate(float DeltaTime);
@@ -63,7 +75,8 @@ protected:
 	float RotationCurveValueLastTick = 0.f;
 	float RotationCurveValueSum = 0.f;
 	float RotationYawOffsetLastTick = 0.f;
-    float RotationDeltaMultiplier = 1.f;
+    float RotationDeltaMultiplier = 1.;
+    float RotationYawOffsetTimer = 0.f;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
@@ -81,8 +94,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	float RotationYawOffset = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float RotationYawOffsetTimer = 0.f;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    ETurnInPlaceTypes TurnInPlaceType;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	float VelocitySize;
@@ -99,9 +112,25 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	FRotator AccDeltaRotator;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    ECardinalDirections JogDirection;
 
-// *** blueprint pure functions to help calculate animaton states ***
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    float JogAngle;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    EJogSpinTypes JogSpinType;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    float JogSpinAngle;
+
+
+// blueprint pure functions to help calculate animaton states ***
 public:
+    // Determine the lean angle
+    UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
+    float CalculateLeanAngle(float LeanAngle, float DeltaTime, float LeanIntensity = 0.08f, float ChangeSpeed = 6.f) const;
+
     // Convert absolute angle to cardinal direction. Stay the same direction for a wider range defined by the tolerance.
     // Assuming input angle is normalized to axis (-180 to 180)
     UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
@@ -114,6 +143,6 @@ public:
 
     // Determine the jog spin state
     UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
-    static EJogSpinTypes CalculateSpinType(ECardinalDirections JogDirection, float YawOffset, float SpinThreshold = 90.f);
+    static EJogSpinTypes CalculateSpinType(ECardinalDirections CurrentDirection, float YawOffset, float SpinThreshold = 90.f);
 
 };

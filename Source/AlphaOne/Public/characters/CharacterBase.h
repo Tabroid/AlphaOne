@@ -25,6 +25,7 @@ enum class EControlStates: uint8
 	WantsToSwim     = 1 << 4	 UMETA(DisplayName = "Wants to swim"),
 	WantsToJump     = 1 << 5	 UMETA(DisplayName = "Wants to jump"),
 	WantsToTurn		= 1 << 6	 UMETA(DisplayName = "Wants to turn"),
+	WantsToSpin		= 1 << 7	 UMETA(DisplayName = "Wants to spin"),
 };
 ENUM_CLASS_FLAGS(EControlStates);
 

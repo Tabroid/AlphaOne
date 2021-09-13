@@ -65,22 +65,25 @@ void UCharacterAnimComponent::AnimationStatesUpdate(float DeltaTime)
 		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%.2f"), RotationYawOffset));
     }
 
-	// RotationYawOffset += MeleeTwist;
-	// update last tick information in the end
-	TurnInPlaceUpdate(DeltaTime);
-	if (std::abs(RotationYawOffset - RotationYawOffsetLastTick) < NearZero) {
-		RotationYawOffsetTimer += DeltaTime;
-	} else {
-		RotationYawOffsetTimer = 0.f;
-	}
 	RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
+    JogAngle = MoveDeltaRotator.Yaw - RotationYawOffset;
+    JogAngle = UKismetMathLibrary::NormalizeAxis(JogAngle);
+    JogDirection = AngleToDirection(JogAngle, JogDirection, JogDirectionChangeTolerance);
+	TurnInPlaceUpdate(DeltaTime);
 	RotationYawLastTick = ActorRotation.Yaw;
-	RotationYawOffsetLastTick = RotationYawOffset;
 }
 
 // update turn in place offset
 void UCharacterAnimComponent::TurnInPlaceUpdate(float DeltaTime)
 {
+    // check timer
+    if (std::abs(RotationYawOffset - RotationYawOffsetLastTick) < NearZero) {
+		RotationYawOffsetTimer += DeltaTime;
+	} else {
+		RotationYawOffsetTimer = 0.f;
+    }
+
+    // update states according to turn state
 	if (MyCharacter->CheckAction(EUnitActions::Turning)) {
         auto AnimInstance = MyCharacter->GetMesh()->GetAnimInstance();
 		float RotationCurveValue;
@@ -103,12 +106,28 @@ void UCharacterAnimComponent::TurnInPlaceUpdate(float DeltaTime)
 		}
 		RotationCurveValueLastTick = RotationCurveValue;
 	} else {
-		RotationCurveValueSum = 0.f;
+        RotationCurveValueSum = 0.f;
+        TurnInPlaceType = AngleToTurnType(RotationYawOffset, TurnMinAngle, PivotMinAngle);
+        if ((RotationYawOffsetTimer > TurnInPlaceTime) && (TurnInPlaceType != ETurnInPlaceTypes::Idle)) {
+            MyCharacter->SetControl(EControlStates::WantsToTurn);
+        }
+        JogSpinType = CalculateSpinType(JogDirection, RotationYawOffset, JogSpinMinAngle);
+        if (JogSpinType != EJogSpinTypes::None) {
+            MyCharacter->SetControl(EControlStates::WantsToSpin);
+        }
 	}
+    RotationYawOffsetLastTick = RotationYawOffset;
 }
 
 
-// *** static functions below ***
+// *** blueprint pure functions below **
+
+float UCharacterAnimComponent::CalculateLeanAngle(float LeanAngle, float DeltaTime, float LeanIntensity, float ChangeSpeed) const
+{
+    float LeanAngleTarget = - AccDeltaRotator.Yaw / DeltaTime * LeanIntensity;
+    float VelocityScale = FMath::Clamp(VelocitySize / MyCharacter->GetMoveSpeed(), 0.f, 1.f);
+    return FMath::FInterpTo(LeanAngle, LeanAngleTarget, DeltaTime, ChangeSpeed);
+}
 
 ECardinalDirections UCharacterAnimComponent::AngleToDirection(float NormalizedAngle, ECardinalDirections CurrentDirection, float ChangeTolerance)
 {
@@ -154,13 +173,13 @@ ETurnInPlaceTypes UCharacterAnimComponent::AngleToTurnType(float NormalizedAngle
     return ETurnInPlaceTypes::Idle;
 }
 
-EJogSpinTypes UCharacterAnimComponent::CalculateSpinType(ECardinalDirections JogDirection, float YawOffset, float SpinThreshold)
+EJogSpinTypes UCharacterAnimComponent::CalculateSpinType(ECardinalDirections CurrentDirection, float YawOffset, float SpinThreshold)
 {
     if (std::abs(YawOffset) < SpinThreshold) {
         return EJogSpinTypes::None;
     }
 
-    switch (JogDirection) {
+    switch (CurrentDirection) {
     case ECardinalDirections::North:
         return (YawOffset < 0.f) ? EJogSpinTypes::FwdToBwd_CW : EJogSpinTypes::FwdToBwd_CCW;
     case ECardinalDirections::South:
@@ -169,11 +188,4 @@ EJogSpinTypes UCharacterAnimComponent::CalculateSpinType(ECardinalDirections Jog
         break;
     }
     return EJogSpinTypes::None;
-}
-
-float UCharacterAnimComponent::CalculateLeanAngle(float LeanAngle, float DeltaTime, float LeanIntensity, float ChangeSpeed) const
-{
-    float LeanAngleTarget = - AccDeltaRotator.Yaw / DeltaTime * LeanIntensity;
-    float VelocityScale = FMath::Clamp(VelocitySize / MyCharacter->GetMoveSpeed(), 0.f, 1.f);
-    return FMath::FInterpTo(LeanAngle, LeanAngleTarget, DeltaTime, ChangeSpeed);
 }
