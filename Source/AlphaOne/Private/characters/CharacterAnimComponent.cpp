@@ -48,9 +48,9 @@ void UCharacterAnimComponent::AnimationStatesUpdate(float DeltaTime)
 	AimDeltaRotator.Normalize();
 
 	// character has a velocity
-	if (VelocitySize > NearZero) {
+	if (AccelerationSize > NearZero) {
 		// moving direction
-		MoveDeltaRotator = VelocityRotX - ActorRotation;
+		MoveDeltaRotator = UKismetMathLibrary::MakeRotFromX(Acceleration) - ActorRotation;
 		MoveDeltaRotator.Yaw -= MeleeTwist;
 		MoveDeltaRotator.Normalize();
 	}
