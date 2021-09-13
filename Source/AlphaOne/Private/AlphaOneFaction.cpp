@@ -22,5 +22,5 @@ bool UFactionComponent::IsEnemy(const UFactionComponent* TargetFactionComponent)
 // Called when the game starts
 void UFactionComponent::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 }

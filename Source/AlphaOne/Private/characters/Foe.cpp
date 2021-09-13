@@ -6,19 +6,19 @@
 AFoe::AFoe()
 {
     SetType(EUnitTypes::Mob);
-	DefaultFaction = EUnitFactions::Intruders;
+    DefaultFaction = EUnitFactions::Intruders;
 
     HealthBarUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar UI"));
-	HealthBarUI->SetupAttachment(GetMesh());
+    HealthBarUI->SetupAttachment(GetMesh());
 }
 
 void AFoe::BeginPlay()
 {
     Super::BeginPlay();
     auto HealthBar = Cast<UHealthBar>(HealthBarUI->GetUserWidgetObject());
-	HealthBarUI->SetVisibility(false);
-	if (HealthBar) {
-		HealthBar->SetAttributeSet(AttributeSet);
-		HealthBar->SetOwningComponent(HealthBarUI);
-	}
+    HealthBarUI->SetVisibility(false);
+    if (HealthBar) {
+        HealthBar->SetAttributeSet(AttributeSet);
+        HealthBar->SetOwningComponent(HealthBarUI);
+    }
 }

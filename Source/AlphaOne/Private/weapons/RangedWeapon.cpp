@@ -30,13 +30,13 @@ bool ARangedWeapon::Attack()
 bool ARangedWeapon::ShootProjectile()
 {
     FTransform SpawnTM(GetEmitterRotation(), GetEmitterLocation());
-	auto Projectile = Cast<AProjectileBase>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ProjectileClass, SpawnTM));
-	if (Projectile) {
-		Projectile->SetInstigator(MyCharacter);
-		Projectile->SetOwner(MyCharacter);
+    auto Projectile = Cast<AProjectileBase>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ProjectileClass, SpawnTM));
+    if (Projectile) {
+        Projectile->SetInstigator(MyCharacter);
+        Projectile->SetOwner(MyCharacter);
         Projectile->AddIgnoreActors({MyCharacter, this});
         UGameplayStatics::FinishSpawningActor(Projectile, SpawnTM);
         return true;
-	}
+    }
     return false;
 }

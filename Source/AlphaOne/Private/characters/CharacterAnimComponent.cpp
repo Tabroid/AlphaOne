@@ -21,56 +21,56 @@ void UCharacterAnimComponent::BeginPlay()
 // update variables for animation graphs
 void UCharacterAnimComponent::AnimationStatesUpdate(float DeltaTime)
 {
-	auto Velocity = MyCharacter->GetVelocity();
-	auto VelocityRotX = UKismetMathLibrary::MakeRotFromX(Velocity);
-	VelocitySize = Velocity.Size();
+    auto Velocity = MyCharacter->GetVelocity();
+    auto VelocityRotX = UKismetMathLibrary::MakeRotFromX(Velocity);
+    VelocitySize = Velocity.Size();
 
-	// character is running
-	auto Acceleration = MyCharacter->GetCharacterMovement()->GetCurrentAcceleration();
-	AccelerationSize = Acceleration.Size();
-	MyCharacter->SetAction(EUnitActions::Running, AccelerationSize > NearZero);
+    // character is running
+    auto Acceleration = MyCharacter->GetCharacterMovement()->GetCurrentAcceleration();
+    AccelerationSize = Acceleration.Size();
+    MyCharacter->SetAction(EUnitActions::Running, AccelerationSize > NearZero);
 
     auto AnimInstance = MyCharacter->GetMesh()->GetAnimInstance();
 
-	if (AccelerationSize > NearZero && VelocitySize > NearZero) {
-		AccDeltaRotator =  VelocityRotX - UKismetMathLibrary::MakeRotFromX(Acceleration);
-		AccDeltaRotator.Normalize();
-		if (!AnimInstance->GetCurveValue(MeleeTwistCurveName, MeleeTwist)) {
-			MeleeTwist = 0.f;
-		}
-	} else {
-		MeleeTwist = 0.f;
-	}
-
-	// aim delta, not dependent on states
-	auto ActorRotation = MyCharacter->GetActorRotation();
-	AimDeltaRotator = MyCharacter->GetBaseAimRotation() - ActorRotation;
-	AimDeltaRotator.Normalize();
-
-	// character has a velocity
-	if (VelocitySize > NearZero) {
-		// moving direction
-		MoveDeltaRotator = VelocityRotX - ActorRotation;
-		MoveDeltaRotator.Yaw -= MeleeTwist;
-		MoveDeltaRotator.Normalize();
-	}
-
-	// yaw offset for mesh
-	if (!MyCharacter->CheckAction(EUnitActions::Running) && !AnimInstance->IsAnyMontagePlaying()) {
-        RotationYawOffset += RotationYawLastTick - ActorRotation.Yaw;
-		RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
+    if (AccelerationSize > NearZero && VelocitySize > NearZero) {
+        AccDeltaRotator =  VelocityRotX - UKismetMathLibrary::MakeRotFromX(Acceleration);
+        AccDeltaRotator.Normalize();
+        if (!AnimInstance->GetCurveValue(MeleeTwistCurveName, MeleeTwist)) {
+            MeleeTwist = 0.f;
+        }
     } else {
-		// RotationYawOffset = 0.f;
-		; // RotationYawOffset = FMath::FInterpTo(RotationYawOffset, 0.f, DeltaTime, 5.f);
-		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%.2f"), RotationYawOffset));
+        MeleeTwist = 0.f;
     }
 
-	RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
+    // aim delta, not dependent on states
+    auto ActorRotation = MyCharacter->GetActorRotation();
+    AimDeltaRotator = MyCharacter->GetBaseAimRotation() - ActorRotation;
+    AimDeltaRotator.Normalize();
+
+    // character has a velocity
+    if (VelocitySize > NearZero) {
+        // moving direction
+        MoveDeltaRotator = VelocityRotX - ActorRotation;
+        MoveDeltaRotator.Yaw -= MeleeTwist;
+        MoveDeltaRotator.Normalize();
+    }
+
+    // yaw offset for mesh
+    if (!MyCharacter->CheckAction(EUnitActions::Running) && !AnimInstance->IsAnyMontagePlaying()) {
+        RotationYawOffset += RotationYawLastTick - ActorRotation.Yaw;
+        RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
+    } else {
+        // RotationYawOffset = 0.f;
+        ; // RotationYawOffset = FMath::FInterpTo(RotationYawOffset, 0.f, DeltaTime, 5.f);
+        // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%.2f"), RotationYawOffset));
+    }
+
+    RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
     JogAngle = MoveDeltaRotator.Yaw - RotationYawOffset;
     JogAngle = UKismetMathLibrary::NormalizeAxis(JogAngle);
     JogDirection = AngleToDirection(JogAngle, JogDirection, JogDirectionChangeTolerance);
-	TurnInPlaceUpdate(DeltaTime);
-	RotationYawLastTick = ActorRotation.Yaw;
+    TurnInPlaceUpdate(DeltaTime);
+    RotationYawLastTick = ActorRotation.Yaw;
 }
 
 // update turn in place offset
@@ -78,19 +78,19 @@ void UCharacterAnimComponent::TurnInPlaceUpdate(float DeltaTime)
 {
     // check timer
     if (std::abs(RotationYawOffset - RotationYawOffsetLastTick) < NearZero) {
-		RotationYawOffsetTimer += DeltaTime;
-	} else {
-		RotationYawOffsetTimer = 0.f;
+        RotationYawOffsetTimer += DeltaTime;
+    } else {
+        RotationYawOffsetTimer = 0.f;
     }
 
     // update states according to turn state
-	if (MyCharacter->CheckAction(EUnitActions::Turning)) {
+    if (MyCharacter->CheckAction(EUnitActions::Turning)) {
         auto AnimInstance = MyCharacter->GetMesh()->GetAnimInstance();
-		float RotationCurveValue;
-		if (AnimInstance->GetCurveValue(RotationCurveName, RotationCurveValue)) {
-			float DeltaRotation = RotationCurveValue - RotationCurveValueLastTick;
-			RotationCurveValueLastTick = RotationCurveValue;
-			// rotation Rotation curve is always increasing
+        float RotationCurveValue;
+        if (AnimInstance->GetCurveValue(RotationCurveName, RotationCurveValue)) {
+            float DeltaRotation = RotationCurveValue - RotationCurveValueLastTick;
+            RotationCurveValueLastTick = RotationCurveValue;
+            // rotation Rotation curve is always increasing
             if (DeltaRotation > 0.f && RotationCurveValue < 0.f) {
                 if (!bRotationCurveInit) {
                     RotationDeltaMultiplier = RotationYawOffset / RotationCurveValueLastTick;
@@ -103,10 +103,10 @@ void UCharacterAnimComponent::TurnInPlaceUpdate(float DeltaTime)
                 // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green,
                 //  	FString::Printf(TEXT("%.2f, %.2f, %.2f!"), RotationCurveValue, RotationDeltaMultiplier*DeltaRotation, RotationCurveValueSum));
             }
-		}
-		RotationCurveValueLastTick = RotationCurveValue;
+        }
+        RotationCurveValueLastTick = RotationCurveValue;
         JogSpinAngle = RotationYawOffset / JogSpinRotationStart * JogSpinAngleStart;
-	} else {
+    } else {
         RotationCurveValueSum = 0.f;
         if (AccelerationSize < NearZero) {
             TurnInPlaceType = AngleToTurnType(RotationYawOffset, TurnMinAngle, PivotMinAngle);
@@ -119,7 +119,7 @@ void UCharacterAnimComponent::TurnInPlaceUpdate(float DeltaTime)
                 MyCharacter->SetControl(EControlStates::WantsToSpin);
             }
         }
-	}
+    }
     RotationYawOffsetLastTick = RotationYawOffset;
 }
 

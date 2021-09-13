@@ -4,17 +4,17 @@
 #include "weapons/KnockbackArrow.h"
 
 AKnockbackArrow::AKnockbackArrow()
-	: AProjectileBase ()
+    : AProjectileBase ()
 {
-	PrimaryActorTick.bCanEverTick = false;
+    PrimaryActorTick.bCanEverTick = false;
 
     ShockWaveMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Shock Wave"));
-	//RootComponent = ProjectileMesh;
-	ShockWaveMesh->SetupAttachment(RootComponent);
+    //RootComponent = ProjectileMesh;
+    ShockWaveMesh->SetupAttachment(RootComponent);
 }
 
 void AKnockbackArrow::OnImpact(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-					   		   FVector NormalImpulse, const FHitResult& Hit)
+                                  FVector NormalImpulse, const FHitResult& Hit)
 {
 }
 

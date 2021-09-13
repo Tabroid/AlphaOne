@@ -27,7 +27,7 @@ void AAlphaOneHUD::BeginPlay()
 
 void AAlphaOneHUD::DrawHUD()
 {
-	Super::DrawHUD();
+    Super::DrawHUD();
 }
 
 void AAlphaOneHUD::Tick(float DeltaTime)

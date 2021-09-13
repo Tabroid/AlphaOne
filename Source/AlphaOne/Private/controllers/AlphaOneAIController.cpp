@@ -44,7 +44,7 @@ void AAlphaOneAIController::BeginPlay()
 
 void AAlphaOneAIController::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+    Super::Tick(DeltaTime);
 }
 
 bool AAlphaOneAIController::IsDead() const

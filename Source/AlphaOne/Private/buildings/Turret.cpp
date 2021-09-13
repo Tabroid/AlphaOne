@@ -11,9 +11,9 @@
 
 ATurret::ATurret()
 {
-	//create default component for the projectile spawn point
-	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile Spawn Point"));
-	ProjectileSpawnPoint->SetupAttachment(AuraMesh);
+    //create default component for the projectile spawn point
+    ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile Spawn Point"));
+    ProjectileSpawnPoint->SetupAttachment(AuraMesh);
     BaseMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
     BaseMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
     // by default it is indestructible
@@ -22,12 +22,12 @@ ATurret::ATurret()
 
 void ATurret::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+    Super::Tick(DeltaTime);
 }
 
 void ATurret::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
     //set up the fire rate timer for the turret
     GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, this, &ATurret::CheckFireCondition, FireRate, true);
@@ -62,26 +62,26 @@ void ATurret::CheckFireCondition()
 
 float ATurret::GetDistanceToEnemy()
 {
-	if (!EnemyTarget) return 1.e9;
+    if (!EnemyTarget) return 1.e9;
     return FVector::Dist(EnemyTarget->GetActorLocation(), GetActorLocation());
 }
 
 void ATurret::Fire()
 {
     FTransform SpawnTM(ProjectileSpawnPoint->GetComponentRotation(), ProjectileSpawnPoint->GetComponentLocation());
-	auto Projectile = Cast<AProjectileBase>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ProjectileClass, SpawnTM));
-	if (Projectile) {
-		Projectile->SetInstigator(this);
-		Projectile->SetOwner(this);
+    auto Projectile = Cast<AProjectileBase>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ProjectileClass, SpawnTM));
+    if (Projectile) {
+        Projectile->SetInstigator(this);
+        Projectile->SetOwner(this);
         Projectile->AddIgnoreActors({this});
-		UGameplayStatics::FinishSpawningActor(Projectile, SpawnTM);
-	}
+        UGameplayStatics::FinishSpawningActor(Projectile, SpawnTM);
+    }
 }
 
 void ATurret::RotateTurret(FVector LookAtTarget)
 {
-	if (!AuraMesh) return;
-	FVector StartLocation = AuraMesh->GetComponentLocation();
-	FRotator AuraRotation = FVector(LookAtTarget - StartLocation).Rotation();
-	AuraMesh->SetWorldRotation(AuraRotation);
+    if (!AuraMesh) return;
+    FVector StartLocation = AuraMesh->GetComponentLocation();
+    FRotator AuraRotation = FVector(LookAtTarget - StartLocation).Rotation();
+    AuraMesh->SetWorldRotation(AuraRotation);
 }

@@ -8,12 +8,12 @@
 
 UBTTask_Attack::UBTTask_Attack()
 {
-	NodeName = TEXT("Attack");
+    NodeName = TEXT("Attack");
 }
 
 EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	Super::ExecuteTask(OwnerComp, NodeMemory);
+    Super::ExecuteTask(OwnerComp, NodeMemory);
 
     if (OwnerComp.GetAIOwner() == nullptr) {
         return EBTNodeResult::Failed;

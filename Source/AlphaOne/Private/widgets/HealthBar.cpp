@@ -28,7 +28,7 @@ void UHealthBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
             auto PlayerCharacter = UGameplayStatics::GetPlayerCharacter(Actor->GetWorld(), 0);
             if (PlayerCharacter) {
                 FVector LookDirection = PlayerCharacter->GetActorLocation() - Actor->GetActorLocation();
-	            OwningComponent->SetWorldRotation(LookDirection.Rotation());
+                OwningComponent->SetWorldRotation(LookDirection.Rotation());
             }
         }
     }

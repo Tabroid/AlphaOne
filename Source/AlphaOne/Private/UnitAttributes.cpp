@@ -19,14 +19,14 @@ void UCharacterAttributes::AdjustAttributeForMaxChange(FGameplayAttributeData& A
 
 void UCharacterAttributes::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
-	// This is called whenever attributes change, so for max health/mana we want to scale the current totals to match
-	Super::PreAttributeChange(Attribute, NewValue);
+    // This is called whenever attributes change, so for max health/mana we want to scale the current totals to match
+    Super::PreAttributeChange(Attribute, NewValue);
 
-	if (Attribute == GetMaxHealthAttribute()) {
-		AdjustAttributeForMaxChange(Health, MaxHealth, NewValue, GetHealthAttribute());
-	} else if (Attribute == GetMaxManaAttribute()) {
-		AdjustAttributeForMaxChange(Mana, MaxMana, NewValue, GetManaAttribute());
-	}
+    if (Attribute == GetMaxHealthAttribute()) {
+        AdjustAttributeForMaxChange(Health, MaxHealth, NewValue, GetHealthAttribute());
+    } else if (Attribute == GetMaxManaAttribute()) {
+        AdjustAttributeForMaxChange(Mana, MaxMana, NewValue, GetManaAttribute());
+    }
 }
 
 void UCharacterAttributes::RegenOverTime(float DeltaTime)
