@@ -8,18 +8,18 @@
 UCLASS()
 class ALPHAONE_API AAlphaOneAIController : public AAIController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	virtual void Tick(float DeltaTime) override;
-	bool IsDead() const;
+    virtual void Tick(float DeltaTime) override;
+    bool IsDead() const;
 
 protected:
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditAnywhere)
-	UBehaviorTree* AIBehavior = nullptr;
+    UPROPERTY(EditAnywhere)
+    UBehaviorTree* AIBehavior = nullptr;
 };
 
 

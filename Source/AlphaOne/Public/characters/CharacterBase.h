@@ -20,159 +20,159 @@ enum class EControlStates: uint8
     NONE            = 0          UMETA(Hidden),
     WantsToAttack   = 1 << 0     UMETA(DisplayName = "Wants to attack"),
     WantsToSprint   = 1 << 1     UMETA(DisplayName = "Wants to sprint"),
-	WantsToAim		= 1 << 2	 UMETA(DisplayName = "Wants to aim"),
-	WantsToClimb    = 1 << 3	 UMETA(DisplayName = "Wants to climb"),
-	WantsToSwim     = 1 << 4	 UMETA(DisplayName = "Wants to swim"),
-	WantsToJump     = 1 << 5	 UMETA(DisplayName = "Wants to jump"),
-	WantsToTurn		= 1 << 6	 UMETA(DisplayName = "Wants to turn"),
-	WantsToSpin		= 1 << 7	 UMETA(DisplayName = "Wants to spin"),
+    WantsToAim		= 1 << 2	 UMETA(DisplayName = "Wants to aim"),
+    WantsToClimb    = 1 << 3	 UMETA(DisplayName = "Wants to climb"),
+    WantsToSwim     = 1 << 4	 UMETA(DisplayName = "Wants to swim"),
+    WantsToJump     = 1 << 5	 UMETA(DisplayName = "Wants to jump"),
+    WantsToTurn		= 1 << 6	 UMETA(DisplayName = "Wants to turn"),
+    WantsToSpin		= 1 << 7	 UMETA(DisplayName = "Wants to spin"),
 };
 ENUM_CLASS_FLAGS(EControlStates);
 
 UCLASS()
 class ALPHAONE_API ACharacterBase : public ACharacter, public IGenericTeamAgentInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	ACharacterBase();
+    // Sets default values for this character's properties
+    ACharacterBase();
 
-	virtual void PossessedBy(AController* NewController) override;
-	virtual void UnPossessed() override;
-	virtual void OnRep_Controller() override;
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+    virtual void PossessedBy(AController* NewController) override;
+    virtual void UnPossessed() override;
+    virtual void OnRep_Controller() override;
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	// Implement IAbilitySystemInterface
-	UAbilitySystemComponent* GetAbilitySystemComponent() const;
+    // Implement IAbilitySystemInterface
+    UAbilitySystemComponent* GetAbilitySystemComponent() const;
 
-	UFUNCTION(BlueprintCallable)
-	virtual bool EquipWeapon(AWeaponBase* NewWeapon = nullptr);
+    UFUNCTION(BlueprintCallable)
+    virtual bool EquipWeapon(AWeaponBase* NewWeapon = nullptr);
 
-	UFUNCTION(BlueprintCallable)
-	void SetAction(EUnitActions Action, bool NewState = true);
+    UFUNCTION(BlueprintCallable)
+    void SetAction(EUnitActions Action, bool NewState = true);
 
-	UFUNCTION(BlueprintCallable)
-	void SetStatus(EUnitStatuses Status, bool NewState = true);
+    UFUNCTION(BlueprintCallable)
+    void SetStatus(EUnitStatuses Status, bool NewState = true);
 
-	UFUNCTION(BlueprintCallable)
-	void SetControl(EControlStates Control, bool NewState = true);
+    UFUNCTION(BlueprintCallable)
+    void SetControl(EControlStates Control, bool NewState = true);
 
-	UFUNCTION(BlueprintCallable)
-	void SetType(EUnitTypes NewType);
+    UFUNCTION(BlueprintCallable)
+    void SetType(EUnitTypes NewType);
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+    // Called every frame
+    virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+    // Called to bind functionality to input
+    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintCallable)
-	virtual AWeaponBase *GetCurrentWeapon() const;
+    UFUNCTION(BlueprintCallable)
+    virtual AWeaponBase *GetCurrentWeapon() const;
 
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE UCharacterAttributes* GetAttributes() { return AttributeSet; }
+    UFUNCTION(BlueprintCallable)
+    FORCEINLINE UCharacterAttributes* GetAttributes() { return AttributeSet; }
 
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool CheckType(EUnitTypes Type) const { return (AttributeSet->Type == Type); }
+    UFUNCTION(BlueprintCallable)
+    FORCEINLINE bool CheckType(EUnitTypes Type) const { return (AttributeSet->Type == Type); }
 
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool CheckAction(EUnitActions Action) const { return static_cast<bool>(AttributeSet->Action & Action); }
+    UFUNCTION(BlueprintCallable)
+    FORCEINLINE bool CheckAction(EUnitActions Action) const { return static_cast<bool>(AttributeSet->Action & Action); }
 
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool CheckStatus(EUnitStatuses Status) const { return static_cast<bool>(AttributeSet->Status & Status); }
+    UFUNCTION(BlueprintCallable)
+    FORCEINLINE bool CheckStatus(EUnitStatuses Status) const { return static_cast<bool>(AttributeSet->Status & Status); }
 
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool CheckControl(EControlStates Control) const { return static_cast<bool>(ControlState & Control); }
+    UFUNCTION(BlueprintCallable)
+    FORCEINLINE bool CheckControl(EControlStates Control) const { return static_cast<bool>(ControlState & Control); }
 
-	// @TODO: item slots, equipment slots
-	// setupItems()
-	UFUNCTION(BlueprintCallable)
-	virtual bool IsAbleToAct() const;
+    // @TODO: item slots, equipment slots
+    // setupItems()
+    UFUNCTION(BlueprintCallable)
+    virtual bool IsAbleToAct() const;
 
-	virtual bool Attack();
-	virtual void OnAttackEnd(bool Interrupted = false);
-	virtual float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-	virtual bool Die(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+    virtual bool Attack();
+    virtual void OnAttackEnd(bool Interrupted = false);
+    virtual float TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+    virtual bool Die(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
-	virtual void StopAllAnimMontages();
-	// Controller responses
-	void MoveForward(float AxisValue);
-	void MoveRight(float AxisValue);
-	void LookUpRate(float AxisValue);
-	void TurnRate(float AxisValue);
-	void Jump() override;
+    virtual void StopAllAnimMontages();
+    // Controller responses
+    void MoveForward(float AxisValue);
+    void MoveRight(float AxisValue);
+    void LookUpRate(float AxisValue);
+    void TurnRate(float AxisValue);
+    void Jump() override;
 
-	UFUNCTION(BlueprintCallable)
-	UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }
+    UFUNCTION(BlueprintCallable)
+    UFactionComponent* GetFactionComponent() { return FactionSystemComponent; }
 
-	UFUNCTION(BlueprintCallable)
-	UCharacterAnimComponent *GetAnimationComponent() { return AnimationComponent; }
+    UFUNCTION(BlueprintCallable)
+    UCharacterAnimComponent *GetAnimationComponent() { return AnimationComponent; }
 
-	UFUNCTION(BlueprintCallable)
-	void SetMoveSpeed(float Value);
-	UFUNCTION(BlueprintCallable)
-	float GetMoveSpeed() const { return MoveSpeed; }
+    UFUNCTION(BlueprintCallable)
+    void SetMoveSpeed(float Value);
+    UFUNCTION(BlueprintCallable)
+    float GetMoveSpeed() const { return MoveSpeed; }
 
-	UFUNCTION(BlueprintCallable)
-	void SetCombatMoveSpeedFactr(float Value) { CombatMoveSpeedFactor = Value; }
-	UFUNCTION(BlueprintCallable)
-	float GetCombatMoveSpeedFactr() const { return CombatMoveSpeedFactor; }
+    UFUNCTION(BlueprintCallable)
+    void SetCombatMoveSpeedFactr(float Value) { CombatMoveSpeedFactor = Value; }
+    UFUNCTION(BlueprintCallable)
+    float GetCombatMoveSpeedFactr() const { return CombatMoveSpeedFactor; }
 
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
 
-	virtual void OnHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags) { /* place holder */ }
-	virtual void OnManaChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags) { /* place holder */ }
-	virtual void OnMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags) { /* place holder */ }
-	virtual void OnStartAttack();
-	virtual void OnStopAttack();
-	virtual void OnStartSpecial() {}
-	virtual void OnStopSpecial() {}
-	// virtual void OnStartSprinting();
-	// virtual void OnStopSprinting();
-	virtual void OnDeath(float KillingDamage, const FDamageEvent& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
-	virtual void SetRagdollPhysics();
+    virtual void OnHealthChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags) { /* place holder */ }
+    virtual void OnManaChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags) { /* place holder */ }
+    virtual void OnMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags) { /* place holder */ }
+    virtual void OnStartAttack();
+    virtual void OnStopAttack();
+    virtual void OnStartSpecial() {}
+    virtual void OnStopSpecial() {}
+    // virtual void OnStartSprinting();
+    // virtual void OnStopSprinting();
+    virtual void OnDeath(float KillingDamage, const FDamageEvent& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser);
+    virtual void SetRagdollPhysics();
 
-	// Passive gameplay effects applied on creation
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
-	TArray<TSubclassOf<UGameplayEffect>> PassiveGameplayEffects;
+    // Passive gameplay effects applied on creation
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
+    TArray<TSubclassOf<UGameplayEffect>> PassiveGameplayEffects;
 
-	virtual FGenericTeamId GetGenericTeamId() const override;
+    virtual FGenericTeamId GetGenericTeamId() const override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AWeaponBase> DefaultWeapon;
-	AWeaponBase* DefaultWeaponPtr;
-	AWeaponBase* CurrentWeapon;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+    TSubclassOf<AWeaponBase> DefaultWeapon;
+    AWeaponBase* DefaultWeaponPtr;
+    AWeaponBase* CurrentWeapon;
 
-	// A proxy to FactionSystem component
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (AllowPrivateAccess = "true"))
-	EUnitFactions DefaultFaction;
-	UPROPERTY()
-	UFactionComponent* FactionSystemComponent;
+    // A proxy to FactionSystem component
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Faction", meta = (AllowPrivateAccess = "true"))
+    EUnitFactions DefaultFaction;
+    UPROPERTY()
+    UFactionComponent* FactionSystemComponent;
 
-	UPROPERTY()
-	UCharacterAnimComponent *AnimationComponent;
+    UPROPERTY()
+    UCharacterAnimComponent *AnimationComponent;
 
-	// properties of the character
-	UPROPERTY()
-	UCharacterAttributes* AttributeSet;
-	UPROPERTY()
-	UAlphaOneAbilitySystem* AbilitySystemComponent;
+    // properties of the character
+    UPROPERTY()
+    UCharacterAttributes* AttributeSet;
+    UPROPERTY()
+    UAlphaOneAbilitySystem* AbilitySystemComponent;
 
-	UPROPERTY()
-	EControlStates ControlState;
+    UPROPERTY()
+    EControlStates ControlState;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
-	FName UnitDataRowName = "Default_Character";
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+    FName UnitDataRowName = "Default_Character";
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* DeathMontage = nullptr;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    UAnimMontage* DeathMontage = nullptr;
 
-	UAnimInstance *AnimInstance;
+    UAnimInstance *AnimInstance;
 
-	float MoveSpeed = 500.f;
-	float CombatMoveSpeedFactor = 1.0f;
+    float MoveSpeed = 500.f;
+    float CombatMoveSpeedFactor = 1.0f;
 };

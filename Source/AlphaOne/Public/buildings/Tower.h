@@ -13,9 +13,9 @@ class UWidgetComponent;
 UCLASS()
 class ALPHAONE_API ATower : public ABuildingBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
-	ATower();
+    // Sets default values for this actor's properties
+    ATower();
 };

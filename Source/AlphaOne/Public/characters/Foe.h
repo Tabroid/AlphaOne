@@ -11,14 +11,14 @@ class UWidgetComponent;
 UCLASS()
 class ALPHAONE_API AFoe : public ACharacterBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	AFoe();
+    AFoe();
 
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	UWidgetComponent* HealthBarUI = nullptr;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    UWidgetComponent* HealthBarUI = nullptr;
 };

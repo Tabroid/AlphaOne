@@ -11,7 +11,7 @@ class ACharacterBase;
 UENUM(BlueprintType)
 enum class ECardinalDirections : uint8
 {
-	North = 0,
+    North = 0,
     East = 1,
     South = 2,
     West = 3,
@@ -20,7 +20,7 @@ enum class ECardinalDirections : uint8
 UENUM(BlueprintType)
 enum class ETurnInPlaceTypes : uint8
 {
-	Idle = 0,
+    Idle = 0,
     RightTurn = 1,
     RightPivot = 2,
     LeftTurn = 3,
@@ -64,68 +64,68 @@ public:
 
     // *** some parameters ***
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation Parameter")
-	float TurnInPlaceTime = 0.5f;
+    float TurnInPlaceTime = 0.5f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation Parameter")
-	float JogDirectionChangeTolerance = 15.f;
+    float JogDirectionChangeTolerance = 15.f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation Parameter")
-	float TurnMinAngle = 75.f;
+    float TurnMinAngle = 75.f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation Parameter")
-	float PivotMinAngle = 75.f;
+    float PivotMinAngle = 75.f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation Parameter")
-	float JogSpinMinAngle = 90.f;
+    float JogSpinMinAngle = 90.f;
 
 protected:
     virtual void TurnInPlaceUpdate(float DeltaTime);
 
     ACharacterBase* MyCharacter;
 
-	float RotationYawLastTick = 0.f;
-	float RotationYawOffsetLastTick = 0.f;
+    float RotationYawLastTick = 0.f;
+    float RotationYawOffsetLastTick = 0.f;
     float RotationYawOffsetTimer = 0.f;
 
-   	float RotationCurveValueLastTick = 0.f;
-	float RotationCurveValueSum = 0.f;
+       float RotationCurveValueLastTick = 0.f;
+    float RotationCurveValueSum = 0.f;
     float RotationDeltaMultiplier = 1.;
 
     float JogSpinAngleStart = 0.f;
     float JogSpinRotationStart = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FName RotationCurveName = "DistanceCurve";
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    FName RotationCurveName = "DistanceCurve";
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	uint8 bRotationCurveInit : 1;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    uint8 bRotationCurveInit : 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FName MeleeTwistCurveName = "MeleeTwist";
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    FName MeleeTwistCurveName = "MeleeTwist";
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float MeleeTwist = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    float MeleeTwist = 0.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float RotationYawOffset = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    float RotationYawOffset = 0.f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
     ETurnInPlaceTypes TurnInPlaceType;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float VelocitySize;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    float VelocitySize;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	float AccelerationSize;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    float AccelerationSize;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FRotator AimDeltaRotator;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    FRotator AimDeltaRotator;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FRotator MoveDeltaRotator;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    FRotator MoveDeltaRotator;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FRotator AccDeltaRotator;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    FRotator AccDeltaRotator;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
     ECardinalDirections JogDirection;

@@ -10,9 +10,9 @@
 UCLASS()
 class ALPHAONE_API AAlphaOnePlayerController : public APlayerController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	virtual void OnPossess(APawn *InPawn) override;
-	virtual void OnUnPossess() override;
+    virtual void OnPossess(APawn *InPawn) override;
+    virtual void OnUnPossess() override;
 };

@@ -45,5 +45,5 @@ protected:
     virtual void BeginPlay() override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EUnitFactions Faction;
+    EUnitFactions Faction;
 };

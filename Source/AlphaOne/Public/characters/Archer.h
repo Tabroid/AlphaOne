@@ -14,19 +14,19 @@ class UCameraComponent;
 UCLASS()
 class ALPHAONE_API AArcher : public AAlphaOnePlayer
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	AArcher();
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+    // Sets default values for this character's properties
+    AArcher();
+    // Called every frame
+    virtual void Tick(float DeltaTime) override;
 
 protected:
     // virtual void OnCameraResetEnd_Impl() override;
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	virtual void OnStartSpecial() override;
-	virtual void OnStopSpecial() override;
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
+    virtual void OnStartSpecial() override;
+    virtual void OnStopSpecial() override;
 };

@@ -10,11 +10,11 @@
 UCLASS()
 class ALPHAONE_API AWarrior : public AAlphaOnePlayer
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	AWarrior();
+    AWarrior();
 
-	virtual bool Attack();
-	virtual void OnAttackEnd(bool Interrupted = false);
+    virtual bool Attack();
+    virtual void OnAttackEnd(bool Interrupted = false);
 };

@@ -19,41 +19,41 @@ struct FGameplayEventData;
 UCLASS(Blueprintable, meta = (ShowWorldContextPin))
 class ALPHAONE_API UTargetType : public UObject
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Constructor and overrides
-	UTargetType() {}
+    // Constructor and overrides
+    UTargetType() {}
 
-	/** Called to determine targets to apply gameplay effects to */
-	UFUNCTION(BlueprintNativeEvent)
-	void GetTargets(ACharacterBase* TargetingCharacter, AActor* TargetingActor, FGameplayEventData EventData, TArray<FHitResult>& OutHitResults, TArray<AActor*>& OutActors) const;
+    /** Called to determine targets to apply gameplay effects to */
+    UFUNCTION(BlueprintNativeEvent)
+    void GetTargets(ACharacterBase* TargetingCharacter, AActor* TargetingActor, FGameplayEventData EventData, TArray<FHitResult>& OutHitResults, TArray<AActor*>& OutActors) const;
 };
 
 /** Trivial target type that uses the owner */
 UCLASS(NotBlueprintable)
 class ALPHAONE_API UTargetType_UseOwner : public UTargetType
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Constructor and overrides
-	UTargetType_UseOwner() {}
+    // Constructor and overrides
+    UTargetType_UseOwner() {}
 
-	/** Uses the passed in event data */
-	virtual void GetTargets_Implementation(ACharacterBase* TargetingCharacter, AActor* TargetingActor, FGameplayEventData EventData, TArray<FHitResult>& OutHitResults, TArray<AActor*>& OutActors) const override;
+    /** Uses the passed in event data */
+    virtual void GetTargets_Implementation(ACharacterBase* TargetingCharacter, AActor* TargetingActor, FGameplayEventData EventData, TArray<FHitResult>& OutHitResults, TArray<AActor*>& OutActors) const override;
 };
 
 /** Trivial target type that pulls the target out of the event data */
 UCLASS(NotBlueprintable)
 class ALPHAONE_API UTargetType_UseEventData : public UTargetType
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Constructor and overrides
-	UTargetType_UseEventData() {}
+    // Constructor and overrides
+    UTargetType_UseEventData() {}
 
-	/** Uses the passed in event data */
-	virtual void GetTargets_Implementation(ACharacterBase* TargetingCharacter, AActor* TargetingActor, FGameplayEventData EventData, TArray<FHitResult>& OutHitResults, TArray<AActor*>& OutActors) const override;
+    /** Uses the passed in event data */
+    virtual void GetTargets_Implementation(ACharacterBase* TargetingCharacter, AActor* TargetingActor, FGameplayEventData EventData, TArray<FHitResult>& OutHitResults, TArray<AActor*>& OutActors) const override;
 };

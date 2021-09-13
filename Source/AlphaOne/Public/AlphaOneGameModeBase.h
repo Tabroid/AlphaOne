@@ -10,5 +10,5 @@
 UCLASS()
 class ALPHAONE_API AAlphaOneGameModeBase : public AGameModeBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };

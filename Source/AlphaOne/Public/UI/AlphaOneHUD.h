@@ -14,21 +14,21 @@ class UTextBlock;
 UCLASS()
 class ALPHAONE_API AAlphaOneHUD : public AHUD
 {
-	GENERATED_UCLASS_BODY()
+    GENERATED_UCLASS_BODY()
 
 public:
-	virtual void DrawHUD() override;
-	virtual void BeginPlay() override;
+    virtual void DrawHUD() override;
+    virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaTime) override;
+    virtual void Tick(float DeltaTime) override;
 
-	void PlayerPossessed(class ACharacterBase *Player);
-	void PlayerUnPossessed();
+    void PlayerPossessed(class ACharacterBase *Player);
+    void PlayerUnPossessed();
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+    UPROPERTY(EditDefaultsOnly, Category = "Widgets")
     TSubclassOf<UPlayerStatusGauge> StatusGaugeClass;
 
 private:
-	UPlayerStatusGauge *StatusGaugeWidget;
+    UPlayerStatusGauge *StatusGaugeWidget;
 };

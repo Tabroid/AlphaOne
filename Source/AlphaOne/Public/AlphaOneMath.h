@@ -10,6 +10,6 @@
 UCLASS()
 class ALPHAONE_API UAlphaOneMath : public UBlueprintFunctionLibrary
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 

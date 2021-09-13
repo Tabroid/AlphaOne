@@ -14,19 +14,19 @@ class UAlphaOneAbility;
 UCLASS()
 class ALPHAONE_API UAlphaOneAbilitySystem : public UAbilitySystemComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	// Constructors and overrides
-	UAlphaOneAbilitySystem();
+    // Constructors and overrides
+    UAlphaOneAbilitySystem();
 
-	/** Returns a list of currently active ability instances that match the tags */
-	void GetActiveAbilitiesWithTags(const FGameplayTagContainer& GameplayTagContainer, TArray<UAlphaOneAbility*>& ActiveAbilities);
+    /** Returns a list of currently active ability instances that match the tags */
+    void GetActiveAbilitiesWithTags(const FGameplayTagContainer& GameplayTagContainer, TArray<UAlphaOneAbility*>& ActiveAbilities);
 
-	/** Returns the default level used for ability activations, derived from the character */
-	int32 GetDefaultAbilityLevel() const;
+    /** Returns the default level used for ability activations, derived from the character */
+    int32 GetDefaultAbilityLevel() const;
 
-	/** Version of function in AbilitySystemGlobals that returns correct type */
-	static UAlphaOneAbilitySystem* GetAbilitySystemComponentFromActor(const AActor* Actor, bool LookForComponent = false);
+    /** Version of function in AbilitySystemGlobals that returns correct type */
+    static UAlphaOneAbilitySystem* GetAbilitySystemComponentFromActor(const AActor* Actor, bool LookForComponent = false);
 
 };

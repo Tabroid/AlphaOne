@@ -13,26 +13,26 @@ class UTextBlock;
 UCLASS(Abstract)
 class ALPHAONE_API UHealthBar : public UUserWidget
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	void SetAttributeSet(UCharacterAttributes* Attr);
-	void SetOwningComponent(UWidgetComponent* Attr);
-	void UpdatePercentage(float NewVal, float OldVal);
+    void SetAttributeSet(UCharacterAttributes* Attr);
+    void SetOwningComponent(UWidgetComponent* Attr);
+    void UpdatePercentage(float NewVal, float OldVal);
 
-	virtual void BeginDestroy() override;
+    virtual void BeginDestroy() override;
 
 protected:
-	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
+    void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
 
-	TWeakObjectPtr<UCharacterAttributes> AttributeSet;
-	TWeakObjectPtr<UWidgetComponent> OwningComponent;
+    TWeakObjectPtr<UCharacterAttributes> AttributeSet;
+    TWeakObjectPtr<UWidgetComponent> OwningComponent;
 
-	UPROPERTY (meta = (BindWidget))
-	UProgressBar* HealthBar = nullptr;
+    UPROPERTY (meta = (BindWidget))
+    UProgressBar* HealthBar = nullptr;
 
-	UPROPERTY (meta = (BindWidget))
-	UTextBlock* HealthPercentage = nullptr;
+    UPROPERTY (meta = (BindWidget))
+    UTextBlock* HealthPercentage = nullptr;
 
-	float FullHealthDuration = 0.f;
+    float FullHealthDuration = 0.f;
 };

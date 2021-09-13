@@ -13,41 +13,41 @@ class UNiagaraSystem;
 UCLASS()
 class ALPHAONE_API ATurret : public ABuildingBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	ATurret();
-	virtual void Tick(float DeltaTime) override;
+    ATurret();
+    virtual void Tick(float DeltaTime) override;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	void RotateTurret(FVector LookAtTarget);
-	void Fire();
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
+    void RotateTurret(FVector LookAtTarget);
+    void Fire();
 
 private:
-	void CheckFireCondition();
-	float GetDistanceToEnemy();
+    void CheckFireCondition();
+    float GetDistanceToEnemy();
 
-	ACharacterBase* EnemyTarget = nullptr;
+    ACharacterBase* EnemyTarget = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	USceneComponent*      ProjectileSpawnPoint = nullptr;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    USceneComponent*      ProjectileSpawnPoint = nullptr;
 
-	//projectile of this pawn
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile Type", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AProjectileBase> ProjectileClass;
+    //projectile of this pawn
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile Type", meta = (AllowPrivateAccess = "true"))
+    TSubclassOf<AProjectileBase> ProjectileClass;
 
-	//particle system effect when the pawn is destroyed
-	UPROPERTY(EditAnywhere, Category = "Effects")
-	UNiagaraSystem* MuzzleParticle = nullptr;
+    //particle system effect when the pawn is destroyed
+    UPROPERTY(EditAnywhere, Category = "Effects")
+    UNiagaraSystem* MuzzleParticle = nullptr;
 
-	FTimerHandle FireRateTimerHandle;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	float FireRate = 1.0f;
+    FTimerHandle FireRateTimerHandle;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+    float FireRate = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-	float FireRange = 1000.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+    float FireRange = 1000.0f;
 };
 
 
