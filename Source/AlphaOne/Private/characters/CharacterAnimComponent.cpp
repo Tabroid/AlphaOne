@@ -105,20 +105,51 @@ void UCharacterAnimComponent::TurnInPlaceUpdate(float DeltaTime)
             }
 		}
 		RotationCurveValueLastTick = RotationCurveValue;
+        JogSpinAngle = RotationYawOffset / JogSpinRotationStart * JogSpinAngleStart;
 	} else {
         RotationCurveValueSum = 0.f;
-        TurnInPlaceType = AngleToTurnType(RotationYawOffset, TurnMinAngle, PivotMinAngle);
-        if ((RotationYawOffsetTimer > TurnInPlaceTime) && (TurnInPlaceType != ETurnInPlaceTypes::Idle)) {
-            MyCharacter->SetControl(EControlStates::WantsToTurn);
-        }
-        JogSpinType = CalculateSpinType(JogDirection, RotationYawOffset, JogSpinMinAngle);
-        if (JogSpinType != EJogSpinTypes::None) {
-            MyCharacter->SetControl(EControlStates::WantsToSpin);
+        if (AccelerationSize < NearZero) {
+            TurnInPlaceType = AngleToTurnType(RotationYawOffset, TurnMinAngle, PivotMinAngle);
+            if ((RotationYawOffsetTimer > TurnInPlaceTime) && (TurnInPlaceType != ETurnInPlaceTypes::Idle)) {
+                MyCharacter->SetControl(EControlStates::WantsToTurn);
+            }
+        } else {
+            JogSpinType = CalculateSpinType(JogDirection, RotationYawOffset, JogSpinMinAngle);
+            if (JogSpinType != EJogSpinTypes::None) {
+                MyCharacter->SetControl(EControlStates::WantsToSpin);
+            }
         }
 	}
     RotationYawOffsetLastTick = RotationYawOffset;
 }
 
+void UCharacterAnimComponent::TurnInPlaceStart()
+{
+    MyCharacter->SetAction(EUnitActions::Turning);
+    MyCharacter->SetControl(EControlStates::WantsToTurn, false);
+    bRotationCurveInit = 0;
+    MyCharacter->GetCharacterMovement()->DisableMovement();
+}
+
+void UCharacterAnimComponent::TurnInPlaceEnd()
+{
+    MyCharacter->SetAction(EUnitActions::Turning, false);
+    MyCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+}
+
+void UCharacterAnimComponent::JogSpinStart()
+{
+    MyCharacter->SetAction(EUnitActions::Turning);
+    MyCharacter->SetControl(EControlStates::WantsToSpin, false);
+    bRotationCurveInit = 0;
+    JogSpinRotationStart = RotationYawOffset;
+    JogSpinAngleStart = CalculateJogSpinAngle(JogSpinType, JogAngle);
+}
+
+void UCharacterAnimComponent::JogSpinEnd()
+{
+    MyCharacter->SetAction(EUnitActions::Turning, false);
+}
 
 // *** blueprint pure functions below **
 
@@ -188,4 +219,11 @@ EJogSpinTypes UCharacterAnimComponent::CalculateSpinType(ECardinalDirections Cur
         break;
     }
     return EJogSpinTypes::None;
+}
+
+float UCharacterAnimComponent::CalculateJogSpinAngle(EJogSpinTypes CurrentSpinType, float CurrentAngle)
+{
+    float Angle = CurrentAngle +
+        ((CurrentSpinType == EJogSpinTypes::FwdToBwd_CW || CurrentSpinType == EJogSpinTypes::FwdToBwd_CCW) ? 0.f : 180.f);
+    return UKismetMathLibrary::NormalizeAxis(Angle);
 }

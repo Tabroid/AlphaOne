@@ -50,6 +50,18 @@ public:
     virtual void BeginPlay() override;
     virtual bool IsNavigationRelevant() const override { return true; }
 
+    UFUNCTION(BlueprintCallable)
+    void TurnInPlaceStart();
+
+    UFUNCTION(BlueprintCallable)
+    void TurnInPlaceEnd();
+
+    UFUNCTION(BlueprintCallable)
+    void JogSpinStart();
+
+    UFUNCTION(BlueprintCallable)
+    void JogSpinEnd();
+
     // *** some parameters ***
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation Parameter")
 	float TurnInPlaceTime = 0.5f;
@@ -72,12 +84,15 @@ protected:
     ACharacterBase* MyCharacter;
 
 	float RotationYawLastTick = 0.f;
-	float RotationCurveValueLastTick = 0.f;
-	float RotationCurveValueSum = 0.f;
 	float RotationYawOffsetLastTick = 0.f;
-    float RotationDeltaMultiplier = 1.;
     float RotationYawOffsetTimer = 0.f;
 
+   	float RotationCurveValueLastTick = 0.f;
+	float RotationCurveValueSum = 0.f;
+    float RotationDeltaMultiplier = 1.;
+
+    float JogSpinAngleStart = 0.f;
+    float JogSpinRotationStart = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	FName RotationCurveName = "DistanceCurve";
@@ -144,5 +159,8 @@ public:
     // Determine the jog spin state
     UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
     static EJogSpinTypes CalculateSpinType(ECardinalDirections CurrentDirection, float YawOffset, float SpinThreshold = 90.f);
+
+    UFUNCTION(BlueprintPure, Category = "AlphaOne Math")
+    static float CalculateJogSpinAngle(EJogSpinTypes CurrentSpinType, float CurrentAngle);
 
 };
