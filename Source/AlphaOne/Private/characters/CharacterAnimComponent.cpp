@@ -7,6 +7,7 @@ static const float NearZero = 0.01f;
 
 UCharacterAnimComponent::UCharacterAnimComponent()
     : bRotationCurveInit(0)
+    , bRotationRecovery(0)
 {
     // should be tick from owner
     PrimaryComponentTick.bCanEverTick = false;
@@ -59,10 +60,6 @@ void UCharacterAnimComponent::AnimationStatesUpdate(float DeltaTime)
     if (!MyCharacter->CheckAction(EUnitActions::Running) && !AnimInstance->IsAnyMontagePlaying()) {
         RotationYawOffset += RotationYawLastTick - ActorRotation.Yaw;
         RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
-    } else {
-        // RotationYawOffset = 0.f;
-        ; // RotationYawOffset = FMath::FInterpTo(RotationYawOffset, 0.f, DeltaTime, 5.f);
-        // GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%.2f"), RotationYawOffset));
     }
 
     RotationYawOffset = UKismetMathLibrary::NormalizeAxis(RotationYawOffset);
@@ -71,6 +68,16 @@ void UCharacterAnimComponent::AnimationStatesUpdate(float DeltaTime)
     JogDirection = AngleToDirection(JogAngle, JogDirection, JogDirectionChangeTolerance);
     TurnInPlaceUpdate(DeltaTime);
     RotationYawLastTick = ActorRotation.Yaw;
+
+    // gradually correct the rotation yaw offset
+    if (bRotationRecovery) {
+        RotationRecoveryFrameCount ++;
+        if (RotationRecoveryFrameCount > RotationRecoveryFrame) {
+            RotationYawOffset = FMath::FInterpTo(RotationYawOffset, 0.f, DeltaTime, RotationRecoveryRate);
+        }
+    } else {
+        RotationRecoveryFrame = 0;
+    }
 }
 
 // update turn in place offset

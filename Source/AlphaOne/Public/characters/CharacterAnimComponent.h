@@ -86,8 +86,9 @@ protected:
     float RotationYawLastTick = 0.f;
     float RotationYawOffsetLastTick = 0.f;
     float RotationYawOffsetTimer = 0.f;
+    uint8 RotationRecoveryFrame = 1;
 
-       float RotationCurveValueLastTick = 0.f;
+    float RotationCurveValueLastTick = 0.f;
     float RotationCurveValueSum = 0.f;
     float RotationDeltaMultiplier = 1.;
 
@@ -99,6 +100,15 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
     uint8 bRotationCurveInit : 1;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    uint8 bRotationRecovery : 1;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    float RotationRecoveryRate = 5.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+    uint8 RotationRecoveryFrameCount = 0;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
     FName MeleeTwistCurveName = "MeleeTwist";
